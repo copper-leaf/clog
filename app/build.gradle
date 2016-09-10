@@ -33,18 +33,26 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-task copyLintJar(type: Copy){
-    from (configurations.lintChecks) {
-        rename {
-            String fileName ->
-                'lint.jar'
-        }
-    }
-    into 'build/intermediates/lint/'
+// build a jar with source files
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
 }
 
+task javadoc(type: Javadoc) {
+    failOnError  false
+    source = android.sourceSets.main.java.sourceFiles
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+    classpath += configurations.compile
+}
 
-project.afterEvaluate{
-    def compileLintTask = project.tasks.find {it.name == 'compileLint'}
-    compileLintTask.dependsOn(copyLintJar)
+// build a jar with javadoc
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
 }

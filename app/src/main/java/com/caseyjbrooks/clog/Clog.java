@@ -1,39 +1,29 @@
 package com.caseyjbrooks.clog;
 
+import android.support.v4.util.Pair;
 import android.util.Log;
 
-import com.caseyjbrooks.clog.formatters.ClogClass;
-import com.caseyjbrooks.clog.formatters.ClogDate;
 import com.caseyjbrooks.clog.loggers.ClogD;
 import com.caseyjbrooks.clog.loggers.ClogE;
 import com.caseyjbrooks.clog.loggers.ClogI;
 import com.caseyjbrooks.clog.loggers.ClogV;
 import com.caseyjbrooks.clog.loggers.ClogW;
 import com.caseyjbrooks.clog.loggers.ClogWTF;
+import com.caseyjbrooks.clog.parsers.ClogStringFormatter;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static java.lang.Integer.parseInt;
 
 public class Clog {
-    private static HashMap<String, ClogFormatter> formatters = new HashMap<>();
+    private static final String CLASS_NAME = Clog.class.getName();
+
     private static HashMap<String, ClogLogger> loggers = new HashMap<>();
+    private static ClogParser parser = new ClogStringFormatter();
+    private static String defaultTag = null;
+    private static String lastTag;
+    private static String lastLog;
+
     static {
-        // initialize default formatters
-        formatters = new HashMap<>();
-        formatters.put("date", new ClogDate());
-        formatters.put("class", new ClogClass());
-
-        formatters.put("d", new ClogD());
-        formatters.put("e", new ClogE());
-        formatters.put("i", new ClogI());
-        formatters.put("v", new ClogV());
-        formatters.put("w", new ClogW());
-        formatters.put("wtf", new ClogWTF());
-
         // initialize default loggers
         loggers = new HashMap<>();
         loggers.put("d", new ClogD());
@@ -47,184 +37,286 @@ public class Clog {
     private Clog() {
     }
 
-    public static int d(String formatString, Object... args)                                    { return log("d", "Clog", formatString, args); }
-    public static int e(String formatString, Object... args)                                    { return log("e", "Clog", formatString, args); }
-    public static int i(String formatString, Object... args)                                    { return log("i", "Clog", formatString, args); }
-    public static int v(String formatString, Object... args)                                    { return log("v", "Clog", formatString, args); }
-    public static int w(String formatString, Object... args)                                    { return log("w", "Clog", formatString, args); }
-    public static int wtf(String formatString, Object... args)                                  { return log("wtf", "Clog", formatString, args); }
+// Log messages with Clog
+//--------------------------------------------------------------------------------------------------
 
-    public static int w(String tag, Throwable throwable)                                        { return log("wtf", tag, getStackTraceString(throwable)); }
-    public static int wtf(String tag, Throwable throwable)                                      { return log("wtf", tag, Log.getStackTraceString(throwable)); }
+    public static int log(String formatString, Object... args)                                    { return logger(null,       formatString,            args); }
+    public static int   d(String formatString, Object... args)                                    { return logger("d",        formatString,            args); }
+    public static int   e(String formatString, Object... args)                                    { return logger("e",        formatString,            args); }
+    public static int   i(String formatString, Object... args)                                    { return logger("i",        formatString,            args); }
+    public static int   v(String formatString, Object... args)                                    { return logger("v",        formatString,            args); }
+    public static int   w(String formatString, Object... args)                                    { return logger("w",        formatString,            args); }
+    public static int wtf(String formatString, Object... args)                                    { return logger("wtf",      formatString,            args); }
 
-    public static int d(String tag, String formatString, Object... args)                        { return log("d", tag, formatString, args); }
-    public static int e(String tag, String formatString, Object... args)                        { return log("e", tag, formatString, args); }
-    public static int i(String tag, String formatString, Object... args)                        { return log("i", tag, formatString, args); }
-    public static int v(String tag, String formatString, Object... args)                        { return log("v", tag, formatString, args); }
-    public static int w(String tag, String formatString, Object... args)                        { return log("w", tag, formatString, args); }
-    public static int wtf(String tag, String formatString, Object... args)                      { return log("wtf", tag, formatString, args); }
+    public static int log(String formatString, Throwable throwable, Object... args)               { return logger(null,       formatString, throwable, args); }
+    public static int   d(String formatString, Throwable throwable, Object... args)               { return logger("d",        formatString, throwable, args); }
+    public static int   e(String formatString, Throwable throwable, Object... args)               { return logger("e",        formatString, throwable, args); }
+    public static int   i(String formatString, Throwable throwable, Object... args)               { return logger("i",        formatString, throwable, args); }
+    public static int   v(String formatString, Throwable throwable, Object... args)               { return logger("v",        formatString, throwable, args); }
+    public static int   w(String formatString, Throwable throwable, Object... args)               { return logger("w",        formatString, throwable, args); }
+    public static int wtf(String formatString, Throwable throwable, Object... args)               { return logger("wtf",      formatString, throwable, args); }
 
-    public static int d(String tag, String formatString, Throwable throwable, Object... args)   { return log("d", tag, formatString, throwable, args); }
-    public static int e(String tag, String formatString, Throwable throwable, Object... args)   { return log("e", tag, formatString, throwable, args); }
-    public static int i(String tag, String formatString, Throwable throwable, Object... args)   { return log("i", tag, formatString, throwable, args); }
-    public static int v(String tag, String formatString, Throwable throwable, Object... args)   { return log("v", tag, formatString, throwable, args); }
-    public static int w(String tag, String formatString, Throwable throwable, Object... args)   { return log("w", tag, formatString, throwable, args); }
-    public static int wtf(String tag, String formatString, Throwable throwable, Object... args) { return log("wtf", tag, formatString, throwable, args); }
+    public static int log(String tag, String formatString, Object... args)                        { return logger(null,  tag, formatString,            args); }
+    public static int   d(String tag, String formatString, Object... args)                        { return logger("d",   tag, formatString,            args); }
+    public static int   e(String tag, String formatString, Object... args)                        { return logger("e",   tag, formatString,            args); }
+    public static int   i(String tag, String formatString, Object... args)                        { return logger("i",   tag, formatString,            args); }
+    public static int   v(String tag, String formatString, Object... args)                        { return logger("v",   tag, formatString,            args); }
+    public static int   w(String tag, String formatString, Object... args)                        { return logger("w",   tag, formatString,            args); }
+    public static int wtf(String tag, String formatString, Object... args)                        { return logger("wtf", tag, formatString,            args); }
+
+    public static int log(String tag, String formatString, Throwable throwable, Object... args)   { return logger(null,  tag, formatString, throwable, args); }
+    public static int   d(String tag, String formatString, Throwable throwable, Object... args)   { return logger("d",   tag, formatString, throwable, args); }
+    public static int   e(String tag, String formatString, Throwable throwable, Object... args)   { return logger("e",   tag, formatString, throwable, args); }
+    public static int   i(String tag, String formatString, Throwable throwable, Object... args)   { return logger("i",   tag, formatString, throwable, args); }
+    public static int   v(String tag, String formatString, Throwable throwable, Object... args)   { return logger("v",   tag, formatString, throwable, args); }
+    public static int   w(String tag, String formatString, Throwable throwable, Object... args)   { return logger("w",   tag, formatString, throwable, args); }
+    public static int wtf(String tag, String formatString, Throwable throwable, Object... args)   { return logger("wtf", tag, formatString, throwable, args); }
+
+    public static int   w(String tag, Throwable throwable)                                        { return logger("wtf", tag, getStackTraceString(throwable)); }
+    public static int wtf(String tag, Throwable throwable)                                        { return logger("wtf", tag, Log.getStackTraceString(throwable)); }
 
     public static String getStackTraceString(Throwable throwable) { return Log.getStackTraceString(throwable); }
     public static boolean isLoggable(String tag, int level) { return Log.isLoggable(tag, level); }
     public static int println(int priority, String tag, String message) { return Log.println(priority, tag, message); }
 
-    public static int log(String logger, String tag, String message, Object... args) {
-        String formattedMessage = formatString(message, args);
+    /**
+     * Format and log a message with the default tag to the specified logger. Passing null as 'logger'
+     * will use the default logger.
+     *
+     * @param logger the key of the specific logger
+     * @param formatString the string to be formatted and logged
+     * @param args the list of objects to format into the format string
+     * @return int
+     */
+    public static int logger(String logger, String formatString, Object... args) {
+        return logger(logger, getTag(), formatString, args);
+    }
 
-        if(loggers.containsKey(logger)) {
-            return loggers.get(logger).log(tag, formattedMessage);
+    /**
+     * Format and log a message and tag to the specified logger
+     *
+     * @param logger the key of the specific logger
+     * @param tag the string to be used as a tag
+     * @param formatString the string to be formatted and logged
+     * @param args the list of objects to format into the format string
+     * @return int
+     */
+    public static int logger(String logger, String tag, String formatString, Object... args) {
+        return logger(logger, tag, formatString, null, args);
+    }
+
+    /**
+     * Format and log a message, tag, and throwable to the specified logger
+     *
+     * @param logger the key of the specific logger
+     * @param tag the string to be used as a tag
+     * @param formatString the string to be formatted and logged
+     * @param args the list of objects to format into the format string
+     * @return int
+     */
+    public static int logger(String logger, String tag, String formatString, Throwable throwable, Object... args) {
+        String formattedMessage = parser.format(formatString, args);
+        lastLog = formattedMessage;
+        lastTag = tag;
+
+        if(loggers.containsKey(logger) && (loggers.get(logger) != null)) {
+            if(throwable != null) {
+                return loggers.get(logger).log(tag, formattedMessage, throwable);
+            }
+            else {
+                return loggers.get(logger).log(tag, formattedMessage);
+            }
         }
         else {
-            return new ClogW().log(tag, "" + formattedMessage + " (cannot find default logger with tag '" + logger + "')");
+            if(throwable != null) {
+                return new ClogW().log(tag, formattedMessage + " (cannot find logger with tag '" + logger + "')", throwable);
+            }
+            else {
+                return new ClogW().log(tag, formattedMessage + " (cannot find logger with tag '" + logger + "')");
+            }
         }
     }
 
-    public static int log(String logger, String tag, String message, Throwable throwable, Object... args) {
-        String formattedMessage = formatString(message, args);
-
-        if(loggers.containsKey(logger)) {
-            return loggers.get(logger).log(tag, formattedMessage, throwable);
-        }
-        else {
-            return new ClogW().log(tag, "" + formattedMessage + " (cannot find logger with tag '" + logger + "')");
-        }
-    }
-
-
-
-
-
-
-
-//String format parser
+// Configure Clog
 //--------------------------------------------------------------------------------------------------
-    public static String formatString(String message, Object... params) {
-        if(params != null && params.length > 0) {
 
-            String replacementRegex = "\\{" + "\\{" + "([^\\{}]*)" + "\\}" + "\\}";
-            Pattern pattern = Pattern.compile(replacementRegex);
-            Matcher matcher = pattern.matcher(message);
+    /**
+     * Get the currently set loggers
+     *
+     * @return the map of loggers
+     */
+    public static HashMap<String, ClogLogger> getLoggers() {
+        return loggers;
+    }
 
-            int lastIndex = 0;
-            String output = "";
-            while(matcher.find()) {
-                // Add all text that isn't part of the formatter pieces
-                String formatBody = message.substring(lastIndex, matcher.start());
-                output += formatBody;
+    /**
+     * Get the keys for all currently set loggers
+     *
+     * @return a list of String keys which map to loggers
+     */
+    public static ArrayList<String> getLoggerKeys() {
+        return new ArrayList<>(loggers.keySet());
+    }
 
-                // Split inner string on '|'. The first piece should indicate which object from the
-                // params we should start with, and the other pieces should create a pipeline of
-                // ClogFormatters which continually format the object.
-                String token = matcher.group(1).trim();
-                String[] bodyPieces = token.split("\\|");
-                Object objectToPrint = getObjectToFormat(bodyPieces[0].trim(), params);
-                if(bodyPieces.length > 1) {
-                    output += formatObject(objectToPrint, bodyPieces, params).toString();
-                }
-                else {
-                    output += objectToPrint.toString();
-                }
+    /**
+     * Replace all currently set loggers with a new set
+     *
+     * @param loggers the new hashmap of loggers
+     */
+    public static void setLoggers(HashMap<String, ClogLogger> loggers) {
+        Clog.loggers = loggers;
+    }
 
-                lastIndex = matcher.end();
-            }
+    /**
+     * Add a new logger, replacing any existing logger already set with the key
+     *
+     * @param key the logger key
+     * @param logger the logger to add or replace
+     */
+    public static void addLogger(String key, ClogLogger logger) {
+        Clog.loggers.put(key, logger);
+    }
 
-            output += message.substring(lastIndex, message.length());
+    /**
+     * Remove the logger at the specified key
+     *
+     * @param key the key mapping to the logger to be removed
+     */
+    public static void removeLogger(String key) {
+        Clog.loggers.remove(key);
+    }
 
-            return output;
+    /**
+     * Get the current Clog parser implementation
+     *
+     * @return the current parser
+     */
+    public static ClogParser getParser() {
+        return parser;
+    }
+
+    /**
+     * Set the current Clog parser implementation
+     *
+     * @param parser the parser implementation to use
+     */
+    public static void setParser(ClogParser parser) {
+        Clog.parser = parser;
+    }
+
+    /**
+     * Get the default tag to be used with all logging messages. A default tag of 'null' indicates
+     * that all logged messages will use the caller's simple class name as the tag.
+     *
+     * @return the default tag, or null
+     */
+    public static String getDefaultTag() {
+        return defaultTag;
+    }
+
+    /**
+     * Set the default tag to be used with all logging messages. A default tag of 'null' indicates
+     * that all logged messages will use the caller's simple class name as the tag.
+     *
+     * @param defaultTag the default tag, or null
+     */
+    public static void setDefaultTag(String defaultTag) {
+        Clog.defaultTag = defaultTag;
+    }
+
+    /**
+     * Get the most recently logged tag and message. The tag is the first item in the pair, and the
+     * message is the second item in the pair.
+     *
+     * @return a pair of the last tag and log as 'Pair(lastTag, lastLog)'
+     */
+    public static Pair<String, String> getLastLog() {
+        return new Pair<>(lastTag, lastLog);
+    }
+
+    // Set and get the default logger tag.
+//--------------------------------------------------------------------------------------------------
+    /**
+     * Get the default tag to log. If the default tag is defined, use that, otherwise attempt to
+     * find the caller simple class name and use that as the tag
+     *
+     * @return the default tag
+     */
+    private static String getTag() {
+        if(defaultTag == null) {
+            return findCallerClassName();
         }
         else {
-            return message;
+            return defaultTag;
         }
     }
 
-    private static Object getObjectToFormat(String indexPiece, Object[] params) {
-        if(indexPiece.matches("^\\$\\d+$")) {
-            int objectIndex = parseInt(indexPiece.substring(1)) - 1;
-
-            if(objectIndex >= 0 && objectIndex < params.length) {
-                return params[objectIndex];
-            }
-            else if(objectIndex == -1) {
-                return null;
-            }
-            else {
-                throw new IllegalArgumentException("Attempted to access an object not within the range of given params: Object index: " + objectIndex + ", number of params: " + params.length);
+    /**
+     * Finds the external class name that directly called a CLog method. Copied from the Android
+     * Open Source Project LogUtil.java class.
+     *
+     * See {@link <a href="https://android.googlesource.com/platform/tools/tradefederation/+/master/src/com/android/tradefed/log/LogUtil.java#324">LogUtil.java#324</a>}.
+     *
+     * @return The simple class name (or full-qualified if an error occurs getting a ref to
+     *         the class) of the external class that called a CLog method, or "Unknown" if
+     *         the stack trace is empty or only contains CLog class names.
+     */
+    private static String findCallerClassName() {
+        return findCallerClassName(null);
+    }
+    /**
+     * Finds the external class name that directly called a CLog method. Copied from the Android
+     * Open Source Project LogUtil.java class.
+     *
+     * See {@link <a href="https://android.googlesource.com/platform/tools/tradefederation/+/master/src/com/android/tradefed/log/LogUtil.java#336">LogUtil.java#336</a>}.
+     *
+     * @param t (Optional) the stack trace to search within, exposed for unit testing
+     * @return The simple class name (or full-qualified if an error occurs getting a ref to
+     *         the class) of the external class that called a CLog method, or "Unknown" if
+     *         the stack trace is empty or only contains CLog class names.
+     */
+    private static String findCallerClassName(Throwable t) {
+        String className = "Unknown";
+        if (t == null) {
+            t = new Throwable();
+        }
+        StackTraceElement[] frames = t.getStackTrace();
+        if (frames.length == 0) {
+            return className;
+        }
+        // starting with the first frame's class name (this CLog class)
+        // keep iterating until a frame of a different class name is found
+        int f;
+        for (f = 0; f < frames.length; f++) {
+            className = frames[f].getClassName();
+            if (!className.equals(CLASS_NAME)) {
+                break;
             }
         }
-        else {
-            throw new IllegalArgumentException("Formatters must specify an object to format using the format '$index': '" + indexPiece + "'");
-        }
+        return parseClassName(className);
     }
 
-    private static Object getParameter(String token, Object[] params) {
-        if(token.matches("^\\$\\d+$")) {
-            int objectLiteral = parseInt(token.substring(1)) - 1;
-
-            if(objectLiteral >= 0 && objectLiteral < params.length) {
-                return params[objectLiteral];
-            }
-            else {
-                return null;
-            }
+    /**
+     * Parses the simple class name out of the full class name. If the formatting already
+     * looks like a simple class name, then just returns that. Copied from the Android
+     * Open Source Project LogUtil.java class.
+     *
+     * See {@link <a href="https://android.googlesource.com/platform/tools/tradefederation/+/master/src/com/android/tradefed/log/LogUtil.java#368">LogUtil.java#368</a>}.
+     *
+     * @param fullName the full class name to parse
+     * @return The simple class name
+     */
+    private static String parseClassName(String fullName) {
+        int lastdot = fullName.lastIndexOf('.');
+        String simpleName = fullName;
+        if (lastdot != -1) {
+            simpleName = fullName.substring(lastdot + 1);
         }
-        else if(token.matches("^'.*'$")) {
-            return token.substring(1, token.length() - 1);
+        // handle inner class names
+        int lastdollar = simpleName.lastIndexOf('$');
+        if (lastdollar != -1) {
+            simpleName = simpleName.substring(0, lastdollar);
         }
-        else if(token.toLowerCase().equals("true")) {
-            return true;
-        }
-        else if(token.toLowerCase().equals("false")) {
-            return false;
-        }
-
-        return null;
-    }
-
-    private static Object formatObject(Object objectToPrint, String[] formatterPieces, Object[] params) {
-        String[] formatterKeys = Arrays.copyOfRange(formatterPieces, 1, formatterPieces.length);
-
-        Object formattedObject = objectToPrint;
-        for(String formatterKey : formatterKeys) {
-            formatterKey = formatterKey.trim();
-            String[] paramsArray = null;
-
-            // Get optional params for the formatter in they exist
-            Pattern pattern = Pattern.compile("\\((.*)\\)");
-            Matcher matcher = pattern.matcher(formatterKey);
-            if(matcher.find()) {
-                String paramsString = matcher.group(1);
-
-                if(paramsString.contains(",")) {
-                    paramsArray = paramsString.split("\\s*,\\s*");
-                }
-                else {
-                    paramsArray = new String[] { paramsString };
-                }
-
-                Object[] parsedParamsArray = new Object[paramsArray.length];
-
-                for(int i = 0; i < paramsArray.length; i++) {
-                    parsedParamsArray[i] = getParameter(paramsArray[i], params);
-                }
-
-                formatterKey = formatterKey.replaceAll("\\((.*)\\)", "").trim();
-            }
-
-            if(formatters.containsKey(formatterKey)) {
-                formattedObject = formatters.get(formatterKey).format(formattedObject, paramsArray);
-            }
-            else {
-                throw new IllegalArgumentException("Cannot find the formatter with key '" + formatterKey + "'");
-            }
-        }
-
-        return formattedObject;
+        return simpleName;
     }
 }
