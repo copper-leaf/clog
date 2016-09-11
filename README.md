@@ -4,6 +4,7 @@ A drop-in replacement for android.util.Log. Features an extensible API and a sim
 
 ### Download
 Clog is distrubuted through JitPack.io.
+[![Release](https://jitpack.io/v/cjbrook12/Clog.svg)](https://jitpack.io/#cjbrooks12/Clog)
 
 In your project-level `build.gradle`:
 
@@ -16,7 +17,7 @@ allprojects {
 }
 ```
 
-In your module's `build.gradle`:
+In your module's `build.gradle` (replace 'v0.1.0' with the most recent release):
 ```groovy
 dependencies {
     ...
