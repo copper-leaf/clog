@@ -6,6 +6,8 @@ import android.support.v4.util.Pair;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
@@ -39,5 +41,23 @@ public class ClogTest {
         lastLog = Clog.getLastLog();
         assertEquals(lastLog.first, "tag");
         assertEquals(lastLog.second, "message");
+    }
+
+    @Test
+    public void testFormattedLogging() throws Exception {
+        Clog.setDefaultTag(null);
+
+        Pair<String, String> lastLog;
+
+        ArrayList<String> names = new ArrayList<>();
+        names.add("Bob");
+        names.add("Larry");
+        names.add("Junior");
+        names.add("French Peas");
+
+        Clog.i("#{ $1 | join('; ') | lowercase } references back to #{ @1 | uppercase }", names);
+        lastLog = Clog.getLastLog();
+        assertEquals(lastLog.first, "ClogTest");
+        assertEquals(lastLog.second, "bob; larry; junior; french peas references back to BOB; LARRY; JUNIOR; FRENCH PEAS");
     }
 }

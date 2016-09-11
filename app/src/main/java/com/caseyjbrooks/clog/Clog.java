@@ -178,6 +178,16 @@ public class Clog {
     }
 
     /**
+     * Sets the default logger, replacing any existing default logger. This default logger will be
+     * used in calls to Clog.log(...) or Clog.logger(null, ...)
+     *
+     * @param logger the logger to add or replace
+     */
+    public static void setDefaultLogger(ClogLogger logger) {
+        Clog.loggers.put(null, logger);
+    }
+
+    /**
      * Remove the logger at the specified key
      *
      * @param key the key mapping to the logger to be removed
