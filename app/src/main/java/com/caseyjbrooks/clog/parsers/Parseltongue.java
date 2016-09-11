@@ -13,14 +13,14 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ClogStringFormatter implements ClogParser {
+public class Parseltongue implements ClogParser {
     private HashMap<String, ClogFormatter> formatters;
     private ArrayList<Object> params;
     private ArrayList<Object> results;
 
 //Public API
 //--------------------------------------------------------------------------------------------------
-    public ClogStringFormatter() {
+    public Parseltongue() {
         formatters = new HashMap<>();
         formatters.put("lowercase", new ClogLowercase());
         formatters.put("uppercase", new ClogUppercase());
@@ -28,7 +28,7 @@ public class ClogStringFormatter implements ClogParser {
         formatters.put("repeat", new ClogRepeat());
     }
 
-    public ClogStringFormatter(HashMap<String, ClogFormatter> formatters) {
+    public Parseltongue(HashMap<String, ClogFormatter> formatters) {
         this.formatters = formatters;
     }
 

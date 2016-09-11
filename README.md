@@ -1,11 +1,36 @@
 # Clog
 
-### What is it?
+A drop-in replacement for android.util.Log. Features an extensible API and a simple yet powerful formatting languge, Parseltongue.
+
+### Download
+Clog is distrubuted through JitPack.io.
+
+In your project-level `build.gradle`:
+
+```groovy
+allprojects {
+    repositories {
+        ...
+        maven { url "https://jitpack.io" }
+    }
+}
+```
+
+In your module's `build.gradle`:
+```groovy
+dependencies {
+    ...
+    compile 'com.github.cjbrooks12:Clog:v0.1.0@aar'
+}
+```
+
+
+### Overview
 Clog is designed to be a drop-in replacement of the basic Android Log class. It provides a more generic interface so that a call like `Clog.i()` does what you want it to do, which isn't strictly logging a message. You might want to view logs in your terminal during development, but send them all to your server during production. That is exactly the problem Clog is designed to solve.
 
 It also attempts to make logging easier overall with more meaningful log messages. That's why Clog can use the caller's simple class name as the tag (thus, you don't need to give a tag to every log), and also contains a powerful String-formatting language, so you can more easily print and format your objects in your logs. But even the Clog formatting language is implemented as a delegate, so if you don't like my string language, you can use your own, such as the standard Java `String.format()`.
 
-### What is it?
+### Basic Usage
 Since Clog implements the full public interface of Log, you can replace all your `Log`s with `Clog`s.
 
 ```Java
@@ -48,7 +73,7 @@ Clog.log(message);
 
 ```
 
-### Clog Formatting Language
+### Clog Formatting Language (Parseltongue)
 Building Strings to be put into logs (or anything else for that matter), is painful. One of the greatest things in many modern languages is string interpolation, which is the idea that I attempt to capture with this formatting language. It's best shown with a basic example of the language's syntax:
 
 ```Java

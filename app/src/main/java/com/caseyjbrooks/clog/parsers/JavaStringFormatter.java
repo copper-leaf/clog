@@ -1,8 +1,10 @@
 package com.caseyjbrooks.clog.parsers;
 
-/**
- * Created by cbrooks on 9/10/16.
- */
+import com.caseyjbrooks.clog.ClogParser;
 
-public class JavaStringFormatter {
+public class JavaStringFormatter implements ClogParser {
+    @Override
+    public String format(String formatString, Object... params) {
+        return String.format(formatString, params);
+    }
 }

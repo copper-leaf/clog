@@ -9,7 +9,7 @@ import com.caseyjbrooks.clog.loggers.ClogI;
 import com.caseyjbrooks.clog.loggers.ClogV;
 import com.caseyjbrooks.clog.loggers.ClogW;
 import com.caseyjbrooks.clog.loggers.ClogWTF;
-import com.caseyjbrooks.clog.parsers.ClogStringFormatter;
+import com.caseyjbrooks.clog.parsers.Parseltongue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,7 +18,7 @@ public class Clog {
     private static final String CLASS_NAME = Clog.class.getName();
 
     private static HashMap<String, ClogLogger> loggers = new HashMap<>();
-    private static ClogParser parser = new ClogStringFormatter();
+    private static ClogParser parser = new Parseltongue();
     private static String defaultTag = null;
     private static String lastTag;
     private static String lastLog;
