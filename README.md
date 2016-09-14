@@ -6,7 +6,7 @@ A drop-in replacement for android.util.Log. Features an extensible API and a sim
 Clog is distrubuted through JitPack.io.
 
 [![](https://jitpack.io/v/cjbrooks12/Clog.svg)](https://jitpack.io/#cjbrooks12/Clog)
-[![View Documentation](https://img.shields.io/badge/view-documentation-blue.svg)](https://jitpack.io/com/github/cjbrooks12/Clog/v0.1.0/javadoc/)
+[![JitPack Javadoc](https://img.shields.io/github/tag/cjbrooks12/Clog.svg?maxAge=2592000&label=javadoc)](https://jitpack.io/com/github/cjbrooks12/Clog/v0.1.0/javadoc/)
 [![Github Releases](https://img.shields.io/github/downloads/cjbrooks12/Clog/latest/total.svg?maxAge=2592000)]()
 
 In your project-level `build.gradle`:
