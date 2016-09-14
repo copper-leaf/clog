@@ -4,7 +4,7 @@ A drop-in replacement for android.util.Log. Features an extensible API and a sim
 
 ### Download
 Clog is distrubuted through JitPack.io.
-[![Release](https://jitpack.io/v/cjbrook12/Clog.svg)](https://jitpack.io/#cjbrooks12/Clog)
+[![](https://jitpack.io/v/cjbrooks12/Clog.svg)](https://jitpack.io/#cjbrooks12/Clog)
 
 View the [Documentation](https://jitpack.io/com/github/cjbrooks12/Clog/v0.1.0/javadoc/)
 
