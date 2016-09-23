@@ -62,7 +62,7 @@ In your module's `build.gradle` (replace the version with the most recent releas
 ```groovy
 dependencies {
     ...
-    compile('com.github.cjbrooks12:Android-Clog:v0.1.0@aar') {
+    compile('com.github.cjbrooks12:Android-Clog:v0.1.1@aar') {
         transitive = true;
     }
 }
