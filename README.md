@@ -31,10 +31,10 @@ Getting Android Clog integrated into your project is easy. Add the following to 
 
 ```java
 if(BuildConfig.DEBUG) {
-    Clog.addProfile("dev", AndroidClog.getDevelopmentClog());
+    Clog.setCurrentProfile("dev", AndroidClog.getDevelopmentClog());
 }
 else {
-    Clog.addProfile("prod", AndroidClog.getProductionClog());
+    Clog.setCurrentProfile("prod", AndroidClog.getProductionClog());
 }
 ```
 
