@@ -36,8 +36,6 @@ public class TheStandardBookOfSpells {
     /**
      * Based on the Android Open Source Project TestUtils.java class.
      *
-     * See {@link <a href="https://android.googlesource.com/platform/frameworks/base/+/b2c4f0bf11f38fd31d80f1256c89b9db043a2929/core/java/android/text/TextUtils.java#280">TextUtils.java#280</a>}.
-     *
      * @param data
      * @param separator
      * @return
@@ -59,8 +57,6 @@ public class TheStandardBookOfSpells {
 
     /**
      * Based on the Android Open Source Project TestUtils.java class.
-     *
-     * See {@link <a href="https://android.googlesource.com/platform/frameworks/base/+/b2c4f0bf11f38fd31d80f1256c89b9db043a2929/core/java/android/text/TextUtils.java#280">TextUtils.java#280</a>}.
      *
      * @param data
      * @param separator

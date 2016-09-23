@@ -70,8 +70,6 @@ public class Clog {
      * Handy function to get a loggable stack trace from a Throwable. Copied from the Android
      * Open Source Project Log.java class.
      *
-     * See {@link <a href="https://android.googlesource.com/platform/frameworks/base/+/master/core/java/android/util/Log.java#329">Log.java#329</a>}.
-     *
      * @param tr An exception to log
      */
     public static String getStackTraceString(Throwable tr) {
@@ -413,8 +411,6 @@ public class Clog {
      * Finds the external class name that directly called a Clog method. Copied from the Android
      * Open Source Project LogUtil.java class.
      *
-     * See {@link <a href="https://android.googlesource.com/platform/tools/tradefederation/+/master/src/com/android/tradefed/log/LogUtil.java#324">LogUtil.java#324</a>}.
-     *
      * @return The simple class name (or full-qualified if an error occurs getting a ref to
      *         the class) of the external class that called a CLog method, or "Unknown" if
      *         the stack trace is empty or only contains CLog class names.
@@ -426,8 +422,6 @@ public class Clog {
     /**
      * Finds the external class name that directly called a CLog method. Copied from the Android
      * Open Source Project LogUtil.java class.
-     *
-     * See {@link <a href="https://android.googlesource.com/platform/tools/tradefederation/+/master/src/com/android/tradefed/log/LogUtil.java#336">LogUtil.java#336</a>}.
      *
      * @param t (Optional) the stack trace to search within, exposed for unit testing
      * @return The simple class name (or full-qualified if an error occurs getting a ref to
@@ -459,8 +453,6 @@ public class Clog {
      * Parses the simple class name out of the full class name. If the formatting already
      * looks like a simple class name, then just returns that. Copied from the Android
      * Open Source Project LogUtil.java class.
-     *
-     * See {@link <a href="https://android.googlesource.com/platform/tools/tradefederation/+/master/src/com/android/tradefed/log/LogUtil.java#368">LogUtil.java#368</a>}.
      *
      * @param fullName the full class name to parse
      * @return The simple class name
