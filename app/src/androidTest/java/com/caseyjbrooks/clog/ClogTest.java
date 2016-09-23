@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 public class ClogTest {
     @Test
     public void testBasicLogging() throws Exception {
+
         Pair<String, String> lastLog;
 
         // test a basic log. It should log this class name as the tag, and the exact message as the message
@@ -50,14 +51,16 @@ public class ClogTest {
         Pair<String, String> lastLog;
 
         ArrayList<String> names = new ArrayList<>();
-        names.add("Bob");
-        names.add("Larry");
-        names.add("Junior");
-        names.add("French Peas");
+        names.add("Harry");
+        names.add("Ron");
+        names.add("Hermione");
+        names.add("Fred and George");
 
-        Clog.i("#{ $1 | join('; ') | lowercase } references back to #{ @1 | uppercase }", names);
+        Clog.i("#{ $1 | join(', ') | lowercase } references back to #{ @1 | uppercase }", names);
         lastLog = Clog.getLastLog();
         assertEquals(lastLog.first, "ClogTest");
-        assertEquals(lastLog.second, "bob; larry; junior; french peas references back to BOB; LARRY; JUNIOR; FRENCH PEAS");
+        assertEquals(lastLog.second, "harry, ron, hermione, fred and george references back to HARRY, RON, HERMIONE, FRED AND GEORGE");
     }
+
+
 }

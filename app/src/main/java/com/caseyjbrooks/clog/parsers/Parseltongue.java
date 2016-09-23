@@ -2,210 +2,598 @@ package com.caseyjbrooks.clog.parsers;
 
 import com.caseyjbrooks.clog.ClogFormatter;
 import com.caseyjbrooks.clog.ClogParser;
-import com.caseyjbrooks.clog.formatters.ClogJoin;
-import com.caseyjbrooks.clog.formatters.ClogLowercase;
-import com.caseyjbrooks.clog.formatters.ClogRepeat;
-import com.caseyjbrooks.clog.formatters.ClogUppercase;
+import com.caseyjbrooks.clog.Spell;
+import com.caseyjbrooks.clog.spells.TheStandardBookOfSpells;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
 
 public class Parseltongue implements ClogParser {
-    private HashMap<String, ClogFormatter> formatters;
-    private ArrayList<Object> params;
-    private ArrayList<Object> results;
+    private HashMap<String, ClogFormatter> spells;
+    private List<ParseltonguePair<String, Method>> annotatedSpells;
 
-//Public API
-//--------------------------------------------------------------------------------------------------
     public Parseltongue() {
-        formatters = new HashMap<>();
-        formatters.put("lowercase", new ClogLowercase());
-        formatters.put("uppercase", new ClogUppercase());
-        formatters.put("join", new ClogJoin());
-        formatters.put("repeat", new ClogRepeat());
+        spells = new HashMap<>();
+        annotatedSpells = new ArrayList<>();
+        findSpells(TheStandardBookOfSpells.class);
     }
 
-    public Parseltongue(HashMap<String, ClogFormatter> formatters) {
-        this.formatters = formatters;
+    public void addSpell(String key, ClogFormatter spell) {
+        spells.put(key, spell);
+    }
+
+    public void findSpells(Class c) {
+        for (final Method method : c.getDeclaredMethods()) {
+            if (method.isAnnotationPresent(Spell.class)) {
+                Spell methodAnnotation = method.getAnnotation(Spell.class);
+                String spellName = methodAnnotation.name();
+                if(spellName.length() == 0) {
+                    spellName = method.getName();
+                }
+
+                annotatedSpells.add(new ParseltonguePair<>(spellName, method));
+            }
+        }
     }
 
     @Override
     public String format(String formatString, Object... params) {
         if(params != null && params.length > 0) {
-            this.params = new ArrayList<>(Arrays.asList(params));
-            this.results = new ArrayList<>();
-            return format(formatString);
+            return new Parser().parse(formatString, params);
         }
         else {
-            return formatString;
+            return new Parser().parse(formatString, null);
         }
     }
 
-// Format the entire input string
-//--------------------------------------------------------------------------------------------------
-    private String format(String formatString) {
-        String replacementRegex = "#" + "\\{" + "([^\\{}]*)" + "\\}";
-        Pattern pattern = Pattern.compile(replacementRegex);
-        Matcher matcher = pattern.matcher(formatString);
+    public Object transfigureObject(String key, Object reagent, Object... reagents) {
+        ClogFormatter spell = spells.get(key);
 
-        int lastIndex = 0;
-        String output = "";
-        while(matcher.find()) {
-            // Add all text that isn't part of the formatter pieces
-            String formatBody = formatString.substring(lastIndex, matcher.start());
-            output += formatBody;
+        if(spell != null) {
+            return spell.format(reagent, reagents);
+        }
+        else {
+            for(ParseltonguePair <String, Method> method : annotatedSpells) {
 
-            // Split inner string on '|'. The first piece should indicate which object from the
-            // params we should start with, and the other pieces should create a pipeline of
-            // ClogFormatters which continually format the object.
-            String token = matcher.group(1).trim();
-            String[] bodyPieces = token.split("\\|");
+                //this method is annotated with the same name as our key
+                if(method.first.equals(key)) {
+
+                    Class<?>[] parameterTypes = method.second.getParameterTypes();
+                    ArrayList<Object> params = new ArrayList<>();
+                    if(reagent != null) {
+                        params.add(reagent);
+                    }
+                    else {
+                        params.add(new NullObject());
+                    }
+
+                    if(reagents != null && reagents.length > 0) {
+                        for(int i = 0; i < reagents.length; i++) {
+                            if(reagents[i] != null) {
+                                params.add(reagents[i]);
+                            }
+                            else {
+                                params.add(new NullObject());
+                            }
+                        }
+                    }
+
+                    //we are passing the same number of arguments as this method accepts. Check the types
+                    // for a type match
+                    if(parameterTypes.length == params.size()) {
+                        boolean methodMatch = true;
+
+                        for (int i = 0; i < params.size(); i++) {
+
+                            //if the object passed in is null, we cannot determine if it matches the param type, but
+                            // we can just pass in the object at that index as a null object
+                            if(params.get(i) instanceof NullObject) {
+                                continue;
+                            }
+
+                            //the parser gives us the concrete wrapper classes of primitives, which are not directly
+                            // assignable to their primitive counterparts, so we must manually check each primitive param type
+                            else if(parameterTypes[i].equals(byte.class) && params.get(i).getClass().equals(Byte.class)) {
+                                continue;
+                            }
+                            else if(parameterTypes[i].equals(short.class) && params.get(i).getClass().equals(Short.class)) {
+                                continue;
+                            }
+                            else if(parameterTypes[i].equals(int.class) && params.get(i).getClass().equals(Integer.class)) {
+                                continue;
+                            }
+                            else if(parameterTypes[i].equals(long.class) && params.get(i).getClass().equals(Long.class)) {
+                                continue;
+                            }
+                            else if(parameterTypes[i].equals(float.class) && params.get(i).getClass().equals(Float.class)) {
+                                continue;
+                            }
+                            else if(parameterTypes[i].equals(double.class) && params.get(i).getClass().equals(Double.class)) {
+                                continue;
+                            }
+                            else if(parameterTypes[i].equals(boolean.class) && params.get(i).getClass().equals(Boolean.class)) {
+                                continue;
+                            }
+                            else if(parameterTypes[i].isAssignableFrom(params.get(i).getClass())) {
+                                continue;
+                            }
+                            else {
+                                methodMatch = false;
+                                break;
+                            }
+                        }
+
+                        //all parameter types match, go ahead and cast the spell!
+                        if(methodMatch) {
+                            Object[] objects = new Object[params.size()];
 
 
-            Object objectToPrint = findFromIndexer(bodyPieces[0].trim());
+                            for(int i = 0; i < params.size(); i++) {
+                                if(params.get(i) instanceof NullObject) {
+                                    objects[i] = null;
+                                }
+                                else {
+                                    objects[i] = params.get(i);
+                                }
+                            }
 
+                            try {
+                                return method.second.invoke(null, objects);
+                            }
+                            catch(Exception e) {
+                                e.printStackTrace();
+                            }
+                            break;
+                        }
+                        else {
+                            continue;
+                        }
 
-            if(bodyPieces.length > 1) {
-                Object result = unclog(objectToPrint, bodyPieces);
-                results.add(result);
+                    }
+                }
+            }
 
-                output += result.toString();
+            return null;
+        }
+    }
+
+// keeping the parser implementation as a private class, instantiated new each time, helps keep
+// each run unpolluted
+
+    private class Parser {
+
+        private ArrayList<Object> params;
+        private ArrayList<Object> results;
+
+        TokenStream ts;
+        String input;
+        String output;
+
+        private ArrayList<String> messages;
+
+        public String parse(String input, Object[] params) {
+
+            if(params != null && params.length > 0) {
+                this.params = new ArrayList<>(Arrays.asList(params));
             }
             else {
-                output += objectToPrint.toString();
+                this.params = new ArrayList<>();
             }
 
-            lastIndex = matcher.end();
+            this.results = new ArrayList<>();
+            this.messages = new ArrayList<>();
+
+            this.input = input;
+            this.output = "";
+
+            this.ts = new TokenStream(input);
+
+            while(ts.hasTokens()) {
+                any();
+
+                if(ts.hasTokens()) {
+                    clog();
+                }
+            }
+
+            return output;
         }
 
-        output += formatString.substring(lastIndex, formatString.length());
+        //any ::= (anything but '#{')
+        private void any() {
+            Token t = ts.getAny();
 
-        return output;
-    }
+            output += t.getStringValue();
+        }
 
-// Format a single 'clog'
-//--------------------------------------------------------------------------------------------------
-    //TODO: parse params such that literal strings to not get split
-    private Object unclog(Object objectToPrint, String[] formatterPieces) {
-        String[] formatterKeys = Arrays.copyOfRange(formatterPieces, 1, formatterPieces.length);
+        //clog ::= CLOG_START reagent spellbook RCURLYBRACE
+        private void clog() {
+            Token a = ts.get();
 
-        Object formattedObject = objectToPrint;
-        for(String formatterKey : formatterKeys) {
-            formatterKey = formatterKey.trim();
-            String[] paramsArray = null;
-            Object[] parsedParamsArray = null;
+            if(a != null && a.equals(Token.Type.CLOG_START)) {
+                ParseltonguePair<Boolean, Object> object = reagent();
 
-            // Get optional params for the formatter in they exist
-            Pattern pattern = Pattern.compile("\\((.*)\\)");
-            Matcher matcher = pattern.matcher(formatterKey);
-            if(matcher.find()) {
-                String paramsString = matcher.group(1);
+                if(object.first) {
+                    ParseltonguePair<Boolean, Object> spellbookResult = spellbook(object.second);
+                    results.add(spellbookResult.second);
 
-                if(paramsString.contains(",")) {
-                    paramsArray = paramsString.split("\\s*,\\s*");
+                    if(spellbookResult.first) {
+                        Token b = ts.get();
+
+                        if (b != null && b.equals(Token.Type.RCURLYBRACE)) {
+                            if (spellbookResult.second != null) {
+                                output += spellbookResult.second.toString();
+                            }
+                        }
+                        else {
+                            ts.unget(b);
+
+                            if (b != null) {
+                                messages.add("Expecting '}' after clog, got '" + b.getStringValue() + "' (at column " + ts.getColumn() + ")");
+                            } else {
+                                messages.add("Expecting '}' after clog, got 'null' (at column " + ts.getColumn() + ")");
+                            }
+
+                            unclog();
+                        }
+                    }
+                    else {
+                        unclog();
+                    }
                 }
                 else {
-                    paramsArray = new String[] { paramsString };
+                    unclog();
+                    results.add(null);
                 }
+            }
+        }
 
-                parsedParamsArray = new Object[paramsArray.length];
+        //spellbook ::= (PIPE castSpell)+
+        private ParseltonguePair<Boolean, Object> spellbook(Object initialReagent) {
+            Object pipelineObject = initialReagent;
 
-                for(int i = 0; i < paramsArray.length; i++) {
-                    parsedParamsArray[i] = getParameter(paramsArray[i]);
+            while (true) {
+                Token a = ts.get();
+
+                if (a != null && a.equals(Token.Type.PIPE)) {
+                    ParseltonguePair<Boolean, Object> spellResult = castSpell(pipelineObject);
+
+                    if(spellResult.first) {
+                        pipelineObject = spellResult.second;
+                    }
+                    else {
+                        return new ParseltonguePair<>(false, null);
+                    }
                 }
-
-                formatterKey = formatterKey.replaceAll("\\((.*)\\)", "").trim();
+                else {
+                    ts.unget(a);
+                    break;
+                }
             }
 
-            if(formatters.containsKey(formatterKey)) {
-                formattedObject = formatters.get(formatterKey).format(formattedObject, parsedParamsArray);
+            return new ParseltonguePair<>(true, pipelineObject);
+        }
+
+        //castSpell ::= spellName (LPAREN reagentList RPAREN)
+        private ParseltonguePair<Boolean, Object> castSpell(Object reagent) {
+            Token a = ts.get();
+
+            if (a != null && a.equals(Token.Type.WORD)) {
+                Token b = ts.get();
+
+                if (b != null && b.equals(Token.Type.LPAREN)) {
+                    ParseltonguePair<Boolean, Object[]> reagents = reagentList();
+
+                    if(reagents.first) {
+                        Token c = ts.get();
+
+                        if (c != null && c.equals(Token.Type.RPAREN)) {
+                            return new ParseltonguePair<>(true, transfigureObject(a.getStringValue(), reagent, reagents.second));
+                        }
+                        else {
+                            ts.unget(c);
+                            ts.unget(b);
+                            ts.unget(a);
+
+                            if(c != null) {
+                                messages.add("Expecting ')' after param list, got '" + c.getStringValue() + "' (at column " + ts.getColumn() + ")");
+                            }
+                            else {
+                                messages.add("Expecting ')' after param list, got 'null' (at column " + ts.getColumn() + ")");
+                            }
+
+                            return new ParseltonguePair<>(false, null);
+                        }
+                    }
+                    else {
+                        return new ParseltonguePair<>(false, null);
+                    }
+                }
+                else{
+                    ts.unget(b);
+                    return new ParseltonguePair<>(true, transfigureObject(a.getStringValue(), reagent, null));
+                }
+            }
+            else{
+                ts.unget(a);
+                return new ParseltonguePair<>(false, null);
+            }
+        }
+
+        //reagentList ::= (reagent (COMMA reagent)+)
+        private ParseltonguePair<Boolean, Object[]> reagentList() {
+            ArrayList<Object> reagents = new ArrayList<>();
+
+            ParseltonguePair<Boolean, Object> reagent = reagent();
+
+            if(reagent.first) {
+                reagents.add(reagent.second);
+
+                while (true) {
+                    Token a = ts.get();
+
+                    if (a != null && a.equals(Token.Type.COMMA)) {
+                        ParseltonguePair<Boolean, Object> otherReagent = reagent();
+                        if(otherReagent.first) {
+                            reagents.add(otherReagent.second);
+                        }
+                        else {
+                            return new ParseltonguePair<>(false, null);
+                        }
+                    }
+                    else {
+                        ts.unget(a);
+                        break;
+                    }
+                }
+
+                Object[] reagentsList = new Object[reagents.size()];
+                reagents.toArray(reagentsList);
+                return new ParseltonguePair<>(true, reagentsList);
             }
             else {
-                throw new IllegalArgumentException("Cannot find the formatter with key '" + formatterKey + "'");
+                return new ParseltonguePair<>(true, null);
             }
         }
 
-        return formattedObject;
+        //reagent ::= param indexer | result indexer | booleanLit | integerLit | doubleLit | stringLit
+        private ParseltonguePair<Boolean, Object> reagent() {
+            ParseltonguePair<Boolean, Object> param = param();
+            if(param.first) {
+                return indexer(param);
+            }
+
+            ParseltonguePair<Boolean, Object> result = result();
+            if(result.first) {
+                return indexer(result);
+            }
+
+            ParseltonguePair<Boolean, Boolean> booleanLit = booleanLit();
+            if(booleanLit.first) {
+                return new ParseltonguePair<Boolean, Object>(true, booleanLit.second);
+            }
+
+            ParseltonguePair<Boolean, Double> doubleLit = doubleLit();
+            if(doubleLit.first) {
+                return new ParseltonguePair<Boolean, Object>(true, doubleLit.second);
+            }
+
+            ParseltonguePair<Boolean, Integer> integerLit = integerLit();
+            if(integerLit.first) {
+                return new ParseltonguePair<Boolean, Object>(true, integerLit.second);
+            }
+
+            ParseltonguePair<Boolean, String> stringLit = stringLit();
+            if(stringLit.first) {
+                return new ParseltonguePair<Boolean, Object>(true, stringLit.second);
+            }
+
+            ParseltonguePair<Boolean, NullObject> nullLit = nullLit();
+            if(nullLit.first) {
+                return new ParseltonguePair<Boolean, Object>(true, nullLit.second);
+            }
+
+            return new ParseltonguePair<>(false, null);
+        }
+
+        //param ::= DOLLARSIGN NUMBER
+        private ParseltonguePair<Boolean, Object> param() {
+            Token a = ts.get();
+
+            if(a != null && a.equals(Token.Type.DOLLARSIGN)) {
+                Token b = ts.get();
+
+                if(b != null && b.equals(Token.Type.NUMBER)) {
+                    int index = b.getIntValue();
+
+                    if(index > 0 && (index - 1) < params.size()) {
+                        return new ParseltonguePair<>(true, params.get(index - 1));
+                    }
+                    else {
+                        return new ParseltonguePair<>(true, null);
+                    }
+                }
+                else {
+                    ts.unget(b);
+                    ts.unget(a);
+                    if(b != null) {
+                        messages.add("Expecting a number after '$', got '" + b.getStringValue() + "' (at column " + ts.getColumn() + ")");
+                    }
+                    else {
+                        messages.add("Expecting a number after '$', got 'null' (at column " + ts.getColumn() + ")");
+                    }
+
+                    return new ParseltonguePair<>(false, null);
+                }
+            }
+            else {
+                ts.unget(a);
+                return new ParseltonguePair<>(false, null);
+            }
+        }
+
+        //result ::= ATSIGN NUMBER
+        private ParseltonguePair<Boolean, Object> result() {
+            Token a = ts.get();
+
+            if(a != null && a.equals(Token.Type.AT)) {
+                Token b = ts.get();
+
+                if(b != null && b.equals(Token.Type.NUMBER)) {
+                    int index = b.getIntValue();
+
+                    if(index > 0 && (index - 1) < results.size()) {
+                        return new ParseltonguePair<>(true, results.get(index - 1));
+                    }
+                    else {
+                        return new ParseltonguePair<>(true, null);
+                    }
+                }
+                else {
+                    ts.unget(b);
+                    ts.unget(a);
+                    if(b != null) {
+                        messages.add("Expecting a number after '@', got '" + b.getStringValue() + "' (at column " + ts.getColumn() + ")");
+                    }
+                    else {
+                        messages.add("Expecting a number after '@', got 'null' (at column " + ts.getColumn() + ")");
+                    }
+
+                    return new ParseltonguePair<>(false, null);
+                }
+            }
+            else {
+                ts.unget(a);
+                return new ParseltonguePair<>(false, null);
+            }
+        }
+
+        //booleanLit ::= WORD=true | WORD=false
+        private ParseltonguePair<Boolean, Boolean> booleanLit() {
+            Token a = ts.get();
+
+            if(a != null && a.equals(Token.Type.WORD)) {
+                if(a.getStringValue().equalsIgnoreCase("true")) {
+                    return new ParseltonguePair<>(true, true);
+                }
+                else if(a.getStringValue().equalsIgnoreCase("false")) {
+                    return new ParseltonguePair<>(true, false);
+                }
+            }
+
+            ts.unget(a);
+            return new ParseltonguePair<>(false, false);
+        }
+
+        //doubleLit ::= NUMBER DOT NUMBER
+        private ParseltonguePair<Boolean, Double> doubleLit() {
+            Token a = ts.get();
+
+            if(a != null && a.equals(Token.Type.NUMBER)) {
+                Token b = ts.get();
+
+                if(b != null && b.equals(Token.Type.DOT)) {
+                    Token c = ts.get();
+                    if(c != null && c.equals(Token.Type.NUMBER)) {
+                        return new ParseltonguePair<>(true, Double.parseDouble(a.getIntValue() + "." + c.getIntValue()));
+                    }
+                    else {
+                        ts.unget(c);
+                        ts.unget(b);
+                        ts.unget(a);
+                    }
+                }
+                else {
+                    ts.unget(b);
+                    ts.unget(a);
+                }
+            }
+            else {
+                ts.unget(a);
+            }
+
+            return new ParseltonguePair<>(false, 0.0);
+        }
+
+        //integerLit ::= NUMBER
+        private ParseltonguePair<Boolean, Integer> integerLit() {
+            Token a = ts.get();
+
+            if(a != null && a.equals(Token.Type.NUMBER)) {
+                return new ParseltonguePair<>(true, a.getIntValue());
+            }
+
+            ts.unget(a);
+            return new ParseltonguePair<>(false, 0);
+        }
+
+        //stringLit ::= QUOTE anything QUOTE
+        private ParseltonguePair<Boolean, String> stringLit() {
+            Token a = ts.get();
+
+            if(a != null && a.equals(Token.Type.QUOTE)) {
+                Token b = ts.getString();
+
+                if(b != null) {
+                    Token c = ts.get();
+                    if(c != null && c.equals(Token.Type.QUOTE)) {
+                        return new ParseltonguePair<>(true, b.getStringValue());
+                    }
+                    else {
+                        ts.unget(c);
+                        ts.unget(b);
+                        ts.unget(a);
+                        messages.add("String literal is never closed (at column " + ts.getColumn() + ")");
+                        unclogString();
+                    }
+                }
+                else {
+                    ts.unget(b);
+                    ts.unget(a);
+                    messages.add("String literal is never closed (at column " + ts.getColumn() + ")");
+                    unclogString();
+                }
+            }
+            else {
+                ts.unget(a);
+            }
+
+            return new ParseltonguePair<>(false, "");
+        }
+
+        //stringLit ::= WORD
+        private ParseltonguePair<Boolean, NullObject> nullLit() {
+            Token a = ts.get();
+
+            if(a != null && a.equals(Token.Type.WORD)) {
+                if(a.getStringValue().equalsIgnoreCase("null")) {
+                    return new ParseltonguePair<>(true, new NullObject());
+                }
+            }
+
+            ts.unget(a);
+            return new ParseltonguePair<>(false, null);
+        }
+
+        //TODO: add support for array indexing and hash-property-getting on any object
+        //indexer :== ( LBRACKET NUMBER RBRACKET | LBRACKET WORD RBRACKET )
+        private ParseltonguePair<Boolean, Object> indexer(ParseltonguePair<Boolean, Object> object) {
+            return object;
+        }
+
+        private void unclog() {
+            ts.unclog();
+        }
+
+        private void unclogString() {
+
+        }
     }
 
-// Reference an object from either the passed in params or from the clog results
-//--------------------------------------------------------------------------------------------------
-    private Object findFromIndexer(String indexer) {
-        if(indexer.matches("^\\$\\d+$")) {
-            return findParamsObject(Integer.parseInt(indexer.substring(1)) - 1);
-        }
-        else if(indexer.matches("^@\\d+$")) {
-            return findResultsObject(Integer.parseInt(indexer.substring(1)) - 1);
-        }
-        else {
-            return null;
-        }
+    private class NullObject {
+
     }
-
-    private Object findParamsObject(int index) {
-        if(index >= 0 && index < params.size()) {
-            return params.get(index);
-        }
-        else {
-            return null;
-        }
-    }
-
-    private Object findResultsObject(int index) {
-        if(index >= 0 && index < results.size()) {
-            return results.get(index);
-        }
-        else {
-            return null;
-        }
-    }
-
-
-// Parse the parameters of a single formatter
-//--------------------------------------------------------------------------------------------------
-    private Object getParameter(String token) {
-        // match a Param Indexer
-        if(token.matches("^\\$\\d+$")) {
-            return findParamsObject(Integer.parseInt(token.substring(1)) - 1);
-        }
-
-        // match a Result Indexer
-        else if(token.matches("^@\\d+$")) {
-            return findResultsObject(Integer.parseInt(token.substring(1)) - 1);
-        }
-
-        // match a literal string
-        else if(token.matches("^'.*'$")) {
-            return token.substring(1, token.length() - 1);
-        }
-
-        // match a literal boolean true
-        else if(token.toLowerCase().equals("true")) {
-            return true;
-        }
-
-        // match a literal boolean false
-        else if(token.toLowerCase().equals("false")) {
-            return false;
-        }
-
-        // match a literal integer
-        else if(token.matches("\\d+")) {
-            return Integer.parseInt(token);
-        }
-
-        // match a literal double
-        else if(token.matches("[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?")) {
-            return Double.parseDouble(token);
-        }
-
-        // parameter is of an unknown format
-        else {
-            return null;
-        }
-    }
-
 }

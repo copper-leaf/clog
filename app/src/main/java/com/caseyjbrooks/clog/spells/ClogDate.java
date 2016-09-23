@@ -1,4 +1,4 @@
-package com.caseyjbrooks.clog.formatters;
+package com.caseyjbrooks.clog.spells;
 
 import com.caseyjbrooks.clog.ClogFormatter;
 
