@@ -45,7 +45,6 @@ Clog and Android Clog is distrubuted through JitPack.io.
 
 [![](https://jitpack.io/v/cjbrooks12/Android-Clog.svg)](https://jitpack.io/#cjbrooks12/Android-Clog)
 [![JitPack Javadoc](https://img.shields.io/github/tag/cjbrooks12/Clog.svg?maxAge=2592000&label=javadoc)](https://jitpack.io/com/github/cjbrooks12/Clog/v0.1.0/javadoc/)
-[![Github Releases](https://img.shields.io/github/downloads/cjbrooks12/Android-Clog.svg?maxAge=2592000)]()
 
 In your project-level `build.gradle`:
 
