@@ -1,6 +1,4 @@
-package com.caseyjbrooks.clog.parsers;
-
-import android.util.Log;
+package com.caseyjbrooks.clog.parseltongue;
 
 import java.util.LinkedList;
 import java.util.Stack;
@@ -114,7 +112,6 @@ public class TokenStream {
             while(ungetTokens.size() > 0) {
                 Token token = ungetTokens.pop();
                 if(token != null) {
-                    Log.i("TokenStream", "unget token: '" + token.getStringValue() + "'");
                     s += token.getStringValue();
                 }
             }
@@ -126,8 +123,6 @@ public class TokenStream {
             while(chars.size() > 0 && chars.peekFirst() != null) {
                 ch = chars.removeFirst();
                 column++;
-
-                Log.i("TokenStream", "char: '" + ch + "'");
 
                 if(ch == '#' && chars.peekFirst() == '{') {
                     chars.removeFirst();
@@ -153,7 +148,6 @@ public class TokenStream {
             while(ungetTokens.size() > 0) {
                 Token token = ungetTokens.pop();
                 if(token != null) {
-                    Log.i("TokenStream", "unget token: '" + token.getStringValue() + "'");
                     s += token.getStringValue();
                 }
             }
@@ -165,8 +159,6 @@ public class TokenStream {
             while(chars.size() > 0 && chars.peekFirst() != null) {
                 ch = chars.removeFirst();
                 column++;
-
-                Log.i("TokenStream", "char: '" + ch + "'");
 
                 if(ch == '\'') {
                     ungetTokens.push(new Token(Token.Type.QUOTE));

@@ -1,5 +1,5 @@
 package com.caseyjbrooks.clog;
 
 public interface ClogFormatter {
-    Object format(Object data, Object[] params);
+    String format(String messagae, Object... params);
 }

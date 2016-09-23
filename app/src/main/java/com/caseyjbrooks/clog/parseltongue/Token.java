@@ -1,4 +1,4 @@
-package com.caseyjbrooks.clog.parsers;
+package com.caseyjbrooks.clog.parseltongue;
 
 public class Token {
     public enum Type {

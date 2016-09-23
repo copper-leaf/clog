@@ -1,28 +1,20 @@
-package com.caseyjbrooks.clog.parsers;
+package com.caseyjbrooks.clog.parseltongue;
 
 import com.caseyjbrooks.clog.ClogFormatter;
-import com.caseyjbrooks.clog.ClogParser;
 import com.caseyjbrooks.clog.Spell;
-import com.caseyjbrooks.clog.spells.TheStandardBookOfSpells;
+import com.caseyjbrooks.clog.TheStandardBookOfSpells;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
-public class Parseltongue implements ClogParser {
-    private HashMap<String, ClogFormatter> spells;
-    private List<ParseltonguePair<String, Method>> annotatedSpells;
+public class Parseltongue implements ClogFormatter {
+    private List<ParseltonguePair<String, Method>> spells;
 
     public Parseltongue() {
-        spells = new HashMap<>();
-        annotatedSpells = new ArrayList<>();
+        spells = new ArrayList<>();
         findSpells(TheStandardBookOfSpells.class);
-    }
-
-    public void addSpell(String key, ClogFormatter spell) {
-        spells.put(key, spell);
     }
 
     public void findSpells(Class c) {
@@ -34,130 +26,123 @@ public class Parseltongue implements ClogParser {
                     spellName = method.getName();
                 }
 
-                annotatedSpells.add(new ParseltonguePair<>(spellName, method));
+                spells.add(new ParseltonguePair<>(spellName, method));
             }
         }
     }
 
     @Override
-    public String format(String formatString, Object... params) {
+    public String format(String messagae, Object... params) {
         if(params != null && params.length > 0) {
-            return new Parser().parse(formatString, params);
+            return new Parser().parse(messagae, params);
         }
         else {
-            return new Parser().parse(formatString, null);
+            return new Parser().parse(messagae, null);
         }
     }
 
     public Object transfigureObject(String key, Object reagent, Object... reagents) {
-        ClogFormatter spell = spells.get(key);
+        for(ParseltonguePair <String, Method> method : spells) {
 
-        if(spell != null) {
-            return spell.format(reagent, reagents);
-        }
-        else {
-            for(ParseltonguePair <String, Method> method : annotatedSpells) {
+            //this method is annotated with the same name as our key
+            if(method.first.equals(key)) {
 
-                //this method is annotated with the same name as our key
-                if(method.first.equals(key)) {
+                Class<?>[] parameterTypes = method.second.getParameterTypes();
+                ArrayList<Object> params = new ArrayList<>();
+                if(reagent != null) {
+                    params.add(reagent);
+                }
+                else {
+                    params.add(new NullObject());
+                }
 
-                    Class<?>[] parameterTypes = method.second.getParameterTypes();
-                    ArrayList<Object> params = new ArrayList<>();
-                    if(reagent != null) {
-                        params.add(reagent);
-                    }
-                    else {
-                        params.add(new NullObject());
-                    }
-
-                    if(reagents != null && reagents.length > 0) {
-                        for(int i = 0; i < reagents.length; i++) {
-                            if(reagents[i] != null) {
-                                params.add(reagents[i]);
-                            }
-                            else {
-                                params.add(new NullObject());
-                            }
-                        }
-                    }
-
-                    //we are passing the same number of arguments as this method accepts. Check the types
-                    // for a type match
-                    if(parameterTypes.length == params.size()) {
-                        boolean methodMatch = true;
-
-                        for (int i = 0; i < params.size(); i++) {
-
-                            //if the object passed in is null, we cannot determine if it matches the param type, but
-                            // we can just pass in the object at that index as a null object
-                            if(params.get(i) instanceof NullObject) {
-                                continue;
-                            }
-
-                            //the parser gives us the concrete wrapper classes of primitives, which are not directly
-                            // assignable to their primitive counterparts, so we must manually check each primitive param type
-                            else if(parameterTypes[i].equals(byte.class) && params.get(i).getClass().equals(Byte.class)) {
-                                continue;
-                            }
-                            else if(parameterTypes[i].equals(short.class) && params.get(i).getClass().equals(Short.class)) {
-                                continue;
-                            }
-                            else if(parameterTypes[i].equals(int.class) && params.get(i).getClass().equals(Integer.class)) {
-                                continue;
-                            }
-                            else if(parameterTypes[i].equals(long.class) && params.get(i).getClass().equals(Long.class)) {
-                                continue;
-                            }
-                            else if(parameterTypes[i].equals(float.class) && params.get(i).getClass().equals(Float.class)) {
-                                continue;
-                            }
-                            else if(parameterTypes[i].equals(double.class) && params.get(i).getClass().equals(Double.class)) {
-                                continue;
-                            }
-                            else if(parameterTypes[i].equals(boolean.class) && params.get(i).getClass().equals(Boolean.class)) {
-                                continue;
-                            }
-                            else if(parameterTypes[i].isAssignableFrom(params.get(i).getClass())) {
-                                continue;
-                            }
-                            else {
-                                methodMatch = false;
-                                break;
-                            }
-                        }
-
-                        //all parameter types match, go ahead and cast the spell!
-                        if(methodMatch) {
-                            Object[] objects = new Object[params.size()];
-
-
-                            for(int i = 0; i < params.size(); i++) {
-                                if(params.get(i) instanceof NullObject) {
-                                    objects[i] = null;
-                                }
-                                else {
-                                    objects[i] = params.get(i);
-                                }
-                            }
-
-                            try {
-                                return method.second.invoke(null, objects);
-                            }
-                            catch(Exception e) {
-                                e.printStackTrace();
-                            }
-                            break;
+                if(reagents != null && reagents.length > 0) {
+                    for(int i = 0; i < reagents.length; i++) {
+                        if(reagents[i] != null) {
+                            params.add(reagents[i]);
                         }
                         else {
+                            params.add(new NullObject());
+                        }
+                    }
+                }
+
+                //we are passing the same number of arguments as this method accepts. Check the types
+                // for a type match
+                if(parameterTypes.length == params.size()) {
+                    boolean methodMatch = true;
+
+                    for (int i = 0; i < params.size(); i++) {
+
+                        //if the object passed in is null, we cannot determine if it matches the param type, but
+                        // we can just pass in the object at that index as a null object
+                        if(params.get(i) instanceof NullObject) {
                             continue;
                         }
 
+                        //the parser gives us the concrete wrapper classes of primitives, which are not directly
+                        // assignable to their primitive counterparts, so we must manually check each primitive param type
+                        else if(parameterTypes[i].equals(byte.class) && params.get(i).getClass().equals(Byte.class)) {
+                            continue;
+                        }
+                        else if(parameterTypes[i].equals(short.class) && params.get(i).getClass().equals(Short.class)) {
+                            continue;
+                        }
+                        else if(parameterTypes[i].equals(int.class) && params.get(i).getClass().equals(Integer.class)) {
+                            continue;
+                        }
+                        else if(parameterTypes[i].equals(long.class) && params.get(i).getClass().equals(Long.class)) {
+                            continue;
+                        }
+                        else if(parameterTypes[i].equals(float.class) && params.get(i).getClass().equals(Float.class)) {
+                            continue;
+                        }
+                        else if(parameterTypes[i].equals(double.class) && params.get(i).getClass().equals(Double.class)) {
+                            continue;
+                        }
+                        else if(parameterTypes[i].equals(boolean.class) && params.get(i).getClass().equals(Boolean.class)) {
+                            continue;
+                        }
+                        else if(parameterTypes[i].isAssignableFrom(params.get(i).getClass())) {
+                            continue;
+                        }
+                        else {
+                            methodMatch = false;
+                            break;
+                        }
                     }
+
+                    //all parameter types match, go ahead and cast the spell!
+                    if(methodMatch) {
+                        Object[] objects = new Object[params.size()];
+
+
+                        for(int i = 0; i < params.size(); i++) {
+                            if(params.get(i) instanceof NullObject) {
+                                objects[i] = null;
+                            }
+                            else {
+                                objects[i] = params.get(i);
+                            }
+                        }
+
+                        try {
+                            return method.second.invoke(null, objects);
+                        }
+                        catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    }
+                    else {
+                        continue;
+                    }
+
                 }
             }
-
-            return null;
         }
+
+        return null;
     }
 
 // keeping the parser implementation as a private class, instantiated new each time, helps keep

@@ -1,4 +1,4 @@
-package com.caseyjbrooks.clog.parsers;
+package com.caseyjbrooks.clog.parseltongue;
 
 /*
  * Copyright (C) 2009 The Android Open Source Project
