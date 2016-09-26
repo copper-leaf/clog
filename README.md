@@ -1,6 +1,8 @@
 # Clog
 
-A drop-in replacement for android.util.Log. Features an extensible API and a simple yet powerful formatting languge, Parseltongue.
+### About
+
+Clog is a simple-to-use yet powerful and customizable logging utility for Java. It is based on the Android Log class interface, but improves it with features like custom loggers with multiple profiles and powerful String formatting with the Parseltongue formatting language. You'll wonder how you ever got by without it.
 
 ### Download
 Clog is distrubuted through JitPack.io.
@@ -28,15 +30,4 @@ dependencies {
 }
 ```
 
-### About
-
-Clog is a simple-to-use yet powerful and customizable logging utility for Java. It is based on the Android Log class interface, but improves it with features like custom loggers with multiple profiles and powerful String formatting with the Parseltongue formatting language. You'll wonder how you ever got by without it.
-
 [View Full Documentation](https://cjbrooks12.github.io/Clog/)
-
-
-
-
-
-
-
