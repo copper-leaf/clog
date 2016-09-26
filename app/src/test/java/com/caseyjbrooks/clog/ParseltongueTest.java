@@ -5,12 +5,38 @@ import com.caseyjbrooks.clog.parseltongue.Parseltongue;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
 public class ParseltongueTest {
     public static class ParselTongueTestClass {
 
+        private String ha = "Harry";
+        private String r = "Ron";
+        private String he = "Hermione";
+        private String fg = "Fred and George";
+
+        public String pha = "Harry";
+        public String pr = "Ron";
+        public String phe = "Hermione";
+        public String pfg = "Fred and George";
+
+        public Object get(String key) {
+            switch (key) {
+                case "ha": return ha;
+                case "r": return r;
+                case "he": return he;
+                case "fg": return fg;
+                case "pha": return pha;
+                case "pr": return pr;
+                case "phe": return phe;
+                case "pfg": return pfg;
+                default: return null;
+            }
+        }
     }
 
 // Spot-test language features for correctness when syntax is valid
@@ -295,6 +321,88 @@ public class ParseltongueTest {
         assertEquals(expectedOutput, output);
     }
 
+// Test that lists and arrays can be indexed by position, and collections and other classes that can
+// get an object by a string index can be found, and any generic object's property can be found
+//--------------------------------------------------------------------------------------------------
+
+    @Test
+    public void testIndexers() {
+        Parseltongue parseltongue = new Parseltongue();
+        parseltongue.findSpells(ParseltongueTest.class);
+
+        List<String> namesList = new ArrayList<>();
+        namesList.add("Harry");
+        namesList.add("Ron");
+        namesList.add("Hermione");
+        namesList.add("Fred and George");
+
+        String[] namesArray = new String[] {
+            "Harry",
+            "Ron",
+            "Hermione",
+            "Fred and George"
+        };
+
+        Map<String, String> namesMap = new HashMap<>();
+        namesMap.put("ha", "Harry");
+        namesMap.put("r", "Ron");
+        namesMap.put("he", "Hermione");
+        namesMap.put("fg", "Fred and George");
+
+        String input, expectedOutput, output;
+
+        // Get the item at index 2 of the List
+        input = "Enter Pipeline --> #{ $1[2] }";
+        expectedOutput = "Enter Pipeline --> Hermione";
+        output = parseltongue.format(input, namesList);
+        assertEquals(expectedOutput, output);
+
+        // Get the item at index 2 of the array. We need to add an extra param to force the String
+        // array as an object and not as varargs
+        input = "Enter Pipeline --> #{ $1[2] }";
+        expectedOutput = "Enter Pipeline --> Hermione";
+        output = parseltongue.format(input, namesArray, 0);
+        assertEquals(expectedOutput, output);
+
+        // Get the value from the map at the key 'he'
+        input = "Enter Pipeline --> #{ $1['he'] }";
+        expectedOutput = "Enter Pipeline --> Hermione";
+        output = parseltongue.format(input, namesMap);
+        assertEquals(expectedOutput, output);
+
+        // The field 'he' is private and will not be displayed
+        input = "Enter Pipeline --> #{ $1[he] }";
+        expectedOutput = "Enter Pipeline --> ";
+        output = parseltongue.format(input, new ParselTongueTestClass());
+        assertEquals(expectedOutput, output);
+
+        // The field 'phe' is public and can be viewed
+        input = "Enter Pipeline --> #{ $1[phe] }";
+        expectedOutput = "Enter Pipeline --> Hermione";
+        output = parseltongue.format(input, new ParselTongueTestClass());
+        assertEquals(expectedOutput, output);
+
+        // The field 'he' is private, but by setting fields to be accessible, it can be accessed
+        parseltongue.setPrivateFieldsAccessible(true);
+        input = "Enter Pipeline --> #{ $1[he] }";
+        expectedOutput = "Enter Pipeline --> Hermione";
+        output = parseltongue.format(input, new ParselTongueTestClass());
+        assertEquals(expectedOutput, output);
+
+        // The ParselTongueTestClass has a 'get(String)' method, so it can be called with a key
+        input = "Enter Pipeline --> #{ $1['he'] }";
+        expectedOutput = "Enter Pipeline --> Hermione";
+        output = parseltongue.format(input, new ParselTongueTestClass());
+        assertEquals(expectedOutput, output);
+
+        // test that spells can also have indexers applied. Spells using indexers must use empty
+        // parentheses as params
+        input = "Enter Pipeline --> #{ $1 | uppercaseAll()[2] }";
+        expectedOutput = "Enter Pipeline --> HERMIONE";
+        output = parseltongue.format(input, namesArray, 0);
+        assertEquals(expectedOutput, output);
+    }
+
 //test spells
 //--------------------------------------------------------------------------------------------------
 
@@ -366,6 +474,18 @@ public class ParseltongueTest {
     @Spell
     public static String paramOrder(String one, int two, String three, double four) {
         return "[" + one + ", " + Integer.toString(two) + ", " + three + ", " + Double.toString(four) + "]";
+    }
+
+    @Spell
+    public static String[] uppercaseAll(String[] array) {
+
+        String[] outputArray = new String[array.length];
+
+        for(int i = 0; i < array.length; i++) {
+            outputArray[i] = array[i].toUpperCase();
+        }
+
+        return outputArray;
     }
 
 

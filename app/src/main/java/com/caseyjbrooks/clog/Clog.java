@@ -9,6 +9,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Clog {
+    public static final String KEY_V = "v";
+    public static final String KEY_D = "d";
+    public static final String KEY_I = "i";
+    public static final String KEY_W = "w";
+    public static final String KEY_E = "e";
+    public static final String KEY_WTF = "wtf";
+
     private static final String CLASS_NAME = Clog.class.getName();
     private static HashMap<String, Clog> profiles;
     private static Clog instance;
@@ -96,65 +103,65 @@ public class Clog {
         return getInstance().formatter.format(message, args);
     }
 
-    public static int log(Throwable throwable)                                                    { return logger(null,       getStackTraceString(throwable)); }
-    public static int   d(Throwable throwable)                                                    { return logger("d",        getStackTraceString(throwable)); }
-    public static int   e(Throwable throwable)                                                    { return logger("e",        getStackTraceString(throwable)); }
-    public static int   i(Throwable throwable)                                                    { return logger("i",        getStackTraceString(throwable)); }
-    public static int   v(Throwable throwable)                                                    { return logger("v",        getStackTraceString(throwable)); }
-    public static int   w(Throwable throwable)                                                    { return logger("w",        getStackTraceString(throwable)); }
-    public static int wtf(Throwable throwable)                                                    { return logger("wtf",      getStackTraceString(throwable)); }
+    public static int log(Throwable throwable)                                               { return logger(null,         getStackTraceString(throwable));   }
+    public static int   d(Throwable throwable)                                               { return logger(KEY_D,        getStackTraceString(throwable));   }
+    public static int   e(Throwable throwable)                                               { return logger(KEY_E,        getStackTraceString(throwable));   }
+    public static int   i(Throwable throwable)                                               { return logger(KEY_I,        getStackTraceString(throwable));   }
+    public static int   v(Throwable throwable)                                               { return logger(KEY_V,        getStackTraceString(throwable));   }
+    public static int   w(Throwable throwable)                                               { return logger(KEY_W,        getStackTraceString(throwable));   }
+    public static int wtf(Throwable throwable)                                               { return logger(KEY_WTF,      getStackTraceString(throwable));   }
 
-    public static int log(String tag, Throwable throwable)                                        { return logger(null,  tag, getStackTraceString(throwable)); }
-    public static int   d(String tag, Throwable throwable)                                        { return logger("d",   tag, getStackTraceString(throwable)); }
-    public static int   e(String tag, Throwable throwable)                                        { return logger("e",   tag, getStackTraceString(throwable)); }
-    public static int   i(String tag, Throwable throwable)                                        { return logger("i",   tag, getStackTraceString(throwable)); }
-    public static int   v(String tag, Throwable throwable)                                        { return logger("v",   tag, getStackTraceString(throwable)); }
-    public static int   w(String tag, Throwable throwable)                                        { return logger("w",   tag, getStackTraceString(throwable)); }
-    public static int wtf(String tag, Throwable throwable)                                        { return logger("wtf", tag, getStackTraceString(throwable)); }
+    public static int log(String tag, Throwable throwable)                                   { return logger(null,    tag, getStackTraceString(throwable));   }
+    public static int   d(String tag, Throwable throwable)                                   { return logger(KEY_D,   tag, getStackTraceString(throwable));   }
+    public static int   e(String tag, Throwable throwable)                                   { return logger(KEY_E,   tag, getStackTraceString(throwable));   }
+    public static int   i(String tag, Throwable throwable)                                   { return logger(KEY_I,   tag, getStackTraceString(throwable));   }
+    public static int   v(String tag, Throwable throwable)                                   { return logger(KEY_V,   tag, getStackTraceString(throwable));   }
+    public static int   w(String tag, Throwable throwable)                                   { return logger(KEY_W,   tag, getStackTraceString(throwable));   }
+    public static int wtf(String tag, Throwable throwable)                                   { return logger(KEY_WTF, tag, getStackTraceString(throwable));   }
 
-    public static int log(String formatString, Object... args)                                    { return logger(null,       formatString,                    args); }
-    public static int   d(String formatString, Object... args)                                    { return logger("d",        formatString,                    args); }
-    public static int   e(String formatString, Object... args)                                    { return logger("e",        formatString,                    args); }
-    public static int   i(String formatString, Object... args)                                    { return logger("i",        formatString,                    args); }
-    public static int   v(String formatString, Object... args)                                    { return logger("v",        formatString,                    args); }
-    public static int   w(String formatString, Object... args)                                    { return logger("w",        formatString,                    args); }
-    public static int wtf(String formatString, Object... args)                                    { return logger("wtf",      formatString,                    args); }
+    public static int log(String message, Object... args)                                    { return logger(null,         message,                    args); }
+    public static int   d(String message, Object... args)                                    { return logger(KEY_D,        message,                    args); }
+    public static int   e(String message, Object... args)                                    { return logger(KEY_E,        message,                    args); }
+    public static int   i(String message, Object... args)                                    { return logger(KEY_I,        message,                    args); }
+    public static int   v(String message, Object... args)                                    { return logger(KEY_V,        message,                    args); }
+    public static int   w(String message, Object... args)                                    { return logger(KEY_W,        message,                    args); }
+    public static int wtf(String message, Object... args)                                    { return logger(KEY_WTF,      message,                    args); }
 
-    public static int log(String tag, String formatString, Object... args)                        { return logger(null,  tag, formatString,                    args); }
-    public static int   d(String tag, String formatString, Object... args)                        { return logger("d",   tag, formatString,                    args); }
-    public static int   e(String tag, String formatString, Object... args)                        { return logger("e",   tag, formatString,                    args); }
-    public static int   i(String tag, String formatString, Object... args)                        { return logger("i",   tag, formatString,                    args); }
-    public static int   v(String tag, String formatString, Object... args)                        { return logger("v",   tag, formatString,                    args); }
-    public static int   w(String tag, String formatString, Object... args)                        { return logger("w",   tag, formatString,                    args); }
-    public static int wtf(String tag, String formatString, Object... args)                        { return logger("wtf", tag, formatString,                    args); }
+    public static int log(String tag, String message, Object... args)                        { return logger(null,    tag, message,                    args); }
+    public static int   d(String tag, String message, Object... args)                        { return logger(KEY_D,   tag, message,                    args); }
+    public static int   e(String tag, String message, Object... args)                        { return logger(KEY_E,   tag, message,                    args); }
+    public static int   i(String tag, String message, Object... args)                        { return logger(KEY_I,   tag, message,                    args); }
+    public static int   v(String tag, String message, Object... args)                        { return logger(KEY_V,   tag, message,                    args); }
+    public static int   w(String tag, String message, Object... args)                        { return logger(KEY_W,   tag, message,                    args); }
+    public static int wtf(String tag, String message, Object... args)                        { return logger(KEY_WTF, tag, message,                    args); }
 
-    public static int log(String formatString, Throwable throwable, Object... args)               { return logger(null,       formatString, throwable,         args); }
-    public static int   d(String formatString, Throwable throwable, Object... args)               { return logger("d",        formatString, throwable,         args); }
-    public static int   e(String formatString, Throwable throwable, Object... args)               { return logger("e",        formatString, throwable,         args); }
-    public static int   i(String formatString, Throwable throwable, Object... args)               { return logger("i",        formatString, throwable,         args); }
-    public static int   v(String formatString, Throwable throwable, Object... args)               { return logger("v",        formatString, throwable,         args); }
-    public static int   w(String formatString, Throwable throwable, Object... args)               { return logger("w",        formatString, throwable,         args); }
-    public static int wtf(String formatString, Throwable throwable, Object... args)               { return logger("wtf",      formatString, throwable,         args); }
+    public static int log(String message, Throwable throwable, Object... args)               { return logger(null,         message, throwable,         args); }
+    public static int   d(String message, Throwable throwable, Object... args)               { return logger(KEY_D,        message, throwable,         args); }
+    public static int   e(String message, Throwable throwable, Object... args)               { return logger(KEY_E,        message, throwable,         args); }
+    public static int   i(String message, Throwable throwable, Object... args)               { return logger(KEY_I,        message, throwable,         args); }
+    public static int   v(String message, Throwable throwable, Object... args)               { return logger(KEY_V,        message, throwable,         args); }
+    public static int   w(String message, Throwable throwable, Object... args)               { return logger(KEY_W,        message, throwable,         args); }
+    public static int wtf(String message, Throwable throwable, Object... args)               { return logger(KEY_WTF,      message, throwable,         args); }
 
-    public static int log(String tag, String formatString, Throwable throwable, Object... args)   { return logger(null,  tag, formatString, throwable,         args); }
-    public static int   d(String tag, String formatString, Throwable throwable, Object... args)   { return logger("d",   tag, formatString, throwable,         args); }
-    public static int   e(String tag, String formatString, Throwable throwable, Object... args)   { return logger("e",   tag, formatString, throwable,         args); }
-    public static int   i(String tag, String formatString, Throwable throwable, Object... args)   { return logger("i",   tag, formatString, throwable,         args); }
-    public static int   v(String tag, String formatString, Throwable throwable, Object... args)   { return logger("v",   tag, formatString, throwable,         args); }
-    public static int   w(String tag, String formatString, Throwable throwable, Object... args)   { return logger("w",   tag, formatString, throwable,         args); }
-    public static int wtf(String tag, String formatString, Throwable throwable, Object... args)   { return logger("wtf", tag, formatString, throwable,         args); }
+    public static int log(String tag, String message, Throwable throwable, Object... args)   { return logger(null,    tag, message, throwable,         args); }
+    public static int   d(String tag, String message, Throwable throwable, Object... args)   { return logger(KEY_D,   tag, message, throwable,         args); }
+    public static int   e(String tag, String message, Throwable throwable, Object... args)   { return logger(KEY_E,   tag, message, throwable,         args); }
+    public static int   i(String tag, String message, Throwable throwable, Object... args)   { return logger(KEY_I,   tag, message, throwable,         args); }
+    public static int   v(String tag, String message, Throwable throwable, Object... args)   { return logger(KEY_V,   tag, message, throwable,         args); }
+    public static int   w(String tag, String message, Throwable throwable, Object... args)   { return logger(KEY_W,   tag, message, throwable,         args); }
+    public static int wtf(String tag, String message, Throwable throwable, Object... args)   { return logger(KEY_WTF, tag, message, throwable,         args); }
 
     /**
      * Format and log a message with the default tag to the specified logger. Passing null as 'logger'
      * will use the default logger.
      *
      * @param logger the key of the specific logger
-     * @param formatString the string to be formatted and logged
+     * @param message the string to be formatted and logged
      * @param args the list of objects to format into the format string
      * @return int
      */
-    public static int logger(String logger, String formatString, Object... args) {
-        return logger(logger, getTag(), formatString, args);
+    public static int logger(String logger, String message, Object... args) {
+        return logger(logger, getTag(), message, args);
     }
 
     /**
@@ -162,12 +169,12 @@ public class Clog {
      *
      * @param logger the key of the specific logger
      * @param tag the string to be used as a tag
-     * @param formatString the string to be formatted and logged
+     * @param message the string to be formatted and logged
      * @param args the list of objects to format into the format string
      * @return int
      */
-    public static int logger(String logger, String tag, String formatString, Object... args) {
-        return logger(logger, tag, formatString, null, args);
+    public static int logger(String logger, String tag, String message, Object... args) {
+        return logger(logger, tag, message, null, args);
     }
 
     /**
@@ -175,12 +182,12 @@ public class Clog {
      *
      * @param logger the key of the specific logger
      * @param tag the string to be used as a tag
-     * @param formatString the string to be formatted and logged
+     * @param message the string to be formatted and logged
      * @param args the list of objects to format into the format string
      * @return int
      */
-    public static int logger(String logger, String tag, String formatString, Throwable throwable, Object... args) {
-        return getInstance().loggerInternal(logger, tag, formatString, throwable, args);
+    public static int logger(String logger, String tag, String message, Throwable throwable, Object... args) {
+        return getInstance().loggerInternal(logger, tag, message, throwable, args);
     }
 
     /**
@@ -188,31 +195,37 @@ public class Clog {
      *
      * @param logger the key of the specific logger
      * @param tag the string to be used as a tag
-     * @param formatString the string to be formatted and logged
+     * @param message the string to be formatted and logged
      * @param args the list of objects to format into the format string
      * @return int
      */
-    private int loggerInternal(String logger, String tag, String formatString, Throwable throwable, Object... args) {
-        String formattedMessage = formatter.format(formatString, args);
-        lastLog = formattedMessage;
-        lastTag = tag;
-
+    private int loggerInternal(String logger, String tag, String message, Throwable throwable, Object... args) {
         if(loggers.containsKey(logger) && (loggers.get(logger) != null)) {
-            if(throwable != null) {
-                return loggers.get(logger).log(tag, formattedMessage, throwable);
-            }
-            else {
-                return loggers.get(logger).log(tag, formattedMessage);
+            if(loggers.get(logger).isActive()) {
+                String formattedMessage = formatter.format(message, args);
+                lastLog = formattedMessage;
+                lastTag = tag;
+                if (throwable != null) {
+                    return loggers.get(logger).log(tag, formattedMessage, throwable);
+                } else {
+                    return loggers.get(logger).log(tag, formattedMessage);
+                }
             }
         }
         else {
-            if(throwable != null) {
-                return loggers.get(null).log(tag, formattedMessage, throwable);
-            }
-            else {
-                return loggers.get(null).log(tag, formattedMessage);
+            if(loggers.get(null).isActive()) {
+                String formattedMessage = formatter.format(message, args);
+                lastLog = formattedMessage;
+                lastTag = tag;
+                if (throwable != null) {
+                    return loggers.get(null).log(tag, formattedMessage, throwable);
+                } else {
+                    return loggers.get(null).log(tag, formattedMessage);
+                }
             }
         }
+
+        return 0;
     }
 
 // Configure Clog
@@ -338,7 +351,7 @@ public class Clog {
      *
      * @param formatter the formatter implementation to use
      */
-    public static void getFormatter(ClogFormatter formatter) {
+    public static void setFormatter(ClogFormatter formatter) {
         getInstance().formatter = formatter;
     }
 
@@ -352,7 +365,7 @@ public class Clog {
     }
 
     /**
-     * Get the tag from the most recently logged message in the current profile
+     * Get the tag from the most recently logged message in the current profile. Mostly used for testing.
      *
      * @return the tag on last message logged
      */
@@ -361,7 +374,7 @@ public class Clog {
     }
 
     /**
-     * Get the most recently logged message in the current profile
+     * Get the most recently logged message in the current profile. Mostly used for testing.
      *
      * @return the last message logged
      */

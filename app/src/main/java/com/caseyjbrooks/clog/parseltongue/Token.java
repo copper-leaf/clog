@@ -24,7 +24,6 @@ public class Token {
 
         WORD,
         STRING,
-
     }
 
     private Type type;
@@ -48,17 +47,9 @@ public class Token {
         this.stringValue = Integer.toString(value);
     }
 
-    Token(Type type, double value) {
-        this.type = type;
-        this.doubleValue = value;
-        this.stringValue = Double.toString(value);
-    }
-
     public String getStringValue() { return stringValue; }
 
     public int getIntValue() { return intValue; }
-
-    public double getDoubleValue() { return doubleValue; }
 
     public boolean equals(Type type) { return this.type == type; }
 }

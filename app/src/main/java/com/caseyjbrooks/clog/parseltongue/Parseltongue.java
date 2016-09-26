@@ -4,16 +4,20 @@ import com.caseyjbrooks.clog.ClogFormatter;
 import com.caseyjbrooks.clog.Spell;
 import com.caseyjbrooks.clog.TheStandardBookOfSpells;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class Parseltongue implements ClogFormatter {
     private List<ParseltonguePair<String, Method>> spells;
+    boolean privateFieldsAccessible;
 
     public Parseltongue() {
         spells = new ArrayList<>();
+        privateFieldsAccessible = false;
         findSpells(TheStandardBookOfSpells.class);
     }
 
@@ -29,6 +33,14 @@ public class Parseltongue implements ClogFormatter {
                 spells.add(new ParseltonguePair<>(spellName, method));
             }
         }
+    }
+
+    public boolean arePrivateFieldsAccessible() {
+        return privateFieldsAccessible;
+    }
+
+    public void setPrivateFieldsAccessible(boolean privateFieldsAccessible) {
+        this.privateFieldsAccessible = privateFieldsAccessible;
     }
 
     @Override
@@ -130,7 +142,7 @@ public class Parseltongue implements ClogFormatter {
                             return method.second.invoke(null, objects);
                         }
                         catch(Exception e) {
-                            e.printStackTrace();
+//                            e.printStackTrace();
                         }
                         break;
                     }
@@ -247,7 +259,14 @@ public class Parseltongue implements ClogFormatter {
                     ParseltonguePair<Boolean, Object> spellResult = castSpell(pipelineObject);
 
                     if(spellResult.first) {
-                        pipelineObject = spellResult.second;
+                        ParseltonguePair<Boolean, Object> indexedSpell = indexer(spellResult);
+
+                        if(indexedSpell.first) {
+                            pipelineObject = indexedSpell.second;
+                        }
+                        else {
+                            pipelineObject = spellResult.second;
+                        }
                     }
                     else {
                         return new ParseltonguePair<>(false, null);
@@ -563,10 +582,68 @@ public class Parseltongue implements ClogFormatter {
             return new ParseltonguePair<>(false, null);
         }
 
-        //TODO: add support for array indexing and hash-property-getting on any object
-        //indexer :== ( LBRACKET NUMBER RBRACKET | LBRACKET WORD RBRACKET )
+        //indexer :== ( LBRACKET NUMBER RBRACKET | LBRACKET WORD RBRACKET | LBRACKET stringLit RBRACKET)
         private ParseltonguePair<Boolean, Object> indexer(ParseltonguePair<Boolean, Object> object) {
-            return object;
+            Token a = ts.get();
+
+            if(a != null && a.equals(Token.Type.LBRACKET)) {
+                Token b = ts.get();
+
+                if(b != null && b.equals(Token.Type.NUMBER)) {
+                    Token c = ts.get();
+                    if(c != null && c.equals(Token.Type.RBRACKET)) {
+                        return new ParseltonguePair<>(true, arrayIndexer(object.second, b.getIntValue()));
+                    }
+                    else {
+                        ts.unget(c);
+                        ts.unget(b);
+                        ts.unget(a);
+                        return new ParseltonguePair<>(false, null);
+                    }
+                }
+                else if(b != null && b.equals(Token.Type.WORD)) {
+                    Token c = ts.get();
+                    if(c != null && c.equals(Token.Type.RBRACKET)) {
+                        return new ParseltonguePair<>(true, propertyIndexer(object.second, b.getStringValue()));
+                    }
+                    else {
+                        ts.unget(c);
+                        ts.unget(b);
+                        ts.unget(a);
+                        return new ParseltonguePair<>(false, null);
+                    }
+                }
+                else if(b != null && b.equals(Token.Type.QUOTE)) {
+                    ts.unget(b);
+
+                    ParseltonguePair<Boolean, String> stringKey = stringLit();
+
+                    if(stringKey.first) {
+                        Token c = ts.get();
+                        if(c != null && c.equals(Token.Type.RBRACKET)) {
+                            return new ParseltonguePair<>(true, mapIndexer(object.second, stringKey.second));
+                        }
+                        else {
+                            ts.unget(c);
+                            ts.unget(b);
+                            ts.unget(a);
+                            return new ParseltonguePair<>(false, null);
+                        }
+                    }
+                    else {
+                        return new ParseltonguePair<>(false, null);
+                    }
+                }
+                else {
+                    ts.unget(b);
+                    ts.unget(a);
+                    return new ParseltonguePair<>(false, null);
+                }
+            }
+            else {
+                ts.unget(a);
+                return object;
+            }
         }
 
         private void unclog() {
@@ -575,6 +652,81 @@ public class Parseltongue implements ClogFormatter {
 
         private void unclogString() {
 
+        }
+
+        private Object arrayIndexer(Object object, int index) {
+            if(object instanceof Object[]) {
+                Object[] array = (Object[]) object;
+
+                if(index >= 0 && index < array.length) {
+                    return array[index];
+                }
+                else {
+                    return null;
+                }
+            }
+            else if(object instanceof List) {
+                List list = (List) object;
+
+                if(index >= 0 && index < list.size()) {
+                    return list.get(index);
+                }
+                else {
+                    return null;
+                }
+            }
+            else {
+                return null;
+            }
+        }
+
+        private Object propertyIndexer(Object object, String property) {
+            try {
+                Class<?> c = object.getClass();
+                Field field = c.getField(property);
+                return field.get(object);
+            }
+            catch(Exception e) {
+//                e.printStackTrace();
+
+                if(privateFieldsAccessible) {
+                    try {
+                        Class<?> c = object.getClass();
+                        Field field = c.getDeclaredField(property);
+                        field.setAccessible(privateFieldsAccessible);
+                        return field.get(object);
+                    }
+                    catch (Exception ee) {
+//                        e.printStackTrace();
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private Object mapIndexer(Object object, String key) {
+            if(object instanceof Map) {
+                Map map = (Map) object;
+
+                if(map.containsKey(key)) {
+                    return map.get(key);
+                }
+                else {
+                    return null;
+                }
+            }
+            else {
+                try {
+                    Method method = object.getClass().getMethod("get", String.class);
+                    return method.invoke(object, key);
+                }
+                catch(Exception e) {
+//                    e.printStackTrace();
+                }
+
+                return null;
+            }
         }
     }
 
