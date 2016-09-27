@@ -18,4 +18,9 @@ public class DefaultLogger implements ClogLogger {
         System.out.println(tag + ": " + message + " (" + throwable.getMessage() + ")");
         return 0;
     }
+
+    @Override
+    public int priority() {
+        return 100;
+    }
 }

@@ -7,6 +7,7 @@ import java.io.StringWriter;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Clog {
     public static final String KEY_V = "v";
@@ -25,6 +26,15 @@ public class Clog {
     private String defaultTag;
     private String lastTag;
     private String lastLog;
+
+    private List<String> tagWhitelist;
+    private List<String> tagBlacklist;
+
+    private List<String> loggerWhitelist;
+    private List<String> loggerBlacklist;
+
+    private Integer minPriority;
+    private Integer maxPriority;
 
     static {
         profiles = new HashMap<>();
@@ -56,6 +66,15 @@ public class Clog {
         loggers = new HashMap<>();
         loggers.put(null, new DefaultLogger());
         formatter = new Parseltongue();
+
+        tagWhitelist = new ArrayList<>();
+        tagBlacklist = new ArrayList<>();
+
+        loggerWhitelist = new ArrayList<>();
+        loggerBlacklist = new ArrayList<>();
+
+        minPriority = null;
+        maxPriority = null;
     }
 
     /**
@@ -67,6 +86,15 @@ public class Clog {
     public Clog(HashMap<String, ClogLogger> loggers, ClogFormatter formatter) {
         this.loggers = loggers;
         this.formatter = formatter;
+
+        tagWhitelist = new ArrayList<>();
+        tagBlacklist = new ArrayList<>();
+
+        loggerWhitelist = new ArrayList<>();
+        loggerBlacklist = new ArrayList<>();
+
+        minPriority = null;
+        maxPriority = null;
     }
 
 // Log messages with Clog
@@ -748,8 +776,29 @@ public class Clog {
      */
     private int loggerInternal(String logger, String tag, String message, Throwable throwable, Object... args) {
         ClogLogger currentLogger = null;
-        String currentTag;
+        String currentTag = (tag != null) ? tag : getTag();
         String currentMessage;
+
+        // check tag against the whitelist and blacklist
+        boolean inWhitelist = false;
+        for(String whiteListedTag : tagWhitelist) {
+            if(currentTag.equals(whiteListedTag)) {
+                inWhitelist = true;
+                break;
+            }
+        }
+
+        boolean inBlacklist = false;
+        for(String blackListedTag : tagBlacklist) {
+            if(currentTag.equals(blackListedTag)) {
+                inBlacklist = true;
+                break;
+            }
+        }
+
+        if((tagWhitelist.size() > 0 && !inWhitelist) || (tagBlacklist.size() > 0 && inBlacklist)) {
+            return 0;
+        }
 
         // get a logger to log to
         if (loggers != null) {
@@ -768,6 +817,35 @@ public class Clog {
             }
         } else {
             currentLogger = new DefaultLogger();
+        }
+
+        // check logger against the whitelist, blacklist, and priority levels
+        inWhitelist = false;
+        for(String whiteListedLogger : loggerWhitelist) {
+            if(logger.equals(whiteListedLogger)) {
+                inWhitelist = true;
+                break;
+            }
+        }
+
+        inBlacklist = false;
+        for(String blackListedLogger : loggerBlacklist) {
+            if(logger.equals(blackListedLogger)) {
+                inBlacklist = true;
+                break;
+            }
+        }
+
+        if((loggerWhitelist.size() > 0 && !inWhitelist) || (loggerBlacklist.size() > 0 && inBlacklist)) {
+            return 0;
+        }
+
+        if(minPriority != null && currentLogger.priority() < minPriority) {
+            return 0;
+        }
+
+        if(maxPriority != null && currentLogger.priority() > maxPriority) {
+            return 0;
         }
 
         if (currentLogger.isActive()) {
@@ -950,7 +1028,101 @@ public class Clog {
         return getInstance().lastLog;
     }
 
-// Set and get the default logger tag.
+    /**
+     * Flushes the last tag and last log from the current profile. Mostly used for testing.
+     */
+    public static void flush() {
+        getInstance().lastTag = null;
+        getInstance().lastLog = null;
+    }
+
+    /**
+     * Adds the tag to a whitelist. Only logging messages whose tag is in the whitelist will be logged. If the whitelist
+     * is empty, no tag whitelist filtering will be done.
+     *
+     * @param tag  the tag to whitelist
+     */
+    public static void addTagToWhitelist(String tag) {
+        getInstance().tagWhitelist.add(tag);
+    }
+
+    /**
+     * Adds the tag to a blacklist. Only logging messages whose tag is not in the blacklist will be logged. If the
+     * blacklist is empty, no tag blacklist filtering will be done.
+     *
+     * @param tag  the tag to blacklist
+     */
+    public static void addTagToBlacklist(String tag) {
+        getInstance().tagBlacklist.add(tag);
+    }
+
+    /**
+     * Clears the tag whitelist of all entries.
+     */
+    public static void clearTagWhitelist() {
+        getInstance().tagWhitelist.clear();
+    }
+
+    /**
+     * Clears the tag blacklist of all entries.
+     */
+    public static void clearTagBlacklist() {
+        getInstance().tagBlacklist.clear();
+    }
+
+    /**
+     * Adds the logger to a whitelist. Only logging messages whose logger is in the whitelist will be logged. If the
+     * whitelist is empty, no logger whitelist filtering will be done.
+     *
+     * @param tag  the tag to whitelist
+     */
+    public static void addLoggerToWhitelist(String tag) {
+        getInstance().loggerWhitelist.add(tag);
+    }
+
+    /**
+     * Adds the tag to a blacklist. Only logging messages whose logger is not in the blacklist will be logged. If the
+     * blacklist is empty, no logger blacklist filtering will be done.
+     *
+     * @param tag  the tag to blacklist
+     */
+    public static void addLoggerToBlacklist(String tag) {
+        getInstance().loggerBlacklist.add(tag);
+    }
+
+    /**
+     * Clears the logger whitelist of all entries.
+     */
+    public static void clearLoggerWhitelist() {
+        getInstance().loggerWhitelist.clear();
+    }
+
+    /**
+     * Clears the logger blacklist of all entries.
+     */
+    public static void clearLoggerBlacklist() {
+        getInstance().loggerBlacklist.clear();
+    }
+
+    /**
+     * Sets the minimum priority of loggers to log messages from
+     *
+     * @param minPriority  the minimum priority to log
+     */
+    public void setMinPriority(Integer minPriority) {
+        this.minPriority = minPriority;
+    }
+
+    /**
+     * Sets the maximum priority of loggers to log messages from
+     *
+     * @param maxPriority  the maximum priority to log
+     */
+    public void setMaxPriority(Integer maxPriority) {
+        this.maxPriority = maxPriority;
+    }
+
+    // Set and get the default logger tag.
 //--------------------------------------------------------------------------------------------------
 
     /**

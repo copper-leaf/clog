@@ -16,4 +16,9 @@ public class EmptyLogger implements ClogLogger {
     public int log(String tag, String message, Throwable throwable) {
         return 0;
     }
+
+    @Override
+    public int priority() {
+        return 100;
+    }
 }

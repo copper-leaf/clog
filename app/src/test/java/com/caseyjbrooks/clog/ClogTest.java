@@ -27,8 +27,8 @@ public class ClogTest {
         Clog.i("message");
         lastLog = Clog.getLastLog();
         lastTag = Clog.getLastTag();
-        assertEquals(lastTag, "ClogTest");
-        assertEquals(lastLog, "message");
+        assertEquals("ClogTest", lastTag);
+        assertEquals("message", lastLog);
 
         // test a basic log with the tag manually set, which should override the default class name
         // as the tag
@@ -157,5 +157,50 @@ public class ClogTest {
         assertEquals(lastTag, "Tag One");
         assertEquals(lastLog, "Message One");
         assertEquals(numberOfLoggers, 1);
+    }
+
+    @Test
+    public void testFiltering() {
+
+        HashMap<String, ClogLogger> profileOneLoggers = new HashMap<>();
+        profileOneLoggers.put(null, new DefaultLogger());
+        ClogFormatter profileOneFormatter = new Parseltongue();
+        Clog profileOne = new Clog(profileOneLoggers, profileOneFormatter);
+        Clog.addProfile(null, profileOne);
+        Clog.setCurrentProfile(null);
+
+        String lastLog;
+        String lastTag;
+
+        // test a basic log, which will use the caller class name as the tag
+        Clog.i("TestTag", "message");
+        lastLog = Clog.getLastLog();
+        lastTag = Clog.getLastTag();
+        assertEquals("TestTag", lastTag);
+        assertEquals("message", lastLog);
+
+        Clog.addTagToWhitelist("TestTag");
+        Clog.flush();
+
+        Clog.i("TestTag", "message");
+        lastLog = Clog.getLastLog();
+        lastTag = Clog.getLastTag();
+        assertEquals("TestTag", lastTag);
+        assertEquals("message", lastLog);
+
+        Clog.addTagToBlacklist("TestTag");
+        Clog.flush();
+
+        Clog.i("TestTag", "message");
+        lastLog = Clog.getLastLog();
+        lastTag = Clog.getLastTag();
+        assertEquals(null, lastTag);
+        assertEquals(null, lastLog);
+
+        Clog.clearTagWhitelist();
+        Clog.clearTagBlacklist();
+
+        Clog.clearLoggerWhitelist();
+        Clog.clearLoggerBlacklist();
     }
 }

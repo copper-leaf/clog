@@ -4,4 +4,5 @@ public interface ClogLogger {
     boolean isActive();
     int log(String tag, String message);
     int log(String tag, String message, Throwable throwable);
+    int priority();
 }
