@@ -203,4 +203,33 @@ public class ClogTest {
         Clog.clearLoggerWhitelist();
         Clog.clearLoggerBlacklist();
     }
+
+    @Test
+    public void testAnsiCodes() {
+
+        // Test that output from the default logger can show colors
+        HashMap<String, ClogLogger> loggers = new HashMap<>();
+        loggers.put(null,  new DefaultLogger(null,      0));
+        loggers.put(Clog.KEY_V, new DefaultLogger(Clog.KEY_V,     1));
+        loggers.put(Clog.KEY_D, new DefaultLogger(Clog.KEY_D,     2));
+        loggers.put(Clog.KEY_I, new DefaultLogger(Clog.KEY_I,     3));
+        loggers.put(Clog.KEY_W, new DefaultLogger(Clog.KEY_W,     4));
+        loggers.put(Clog.KEY_E, new DefaultLogger(Clog.KEY_E,     5));
+        loggers.put(Clog.KEY_WTF, new DefaultLogger(Clog.KEY_WTF, 6));
+
+        Clog clog = new Clog(loggers, new Parseltongue());
+
+        Clog.setCurrentProfile("test2", clog);
+
+        Clog.v("Log me, dog!");
+        Clog.d("Log me, dog!");
+        Clog.i("Log me, dog!");
+        Clog.w("Log me, dog!");
+        Clog.e("Log me, dog!");
+        Clog.wtf("Log me, dog!");
+
+        //test that the color spell works
+
+        Clog.log("Log #{$0 | fg('BLUE') }me,#{$0 | reset } dog!");
+    }
 }

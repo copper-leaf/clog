@@ -107,8 +107,8 @@ public class TheStandardBookOfSpells {
         return new SimpleDateFormat(formatString).format(data.getTime());
     }
 
-    @Spell(name="colorStart")
-    public static Object ansiColorStart(Object data, String color) {
+    @Spell(name="fg")
+    public static Object ansiForegroundColorStart(Object data, String color) {
         Ansi.Color ansiColor = Ansi.Color.valueOf(color);
 
         if(ansiColor != null) {
@@ -119,8 +119,8 @@ public class TheStandardBookOfSpells {
         }
     }
 
-    @Spell(name="ansiStop")
-    public static Object ansiStop() {
+    @Spell(name="reset")
+    public static Object ansiStop(Object data) {
         return Ansi.ansi().reset();
     }
 }

@@ -3,7 +3,15 @@ package com.caseyjbrooks.clog;
 import org.fusesource.jansi.Ansi;
 import org.fusesource.jansi.AnsiConsole;
 
+import static org.fusesource.jansi.Ansi.*;
+import static org.fusesource.jansi.Ansi.Color.*;
+
 public class DefaultLogger implements ClogLogger {
+    static {
+        // hack to get IntelliJ to show output codes. Jansi doesn't determine the IntelliJ console to be ansi-compatible
+        System.setProperty("jansi.passthrough", "true");
+        AnsiConsole.systemInstall();
+    }
 
     private String logger;
     private int priority;
@@ -20,13 +28,13 @@ public class DefaultLogger implements ClogLogger {
 
     @Override
     public int log(String tag, String message) {
-        AnsiConsole.out.println("[" + getLevelString() + "] " + tag + ": " + message);
+        AnsiConsole.out.println(getAnsiLevelString().a(tag + ": ").a(message));
         return 0;
     }
 
     @Override
     public int log(String tag, String message, Throwable throwable) {
-        AnsiConsole.out.println("[" + getLevelString() + "] " + tag + ": " + message + " (" + throwable.getMessage() + ")");
+        AnsiConsole.out.println(getAnsiLevelString().a(tag + ": ").a(message).a(" (" + throwable.getMessage() + ")"));
         return 0;
     }
 
@@ -35,36 +43,28 @@ public class DefaultLogger implements ClogLogger {
         return priority;
     }
 
-    private String getLevelString() {
-
-        String out = "";
+    private Ansi getAnsiLevelString() {
 
         if(logger != null) {
 
             switch (logger) {
                 case Clog.KEY_V:
-                    out += Ansi.ansi().fg(Ansi.Color.CYAN).a("VERBOSE").reset();
-                    break;
+                    return ansi().fg(GREEN).a("[VERBOSE] ").reset();
                 case Clog.KEY_D:
-                    out += Ansi.ansi().fg(Ansi.Color.MAGENTA).a("DEBUG").reset();
-                    break;
+                    return ansi().fg(BLUE).a("[DEBUG] ").reset();
                 case Clog.KEY_I:
-                    out += Ansi.ansi().fg(Ansi.Color.GREEN).a("INFO").reset();
-                    break;
+                    return ansi().fg(CYAN).a("[INFO] ").reset();
                 case Clog.KEY_W:
-                    out += Ansi.ansi().fg(Ansi.Color.YELLOW).a("WARN").reset();
-                    break;
+                    return ansi().fg(YELLOW).a("[WARN] ").reset();
                 case Clog.KEY_E:
-                    out += Ansi.ansi().fg(Ansi.Color.RED).a("ERROR").reset();
-                    break;
+                    return ansi().fg(RED).a("[ERROR] ").reset();
                 case Clog.KEY_WTF:
-                    out += Ansi.ansi().fg(Ansi.Color.RED).a("FATAL").reset();
-                    break;
+                    return ansi().fg(MAGENTA).a("[FATAL] ").reset();
                 default:
                     break;
             }
         }
 
-        return out;
+        return Ansi.ansi();
     }
 }
