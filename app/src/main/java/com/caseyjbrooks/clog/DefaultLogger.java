@@ -5,10 +5,6 @@ import org.fusesource.jansi.AnsiConsole;
 
 public class DefaultLogger implements ClogLogger {
 
-    static {
-        AnsiConsole.systemInstall();
-    }
-
     private String logger;
     private int priority;
 
@@ -24,13 +20,13 @@ public class DefaultLogger implements ClogLogger {
 
     @Override
     public int log(String tag, String message) {
-        System.out.println("[" + getLevelString() + "]" + tag + ": " + message);
+        AnsiConsole.out.println("[" + getLevelString() + "] " + tag + ": " + message);
         return 0;
     }
 
     @Override
     public int log(String tag, String message, Throwable throwable) {
-        System.out.println("[" + getLevelString() + "]" + tag + ": " + message + " (" + throwable.getMessage() + ")");
+        AnsiConsole.out.println("[" + getLevelString() + "] " + tag + ": " + message + " (" + throwable.getMessage() + ")");
         return 0;
     }
 
@@ -47,22 +43,22 @@ public class DefaultLogger implements ClogLogger {
 
             switch (logger) {
                 case Clog.KEY_V:
-                    out += Ansi.ansi().fg(Ansi.Color.CYAN).a("VERBOSE: ").reset();
+                    out += Ansi.ansi().fg(Ansi.Color.CYAN).a("VERBOSE").reset();
                     break;
                 case Clog.KEY_D:
-                    out += Ansi.ansi().fg(Ansi.Color.MAGENTA).a("DEBUG: ").reset();
+                    out += Ansi.ansi().fg(Ansi.Color.MAGENTA).a("DEBUG").reset();
                     break;
                 case Clog.KEY_I:
-                    out += Ansi.ansi().fg(Ansi.Color.GREEN).a("INFO: ").reset();
+                    out += Ansi.ansi().fg(Ansi.Color.GREEN).a("INFO").reset();
                     break;
                 case Clog.KEY_W:
-                    out += Ansi.ansi().fg(Ansi.Color.YELLOW).a("WARN: ").reset();
+                    out += Ansi.ansi().fg(Ansi.Color.YELLOW).a("WARN").reset();
                     break;
                 case Clog.KEY_E:
-                    out += Ansi.ansi().fg(Ansi.Color.RED).a("ERROR: ").reset();
+                    out += Ansi.ansi().fg(Ansi.Color.RED).a("ERROR").reset();
                     break;
                 case Clog.KEY_WTF:
-                    out += Ansi.ansi().fg(Ansi.Color.RED).a("FATAL: ").reset();
+                    out += Ansi.ansi().fg(Ansi.Color.RED).a("FATAL").reset();
                     break;
                 default:
                     break;
