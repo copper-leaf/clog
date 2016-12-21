@@ -1,5 +1,7 @@
 package com.caseyjbrooks.clog;
 
+import org.fusesource.jansi.Ansi;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -103,5 +105,22 @@ public class TheStandardBookOfSpells {
         }
 
         return new SimpleDateFormat(formatString).format(data.getTime());
+    }
+
+    @Spell(name="colorStart")
+    public static Object ansiColorStart(Object data, String color) {
+        Ansi.Color ansiColor = Ansi.Color.valueOf(color);
+
+        if(ansiColor != null) {
+            return Ansi.ansi().fg(ansiColor);
+        }
+        else {
+            return "";
+        }
+    }
+
+    @Spell(name="ansiStop")
+    public static Object ansiStop() {
+        return Ansi.ansi().reset();
     }
 }

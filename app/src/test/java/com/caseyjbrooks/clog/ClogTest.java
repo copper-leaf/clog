@@ -14,7 +14,7 @@ public class ClogTest {
     public void testBasicLogging() throws Exception {
 
         HashMap<String, ClogLogger> profileOneLoggers = new HashMap<>();
-        profileOneLoggers.put(null, new DefaultLogger());
+        profileOneLoggers.put(null, new DefaultLogger(null, 0));
         ClogFormatter profileOneFormatter = new Parseltongue();
         Clog profileOne = new Clog(profileOneLoggers, profileOneFormatter);
         Clog.addProfile(null, profileOne);
@@ -86,20 +86,20 @@ public class ClogTest {
         HashMap<String, ClogLogger> profileTwoLoggers = new HashMap<>();
         HashMap<String, ClogLogger> profileThreeLoggers = new HashMap<>();
 
-        profileOneLoggers.put(null, new DefaultLogger());
+        profileOneLoggers.put(null, new DefaultLogger(null, 0));
 
-        profileTwoLoggers.put(null, new DefaultLogger());
-        profileTwoLoggers.put("i", new DefaultLogger());
-        profileTwoLoggers.put("d", new DefaultLogger());
-        profileTwoLoggers.put("e", new DefaultLogger());
+        profileTwoLoggers.put(null, new DefaultLogger(null, 0));
+        profileTwoLoggers.put("i", new DefaultLogger(null, 0));
+        profileTwoLoggers.put("d", new DefaultLogger(null, 0));
+        profileTwoLoggers.put("e", new DefaultLogger(null, 0));
 
-        profileThreeLoggers.put(null, new DefaultLogger());
-        profileThreeLoggers.put("i", new DefaultLogger());
-        profileThreeLoggers.put("d", new DefaultLogger());
-        profileThreeLoggers.put("e", new DefaultLogger());
-        profileThreeLoggers.put("v", new DefaultLogger());
-        profileThreeLoggers.put("w", new DefaultLogger());
-        profileThreeLoggers.put("wtf", new DefaultLogger());
+        profileThreeLoggers.put(null, new DefaultLogger(null, 0));
+        profileThreeLoggers.put("i", new DefaultLogger(null, 0));
+        profileThreeLoggers.put("d", new DefaultLogger(null, 0));
+        profileThreeLoggers.put("e", new DefaultLogger(null, 0));
+        profileThreeLoggers.put("v", new DefaultLogger(null, 0));
+        profileThreeLoggers.put("w", new DefaultLogger(null, 0));
+        profileThreeLoggers.put("wtf", new DefaultLogger(null, 0));
 
         ClogFormatter profileOneFormatter = new Parseltongue();
         ClogFormatter profileTwoFormatter = new Parseltongue();
@@ -163,7 +163,7 @@ public class ClogTest {
     public void testFiltering() {
 
         HashMap<String, ClogLogger> profileOneLoggers = new HashMap<>();
-        profileOneLoggers.put(null, new DefaultLogger());
+        profileOneLoggers.put(null, new DefaultLogger(null, 0));
         ClogFormatter profileOneFormatter = new Parseltongue();
         Clog profileOne = new Clog(profileOneLoggers, profileOneFormatter);
         Clog.addProfile(null, profileOne);

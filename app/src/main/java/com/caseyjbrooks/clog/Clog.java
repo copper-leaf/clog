@@ -64,7 +64,13 @@ public class Clog {
      */
     private Clog() {
         loggers = new HashMap<>();
-        loggers.put(null, new DefaultLogger());
+        loggers.put(null,  new DefaultLogger(null,      0));
+        loggers.put(KEY_V, new DefaultLogger(KEY_V,     1));
+        loggers.put(KEY_D, new DefaultLogger(KEY_D,     2));
+        loggers.put(KEY_I, new DefaultLogger(KEY_I,     3));
+        loggers.put(KEY_W, new DefaultLogger(KEY_W,     4));
+        loggers.put(KEY_E, new DefaultLogger(KEY_E,     5));
+        loggers.put(KEY_WTF, new DefaultLogger(KEY_WTF, 6));
         formatter = new Parseltongue();
 
         tagWhitelist = new ArrayList<>();
@@ -813,10 +819,10 @@ public class Clog {
             }
 
             if (currentLogger == null) {
-                currentLogger = new DefaultLogger();
+                currentLogger = new DefaultLogger(null, 0);
             }
         } else {
-            currentLogger = new DefaultLogger();
+            currentLogger = new DefaultLogger(null, 0);
         }
 
         // check logger against the whitelist, blacklist, and priority levels
