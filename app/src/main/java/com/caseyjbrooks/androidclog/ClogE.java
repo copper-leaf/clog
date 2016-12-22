@@ -20,4 +20,9 @@ public class ClogE implements ClogLogger {
     public int log(String tag, String message, Throwable throwable) {
         return Log.e(tag, message, throwable);
     }
+
+    @Override
+    public int priority() {
+        return 5;
+    }
 }
