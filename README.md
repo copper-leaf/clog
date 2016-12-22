@@ -1,7 +1,7 @@
 # Android-Clog
 Clog logger implementation for the standard Android Log priorities
 
-See https://github.com/cjbrooks12/Clog for information on Clog.
+See https://github.com/JavaEden/Clog for information on Clog.
 
 ### Android Clog Implementation
 
@@ -43,8 +43,8 @@ In development, all logs will be directed to the standard Log implementations sh
 ### Download
 Clog and Android Clog is distrubuted through JitPack.io.
 
-[![](https://jitpack.io/v/cjbrooks12/Android-Clog.svg)](https://jitpack.io/#cjbrooks12/Android-Clog)
-[![JitPack Javadoc](https://img.shields.io/github/tag/cjbrooks12/Clog.svg?maxAge=2592000&label=javadoc)](https://jitpack.io/com/github/cjbrooks12/Clog/v1.0.0/javadoc/)
+[![](https://jitpack.io/v/JavaEden/Android-Clog.svg)](https://jitpack.io/#JavaEden/Android-Clog)
+[![JitPack Javadoc](https://img.shields.io/github/tag/JavaEden/Clog.svg?maxAge=2592000&label=javadoc)](https://jitpack.io/com/github/JavaEden/Clog/v1.2.3/javadoc/)
 
 In your project-level `build.gradle`:
 
@@ -61,7 +61,7 @@ In your module's `build.gradle` (replace the version with the most recent releas
 ```groovy
 dependencies {
     ...
-    compile('com.github.cjbrooks12:Android-Clog:v1.0.0@aar') {
+    compile('com.github.JavaEden:Android-Clog:v1.2.3@aar') {
         transitive = true;
     }
 }
