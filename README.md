@@ -7,9 +7,9 @@ Clog is a simple-to-use yet powerful and customizable logging utility for Java. 
 ### Download
 Clog is distrubuted through JitPack.io.
 
-[![](https://jitpack.io/v/cjbrooks12/Clog.svg)](https://jitpack.io/#cjbrooks12/Clog)
-[![JitPack Javadoc](https://img.shields.io/github/tag/cjbrooks12/Clog.svg?maxAge=2592000&label=javadoc)](https://jitpack.io/com/github/cjbrooks12/Clog/v0.3.0/javadoc/)
-[![Github Releases](https://img.shields.io/github/downloads/cjbrooks12/Clog/latest/total.svg?maxAge=2592000)]()
+[![](https://jitpack.io/v/JavaEden/Clog.svg)](https://jitpack.io/#JavaEden/Clog)
+[![JitPack Javadoc](https://img.shields.io/github/tag/JavaEden/Clog.svg?maxAge=2592000&label=javadoc)](https://jitpack.io/com/github/JavaEden/Clog/v1.2.4/javadoc/)
+[![Github Releases](https://img.shields.io/github/downloads/JavaEden/Clog/latest/total.svg?maxAge=2592000)]()
 
 In your project-level `build.gradle`:
 
@@ -22,12 +22,12 @@ allprojects {
 }
 ```
 
-In your module's `build.gradle` (replace 'v0.3.0' with the most recent release):
+In your module's `build.gradle` (replace 'v1.2.4' with the most recent release):
 ```groovy
 dependencies {
     ...
-    compile 'com.github.cjbrooks12:Clog:v0.3.0'
+    compile 'com.github.JavaEden:Clog:v1.2.4'
 }
 ```
 
-[View Full Documentation](https://cjbrooks12.github.io/Clog/)
+[View Full Documentation](https://JavaEden.github.io/Clog/)
