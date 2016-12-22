@@ -44,7 +44,7 @@ In development, all logs will be directed to the standard Log implementations sh
 Clog and Android Clog is distrubuted through JitPack.io.
 
 [![](https://jitpack.io/v/JavaEden/Android-Clog.svg)](https://jitpack.io/#JavaEden/Android-Clog)
-[![JitPack Javadoc](https://img.shields.io/github/tag/JavaEden/Clog.svg?maxAge=2592000&label=javadoc)](https://jitpack.io/com/github/JavaEden/Clog/v1.2.3/javadoc/)
+[![JitPack Javadoc](https://img.shields.io/github/tag/JavaEden/Clog.svg?maxAge=2592000&label=javadoc)](https://jitpack.io/com/github/JavaEden/Clog/v1.2.4/javadoc/)
 
 In your project-level `build.gradle`:
 
@@ -61,7 +61,7 @@ In your module's `build.gradle` (replace the version with the most recent releas
 ```groovy
 dependencies {
     ...
-    compile('com.github.JavaEden:Android-Clog:v1.2.3@aar') {
+    compile('com.github.JavaEden:Android-Clog:v1.2.4@aar') {
         transitive = true;
     }
 }
