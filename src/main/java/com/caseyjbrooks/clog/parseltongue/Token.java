@@ -1,7 +1,7 @@
 package com.caseyjbrooks.clog.parseltongue;
 
-public class Token {
-    public enum Type {
+class Token {
+    enum Type {
         ANY,
 
         CLOG_START,
@@ -47,9 +47,9 @@ public class Token {
         this.stringValue = Integer.toString(value);
     }
 
-    public String getStringValue() { return stringValue; }
+    String getStringValue() { return stringValue; }
 
-    public int getIntValue() { return intValue; }
+    int getIntValue() { return intValue; }
 
-    public boolean equals(Type type) { return this.type == type; }
+    boolean equals(Type type) { return this.type == type; }
 }

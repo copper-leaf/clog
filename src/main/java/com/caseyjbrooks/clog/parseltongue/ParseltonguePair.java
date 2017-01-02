@@ -26,7 +26,7 @@ import java.util.Objects;
  * because this class is used extensively in the Parseltongue parser, but this library is built for
  * plain Java.
  */
-public class ParseltonguePair<F, S> {
+class ParseltonguePair<F, S> {
     public final F first;
     public final S second;
 
@@ -36,7 +36,7 @@ public class ParseltonguePair<F, S> {
      * @param first the first object in the ParseltonguePair
      * @param second the second object in the ParseltonguePair
      */
-    public ParseltonguePair(F first, S second) {
+    ParseltonguePair(F first, S second) {
         this.first = first;
         this.second = second;
     }
@@ -71,15 +71,5 @@ public class ParseltonguePair<F, S> {
     @Override
     public String toString() {
         return "ParseltonguePair{" + String.valueOf(first) + " " + String.valueOf(second) + "}";
-    }
-
-    /**
-     * Convenience method for creating an appropriately typed ParseltonguePair.
-     * @param a the first object in the ParseltonguePair
-     * @param b the second object in the ParseltonguePair
-     * @return a ParseltonguePair that is templatized with the types of a and b
-     */
-    public static <A, B> ParseltonguePair <A, B> create(A a, B b) {
-        return new ParseltonguePair<A, B>(a, b);
     }
 }

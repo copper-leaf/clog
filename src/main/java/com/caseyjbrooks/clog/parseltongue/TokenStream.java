@@ -3,12 +3,12 @@ package com.caseyjbrooks.clog.parseltongue;
 import java.util.LinkedList;
 import java.util.Stack;
 
-public class TokenStream {
-    LinkedList<Character> chars;
-    Stack<Token> ungetTokens;
-    int column;
+class TokenStream {
+    private LinkedList<Character> chars;
+    private Stack<Token> ungetTokens;
+    private int column;
 
-    public TokenStream(String expression) {
+    TokenStream(String expression) {
         chars = new LinkedList<>();
         for(int i = 0; i < expression.length(); i++) {
             chars.add(expression.charAt(i));
@@ -16,7 +16,7 @@ public class TokenStream {
         ungetTokens = new Stack<>();
     }
 
-    public Token get() {
+    Token get() {
         try {
             if(ungetTokens.size() > 0) {
                 return ungetTokens.pop();
@@ -106,7 +106,7 @@ public class TokenStream {
         }
     }
 
-    public Token getAny() {
+    Token getAny() {
         String s = "";
         if(ungetTokens.size() > 0) {
             while(ungetTokens.size() > 0) {
@@ -142,7 +142,7 @@ public class TokenStream {
         }
     }
 
-    public Token getString() {
+    Token getString() {
         String s = "";
         if(ungetTokens.size() > 0) {
             while(ungetTokens.size() > 0) {
@@ -177,11 +177,11 @@ public class TokenStream {
     }
 
 
-    public void unget(Token token) {
+    void unget(Token token) {
         ungetTokens.push(token);
     }
 
-    public boolean hasTokens() {
+    boolean hasTokens() {
         if(ungetTokens != null && ungetTokens.size() > 0) {
             return true;
         }
@@ -193,11 +193,11 @@ public class TokenStream {
         }
     }
 
-    public int getColumn() {
+    int getColumn() {
         return column;
     }
 
-    public void unclog() {
+    void unclog() {
         if(ungetTokens.size() > 0) {
             while(ungetTokens.size() > 0) {
                 Token token = ungetTokens.pop();

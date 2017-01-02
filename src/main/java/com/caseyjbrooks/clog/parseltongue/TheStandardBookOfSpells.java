@@ -1,11 +1,15 @@
-package com.caseyjbrooks.clog;
+package com.caseyjbrooks.clog.parseltongue;
 
+import com.caseyjbrooks.clog.Clog;
 import org.fusesource.jansi.Ansi;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
 
+/**
+ * A collection of all the Spells available by default within Parseltongue formatters.
+ */
 public class TheStandardBookOfSpells {
 
     /**

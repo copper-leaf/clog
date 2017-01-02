@@ -32,7 +32,7 @@ dependencies {
 
     compile 'org.fusesource.jansi:jansi:1.14'
 
-    orchidDocs('com.github.JavaEden:Orchid-Liquid:da95dc5807') {
+    orchidDocs('com.github.JavaEden:Orchid-Liquid:d70321097d') {
         transitive = true
     }
 }

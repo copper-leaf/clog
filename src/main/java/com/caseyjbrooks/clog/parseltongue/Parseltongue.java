@@ -1,8 +1,6 @@
 package com.caseyjbrooks.clog.parseltongue;
 
 import com.caseyjbrooks.clog.ClogFormatter;
-import com.caseyjbrooks.clog.Spell;
-import com.caseyjbrooks.clog.TheStandardBookOfSpells;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

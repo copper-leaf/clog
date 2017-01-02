@@ -1,5 +1,9 @@
 package com.caseyjbrooks.clog;
 
+/**
+ * A default inactive logger. For performance in a production environment, loggers should be replaced by EmptyLogger or
+ * a custom inactive logger.
+ */
 public class EmptyLogger implements ClogLogger {
 
     @Override

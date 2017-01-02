@@ -2,6 +2,7 @@ package com.caseyjbrooks.clog;
 
 import com.caseyjbrooks.clog.parseltongue.Parseltongue;
 
+import com.caseyjbrooks.clog.parseltongue.Spell;
 import org.junit.Test;
 
 import java.util.ArrayList;

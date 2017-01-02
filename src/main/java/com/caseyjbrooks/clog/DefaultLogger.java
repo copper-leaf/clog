@@ -6,6 +6,12 @@ import org.fusesource.jansi.AnsiConsole;
 import static org.fusesource.jansi.Ansi.*;
 import static org.fusesource.jansi.Ansi.Color.*;
 
+/**
+ * The standard Clog Logger implementation, used if no other loggers have been registered. Displays messages in the
+ * following format:
+ *
+ * [LEVEL] Tag: Message
+ */
 public class DefaultLogger implements ClogLogger {
     static {
         // hack to get IntelliJ to show output codes. Jansi doesn't determine the IntelliJ console to be ansi-compatible
@@ -44,9 +50,7 @@ public class DefaultLogger implements ClogLogger {
     }
 
     private Ansi getAnsiLevelString() {
-
         if(logger != null) {
-
             switch (logger) {
                 case Clog.KEY_V:
                     return ansi().fg(GREEN).a("[VERBOSE] ").reset();
