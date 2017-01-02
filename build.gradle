@@ -1,17 +1,28 @@
 // Configure build, dependencies, output jar, and Java compatibility
 //------------------------------------------------------------------------------
-
-apply plugin: 'java'
-apply plugin: 'jacoco'
+plugins {
+    id 'java'
+    id 'jacoco'
+    id 'org.ajoberstar.grgit' version '1.6.0'
+    id 'org.ajoberstar.github-pages' version '1.6.0'
+}
 
 group 'com.eden'
-version '1.2.4'
+version = 'v1.2.4'
 
-sourceCompatibility = '1.7'
-targetCompatibility = '1.7'
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+configurations {
+    orchidDocs
+}
+
+sourceSets {
+    orchidDocs
+}
 
 repositories {
-	mavenCentral()
+    mavenCentral()
     maven { url 'https://jitpack.io' }
 }
 
@@ -20,6 +31,10 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile 'org.fusesource.jansi:jansi:1.14'
+
+    orchidDocs('com.github.JavaEden:Orchid-Liquid:da95dc5807') {
+        transitive = true
+    }
 }
 
 // Jacoco Code Coverage
@@ -34,6 +49,21 @@ check.dependsOn jacocoTestReport
 
 // Javadoc Generation
 //------------------------------------------------------------------------------
+javadoc {
+    title = ""
+    source = sourceSets.main.allJava
+
+    options.docletpath = [file("build/libs/Clog-${version}-orchidDocs.jar")]
+    options.docletpath.addAll(configurations.orchidDocs)
+    options.doclet = 'com.eden.orchid.Orchid'
+
+    options.addStringOption("theme", "com.eden.orchidliquid.BSDocTheme")
+    options.addStringOption("resourcesDir", sourceSets.orchidDocs.resources.srcDirs[0].toString())
+
+    options.addStringOption("v", version)
+//    options.addStringOption("baseUrl", "https://javaeden.github.io/Clog")
+}
+
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
@@ -48,3 +78,67 @@ artifacts {
     archives sourcesJar
     archives javadocJar
 }
+
+// Tagging, Releases, and Github Pages Publishing
+task setGitReleaseTag {
+    doLast {
+        if((grgit.tag.list().findAll { item -> item.name.equals(version) }).size() > 0) {
+            println "Version '${version}' is already tagged"
+        }
+        else {
+            println "Tagging repo with version: ${version}."
+            grgit.tag.add {
+                name = version
+                message = "Updates to version ${version}"
+            }
+        }
+    }
+}
+
+prepareGhPages.outputs.upToDateWhen { false }
+publishGhPages.outputs.upToDateWhen { false }
+
+githubPages {
+    pages {
+        from javadoc
+        into ""
+    }
+}
+
+task release {
+
+}
+
+tasks.release.dependsOn 'build', 'setGitReleaseTag', 'publishGhPages'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

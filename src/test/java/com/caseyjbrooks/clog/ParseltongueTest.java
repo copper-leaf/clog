@@ -55,9 +55,9 @@ public class ParseltongueTest {
 
         String input, expectedOutput, output;
 
-        input = "#{ $1 | repeat(3) | uppercase }";
-        expectedOutput = "HARRYHARRYHARRY";
-        output = parseltongue.format(input, "Harry");
+        input = "#{ $1 | repeat('#{$1}, ') | lowercase }";
+        expectedOutput = "harry, ron, hermione, fred and george, ";
+        output = parseltongue.format(input, names);
         assertEquals(expectedOutput, output);
 
         input = "#{ $1 | join(', ') | lowercase }";
@@ -488,5 +488,15 @@ public class ParseltongueTest {
         return outputArray;
     }
 
+    @Spell
+    public static String repeat(Object data, int times) {
+        String output = "";
+        for(int i = 0; i < times; i++) {
+            if(data != null) {
+                output += data.toString();
+            }
+        }
 
+        return output;
+    }
 }

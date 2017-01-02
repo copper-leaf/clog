@@ -318,7 +318,7 @@ public class Parseltongue implements ClogFormatter {
                 }
                 else{
                     ts.unget(b);
-                    return new ParseltonguePair<>(true, transfigureObject(a.getStringValue(), reagent, null));
+                    return new ParseltonguePair<>(true, transfigureObject(a.getStringValue(), reagent));
                 }
             }
             else{
