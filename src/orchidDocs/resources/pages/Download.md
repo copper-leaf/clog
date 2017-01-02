@@ -20,7 +20,9 @@ Add this to your module's dependencies:
 
     dependencies {
         ...
-        compile 'com.github.cjbrooks12:Clog:{{options.v}}'
+        compile('com.github.cjbrooks12:Clog:{{options.v}}') {
+            transitive = true
+        }
     }
 
 Alternatively, use the preconfigured Clog profiles for Android or Log4j:
