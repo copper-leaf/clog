@@ -1,5 +1,2 @@
-
-right :
-  - type: pages
-  - type: classes
-  - type: packages
+- type: pages
+- type: classes
