@@ -8,6 +8,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 
 public class Clog {
     public static final String KEY_V = "v";
@@ -23,9 +24,10 @@ public class Clog {
 
     private HashMap<String, ClogLogger> loggers;
     private ClogFormatter formatter;
-    private String defaultTag;
     private String lastTag;
     private String lastLog;
+
+    private Stack<String> tagStack;
 
     private List<String> tagWhitelist;
     private List<String> tagBlacklist;
@@ -63,6 +65,7 @@ public class Clog {
      * Initialize Clog with the default configuration, using a simple logger and the Parseltongue formatter
      */
     private Clog() {
+        tagStack = new Stack<>();
         loggers = new HashMap<>();
         loggers.put(null,  new DefaultLogger(null,      0));
         loggers.put(KEY_V, new DefaultLogger(KEY_V,     1));
@@ -90,6 +93,7 @@ public class Clog {
      * @param formatter
      */
     public Clog(HashMap<String, ClogLogger> loggers, ClogFormatter formatter) {
+        this.tagStack = new Stack<>();
         this.loggers = loggers;
         this.formatter = formatter;
 
@@ -152,19 +156,6 @@ public class Clog {
     }
 
     /**
-     * Log a Throwable to a generic logger. Will print the stack trace of the throwable as the log
-     * message, and use the specified tag.
-     *
-     * @param logger the key of the logger to use
-     * @param tag the tag
-     * @param throwable the throwable to log
-     * @return int
-     */
-    public static int logger(String logger, String tag, Throwable throwable) {
-        return getInstance().loggerInternal(logger, tag, null, throwable);
-    }
-
-    /**
      * Log a formatted message to a generic logger. Will use the default tag, which if not specified
      * will be the calling class's simple name.
      *
@@ -175,21 +166,7 @@ public class Clog {
      * @return int
      */
     public static int logger(String logger, String message, Object... args) {
-        return getInstance().loggerInternal(logger, null, message, null, args);
-    }
-
-    /**
-     * Log a formatted message to a generic logger. Will use the specified tag.
-     *
-     * @param logger the key of the logger to use
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param args (optional) the arguments to pass to the formatter
-     * @return int
-     */
-    public static int logger(String logger, String tag, String message, Object... args) {
-        return getInstance().loggerInternal(logger, tag, message, null, args);
+        return getInstance().loggerInternal(logger, message, null, args);
     }
 
     /**
@@ -203,21 +180,7 @@ public class Clog {
      * @param args (optional) the arguments to pass to the formatter
      */
     public static int logger(String logger, String message, Throwable throwable, Object... args) {
-        return getInstance().loggerInternal(logger, null, message, throwable, args);
-    }
-
-    /**
-     * Log a formatted message and a Throwable to a generic logger. Will use the specified tag.
-     *
-     * @param logger the key of the logger to use
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param throwable the throwable to log
-     * @param args (optional) the arguments to pass to the formatter
-     */
-    public static int logger(String logger, String tag, String message, Throwable throwable, Object... args) {
-        return getInstance().loggerInternal(logger, tag, message, throwable, args);
+        return getInstance().loggerInternal(logger, message, throwable, args);
     }
 
 // Default logging calls. Calls to generic logger function with key 'null'
@@ -235,18 +198,6 @@ public class Clog {
     }
 
     /**
-     * Log a Throwable to the default logger. Will print the stack trace of the throwable as the log
-     * message, and use the specified tag.
-     *
-     * @param tag the tag
-     * @param throwable the throwable to log
-     * @return int
-     */
-    public static int log(String tag, Throwable throwable) {
-        return logger(null, tag, throwable);
-    }
-
-    /**
      * Log a formatted message to the default logger. Will use the default tag, which if not specified
      * will be the calling class's simple name.
      *
@@ -260,19 +211,6 @@ public class Clog {
     }
 
     /**
-     * Log a formatted message to the default logger. Will use the specified tag.
-     *
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param args (optional) the arguments to pass to the formatter
-     * @return int
-     */
-    public static int log(String tag, String message, Object... args) {
-        return logger(null, tag, message, args);
-    }
-
-    /**
      * Log a formatted message and a Throwable to the default logger. Will use the default tag, which
      * if not specified will be the calling class's simple name.
      *
@@ -283,19 +221,6 @@ public class Clog {
      */
     public static int log(String message, Throwable throwable, Object... args) {
         return logger(null, message, throwable, args);
-    }
-
-    /**
-     * Log a formatted message and a Throwable to the default logger. Will use the specified tag.
-     *
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param throwable the throwable to log
-     * @param args (optional) the arguments to pass to the formatter
-     */
-    public static int log(String tag, String message, Throwable throwable, Object... args) {
-        return logger(null, tag, message, throwable, args);
     }
 
 // Verbose-level logging calls. Calls to generic logger function with key 'v'
@@ -313,18 +238,6 @@ public class Clog {
     }
 
     /**
-     * Log a Throwable to the 'verbose' logger. Will print the stack trace of the throwable as the log
-     * message, and use the specified tag.
-     *
-     * @param tag the tag
-     * @param throwable the throwable to log
-     * @return int
-     */
-    public static int v(String tag, Throwable throwable) {
-        return logger(KEY_V, tag, throwable);
-    }
-
-    /**
      * Log a formatted message to the 'verbose' logger. Will use the default tag, which if not specified
      * will be the calling class's simple name.
      *
@@ -338,19 +251,6 @@ public class Clog {
     }
 
     /**
-     * Log a formatted message to the 'verbose' logger. Will use the specified tag.
-     *
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param args (optional) the arguments to pass to the formatter
-     * @return int
-     */
-    public static int v(String tag, String message, Object... args) {
-        return logger(KEY_V, tag, message, args);
-    }
-
-    /**
      * Log a formatted message and a Throwable to the 'verbose' logger. Will use the default tag, which
      * if not specified will be the calling class's simple name.
      *
@@ -361,19 +261,6 @@ public class Clog {
      */
     public static int v(String message, Throwable throwable, Object... args) {
         return logger(KEY_V, message, throwable, args);
-    }
-
-    /**
-     * Log a formatted message and a Throwable to the 'verbose' logger. Will use the specified tag.
-     *
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param throwable the throwable to log
-     * @param args (optional) the arguments to pass to the formatter
-     */
-    public static int v(String tag, String message, Throwable throwable, Object... args) {
-        return logger(KEY_V, tag, message, throwable, args);
     }
 
 // Debug-level logging calls. Calls to generic logger function with key 'd'
@@ -391,18 +278,6 @@ public class Clog {
     }
 
     /**
-     * Log a Throwable to the 'debug' logger. Will print the stack trace of the throwable as the log
-     * message, and use the specified tag.
-     *
-     * @param tag the tag
-     * @param throwable the throwable to log
-     * @return int
-     */
-    public static int d(String tag, Throwable throwable) {
-        return logger(KEY_D, tag, throwable);
-    }
-
-    /**
      * Log a formatted message to the 'debug' logger. Will use the default tag, which if not specified
      * will be the calling class's simple name.
      *
@@ -413,19 +288,6 @@ public class Clog {
      */
     public static int d(String message, Object... args) {
         return logger(KEY_D, message, args);
-    }
-
-    /**
-     * Log a formatted message to the 'debug' logger. Will use the specified tag.
-     *
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param args (optional) the arguments to pass to the formatter
-     * @return int
-     */
-    public static int d(String tag, String message, Object... args) {
-        return logger(KEY_D, tag, message, args);
     }
 
     /**
@@ -440,20 +302,6 @@ public class Clog {
     public static int d(String message, Throwable throwable, Object... args) {
         return logger(KEY_D, message, throwable, args);
     }
-
-    /**
-     * Log a formatted message and a Throwable to the 'debug' logger. Will use the specified tag.
-     *
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param throwable the throwable to log
-     * @param args (optional) the arguments to pass to the formatter
-     */
-    public static int d(String tag, String message, Throwable throwable, Object... args) {
-        return logger(KEY_D, tag, message, throwable, args);
-    }
-
 
 // Info-level logging calls. Calls to generic logger function with key 'i'
 //--------------------------------------------------------------------------------------------------
@@ -470,18 +318,6 @@ public class Clog {
     }
 
     /**
-     * Log a Throwable to the 'info' logger. Will print the stack trace of the throwable as the log
-     * message, and use the specified tag.
-     *
-     * @param tag the tag
-     * @param throwable the throwable to log
-     * @return int
-     */
-    public static int i(String tag, Throwable throwable) {
-        return logger(KEY_I, tag, throwable);
-    }
-
-    /**
      * Log a formatted message to the 'info' logger. Will use the default tag, which if not specified
      * will be the calling class's simple name.
      *
@@ -495,19 +331,6 @@ public class Clog {
     }
 
     /**
-     * Log a formatted message to the 'info' logger. Will use the specified tag.
-     *
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param args (optional) the arguments to pass to the formatter
-     * @return int
-     */
-    public static int i(String tag, String message, Object... args) {
-        return logger(KEY_I, tag, message, args);
-    }
-
-    /**
      * Log a formatted message and a Throwable to the 'info' logger. Will use the default tag, which
      * if not specified will be the calling class's simple name.
      *
@@ -518,19 +341,6 @@ public class Clog {
      */
     public static int i(String message, Throwable throwable, Object... args) {
         return logger(KEY_I, message, throwable, args);
-    }
-
-    /**
-     * Log a formatted message and a Throwable to the 'info' logger. Will use the specified tag.
-     *
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param throwable the throwable to log
-     * @param args (optional) the arguments to pass to the formatter
-     */
-    public static int i(String tag, String message, Throwable throwable, Object... args) {
-        return logger(KEY_I, tag, message, throwable, args);
     }
 
 // Warning-level logging calls. Calls to generic logger function with key 'w'
@@ -548,18 +358,6 @@ public class Clog {
     }
 
     /**
-     * Log a Throwable to the 'warning' logger. Will print the stack trace of the throwable as the log
-     * message, and use the specified tag.
-     *
-     * @param tag the tag
-     * @param throwable the throwable to log
-     * @return int
-     */
-    public static int w(String tag, Throwable throwable) {
-        return logger(KEY_W, tag, throwable);
-    }
-
-    /**
      * Log a formatted message to the 'warning' logger. Will use the default tag, which if not specified
      * will be the calling class's simple name.
      *
@@ -573,19 +371,6 @@ public class Clog {
     }
 
     /**
-     * Log a formatted message to the 'warning' logger. Will use the specified tag.
-     *
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param args (optional) the arguments to pass to the formatter
-     * @return int
-     */
-    public static int w(String tag, String message, Object... args) {
-        return logger(KEY_W, tag, message, args);
-    }
-
-    /**
      * Log a formatted message and a Throwable to the 'warning' logger. Will use the default tag, which
      * if not specified will be the calling class's simple name.
      *
@@ -596,19 +381,6 @@ public class Clog {
      */
     public static int w(String message, Throwable throwable, Object... args) {
         return logger(KEY_W, message, throwable, args);
-    }
-
-    /**
-     * Log a formatted message and a Throwable to the 'warning' logger. Will use the specified tag.
-     *
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param throwable the throwable to log
-     * @param args (optional) the arguments to pass to the formatter
-     */
-    public static int w(String tag, String message, Throwable throwable, Object... args) {
-        return logger(KEY_W, tag, message, throwable, args);
     }
 
 // Error-level logging calls. Calls to generic logger function with key 'e'
@@ -626,18 +398,6 @@ public class Clog {
     }
 
     /**
-     * Log a Throwable to the 'error' logger. Will print the stack trace of the throwable as the log
-     * message, and use the specified tag.
-     *
-     * @param tag the tag
-     * @param throwable the throwable to log
-     * @return int
-     */
-    public static int e(String tag, Throwable throwable) {
-        return logger(KEY_E, tag, throwable);
-    }
-
-    /**
      * Log a formatted message to the 'error' logger. Will use the default tag, which if not specified
      * will be the calling class's simple name.
      *
@@ -651,19 +411,6 @@ public class Clog {
     }
 
     /**
-     * Log a formatted message to the 'error' logger. Will use the specified tag.
-     *
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param args (optional) the arguments to pass to the formatter
-     * @return int
-     */
-    public static int e(String tag, String message, Object... args) {
-        return logger(KEY_E, tag, message, args);
-    }
-
-    /**
      * Log a formatted message and a Throwable to the 'error' logger. Will use the default tag, which
      * if not specified will be the calling class's simple name.
      *
@@ -674,19 +421,6 @@ public class Clog {
      */
     public static int e(String message, Throwable throwable, Object... args) {
         return logger(KEY_E, message, throwable, args);
-    }
-
-    /**
-     * Log a formatted message and a Throwable to the 'error' logger. Will use the specified tag.
-     *
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param throwable the throwable to log
-     * @param args (optional) the arguments to pass to the formatter
-     */
-    public static int e(String tag, String message, Throwable throwable, Object... args) {
-        return logger(KEY_E, tag, message, throwable, args);
     }
 
 // Fatal-level (What a Terrible Failure) logging calls. Calls to generic logger function with key 'wtf'
@@ -704,18 +438,6 @@ public class Clog {
     }
 
     /**
-     * Log a Throwable to the WTF (what a terrible failure!) logger. Will print the stack trace of
-     * the throwable as the log message, and use the specified tag.
-     *
-     * @param tag the tag
-     * @param throwable the throwable to log
-     * @return int
-     */
-    public static int wtf(String tag, Throwable throwable) {
-        return logger(KEY_WTF, tag, throwable);
-    }
-
-    /**
      * Log a formatted message to the WTF (what a terrible failure!) logger. Will use the default
      * tag, which if not specified will be the calling class's simple name.
      *
@@ -726,19 +448,6 @@ public class Clog {
      */
     public static int wtf(String message, Object... args) {
         return logger(KEY_WTF, message, args);
-    }
-
-    /**
-     * Log a formatted message to the WTF (what a terrible failure!) logger. Will use the specified tag.
-     *
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param args (optional) the arguments to pass to the formatter
-     * @return int
-     */
-    public static int wtf(String tag, String message, Object... args) {
-        return logger(KEY_WTF, tag, message, args);
     }
 
     /**
@@ -754,20 +463,6 @@ public class Clog {
         return logger(KEY_WTF, message, throwable, args);
     }
 
-    /**
-     * Log a formatted message and a Throwable to the WTF (what a terrible failure!) logger. Will
-     * use the specified tag.
-     *
-     * @param tag the tag
-     * @param message the message to log. Should be marked up with your chosen formatter's markup,
-     *                with objects passed in as varargs
-     * @param throwable the throwable to log
-     * @param args (optional) the arguments to pass to the formatter
-     */
-    public static int wtf(String tag, String message, Throwable throwable, Object... args) {
-        return logger(KEY_WTF, tag, message, throwable, args);
-    }
-
 // All above logging calls come here, so that all logging logic is managed in one place
 //--------------------------------------------------------------------------------------------------
 
@@ -775,14 +470,13 @@ public class Clog {
      * Format and log a message, tag, and throwable to the specified logger
      *
      * @param logger  the key of the specific logger
-     * @param tag     the string to be used as a tag
      * @param message the string to be formatted and logged
      * @param args    the list of objects to format into the format string
      * @return int
      */
-    private int loggerInternal(String logger, String tag, String message, Throwable throwable, Object... args) {
+    private int loggerInternal(String logger, String message, Throwable throwable, Object... args) {
         ClogLogger currentLogger = null;
-        String currentTag = (tag != null) ? tag : getTag();
+        String currentTag = getTag();
         String currentMessage;
 
         // check tag against the whitelist and blacklist
@@ -855,7 +549,7 @@ public class Clog {
         }
 
         if (currentLogger.isActive()) {
-            currentTag = (tag != null) ? tag : getTag();
+            currentTag = getTag();
 
             if (message != null) {
                 currentMessage = formatter.format(message, args);
@@ -1128,27 +822,31 @@ public class Clog {
         this.maxPriority = maxPriority;
     }
 
-    // Set and get the default logger tag.
+// Set and get the default logger tag.
 //--------------------------------------------------------------------------------------------------
 
     /**
-     * Get the default tag to be used with all logging messages in the current profile. A default tag
-     * of 'null' indicates that all logged messages will use the caller's simple class name as the tag.
+     * Set the tag to use for subsequent logging calls. Be sure to push the tag as close the logging call as possible,
+     * and to pop this tag off the stack when finished.
      *
-     * @return the default tag, or null
+     * @param tag the tag to use
      */
-    public static String getDefaultTag() {
-        return getInstance().defaultTag;
+    public static void pushTag(String tag) {
+        getInstance().tagStack.push(tag);
     }
 
     /**
-     * Set the default tag to be used with all logging messages in the current profile. A default tag
-     * of 'null' indicates that all logged messages will use the caller's simple class name as the tag.
-     *
-     * @param defaultTag the default tag, or null
+     * Remove the latest tag from the tag stack.
      */
-    public static void setDefaultTag(String defaultTag) {
-        getInstance().defaultTag = defaultTag;
+    public static void popTag() {
+        getInstance().tagStack.pop();
+    }
+
+    /**
+     * Remove the current tag from the tag stack.
+     */
+    public static String getCurrentTag() {
+        return getTag();
     }
 
     /**
@@ -1158,8 +856,8 @@ public class Clog {
      * @return the default tag
      */
     private static String getTag() {
-        if (getInstance().defaultTag != null) {
-            return getInstance().defaultTag;
+        if (getInstance().tagStack.size() > 0) {
+            return getInstance().tagStack.peek();
         } else {
             return findCallerClassName();
         }

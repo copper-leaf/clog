@@ -30,16 +30,8 @@ public class ClogTest {
         assertEquals("ClogTest", lastTag);
         assertEquals("message", lastLog);
 
-        // test a basic log with the tag manually set, which should override the default class name
-        // as the tag
-        Clog.i("tag", "message");
-        lastLog = Clog.getLastLog();
-        lastTag = Clog.getLastTag();
-        assertEquals(lastTag, "tag");
-        assertEquals(lastLog, "message");
-
         // test a basic log with the default tag set
-        Clog.setDefaultTag("Clog");
+        Clog.pushTag("Clog");
 
         Clog.i("message");
         lastLog = Clog.getLastLog();
@@ -49,19 +41,25 @@ public class ClogTest {
 
         // test a basic log with the default tag set and the tag in the call manually set. The logging
         // tag should override the default tag
-        Clog.i("tag", "message");
+        Clog.pushTag("tag");
+        Clog.i("message");
         lastLog = Clog.getLastLog();
         lastTag = Clog.getLastTag();
         assertEquals(lastTag, "tag");
         assertEquals(lastLog, "message");
 
-        Clog.setDefaultTag(null);
+        Clog.popTag();
+        lastTag = Clog.getCurrentTag();
+        assertEquals(lastTag, "Clog");
+
+        Clog.popTag();
+        lastTag = Clog.getCurrentTag();
+        assertEquals(lastTag, "ClogTest");
     }
 
     @Test
     public void testFormattedLogging() throws Exception {
         String lastLog;
-        String lastTag;
 
         ArrayList<String> names = new ArrayList<>();
         names.add("Harry");
@@ -71,15 +69,12 @@ public class ClogTest {
 
         Clog.i("#{ $1 | join(', ') | lowercase } references back to #{ @1 | uppercase }", names);
         lastLog = Clog.getLastLog();
-        lastTag = Clog.getLastTag();
-        assertEquals(lastTag, "ClogTest");
         assertEquals(lastLog, "harry, ron, hermione, fred and george references back to HARRY, RON, HERMIONE, FRED AND GEORGE");
     }
 
     @Test
     public void testMultipleProfiles() throws Exception {
         String lastLog;
-        String lastTag;
         int numberOfLoggers;
 
         HashMap<String, ClogLogger> profileOneLoggers = new HashMap<>();
@@ -117,44 +112,38 @@ public class ClogTest {
         // own last logged message, I will go back and check the messages of each profile, and also
         // check the number of loggers in each profile
         Clog.setCurrentProfile("one");
-        Clog.i("Tag One", "Message One");
+        Clog.i("Message One");
 
         Clog.setCurrentProfile("two");
-        Clog.i("Tag Two", "Message Two");
+        Clog.i("Message Two");
 
         Clog.setCurrentProfile("three");
-        Clog.i("Tag Three", "Message Three");
+        Clog.i("Message Three");
 
         Clog.setCurrentProfile("one");
         lastLog = Clog.getLastLog();
-        lastTag = Clog.getLastTag();
+
         numberOfLoggers = Clog.getLoggers().size();
-        assertEquals(lastTag, "Tag One");
+
         assertEquals(lastLog, "Message One");
         assertEquals(numberOfLoggers, 1);
-
         Clog.setCurrentProfile("two");
         lastLog = Clog.getLastLog();
-        lastTag = Clog.getLastTag();
+
         numberOfLoggers = Clog.getLoggers().size();
-        assertEquals(lastTag, "Tag Two");
         assertEquals(lastLog, "Message Two");
         assertEquals(numberOfLoggers, 4);
 
         Clog.setCurrentProfile("three");
         lastLog = Clog.getLastLog();
-        lastTag = Clog.getLastTag();
         numberOfLoggers = Clog.getLoggers().size();
-        assertEquals(lastTag, "Tag Three");
         assertEquals(lastLog, "Message Three");
         assertEquals(numberOfLoggers, 7);
 
         //go back to profile one and check again for good measure
         Clog.setCurrentProfile("one");
         lastLog = Clog.getLastLog();
-        lastTag = Clog.getLastTag();
         numberOfLoggers = Clog.getLoggers().size();
-        assertEquals(lastTag, "Tag One");
         assertEquals(lastLog, "Message One");
         assertEquals(numberOfLoggers, 1);
     }
@@ -170,32 +159,29 @@ public class ClogTest {
         Clog.setCurrentProfile(null);
 
         String lastLog;
-        String lastTag;
 
         // test a basic log, which will use the caller class name as the tag
-        Clog.i("TestTag", "message");
+        Clog.i("message");
         lastLog = Clog.getLastLog();
-        lastTag = Clog.getLastTag();
-        assertEquals("TestTag", lastTag);
         assertEquals("message", lastLog);
 
         Clog.addTagToWhitelist("TestTag");
         Clog.flush();
 
-        Clog.i("TestTag", "message");
+        Clog.pushTag("TestTag");
+        Clog.i("message");
         lastLog = Clog.getLastLog();
-        lastTag = Clog.getLastTag();
-        assertEquals("TestTag", lastTag);
         assertEquals("message", lastLog);
+        Clog.popTag();
 
         Clog.addTagToBlacklist("TestTag");
         Clog.flush();
 
-        Clog.i("TestTag", "message");
+        Clog.pushTag("TestTag");
+        Clog.i("message");
         lastLog = Clog.getLastLog();
-        lastTag = Clog.getLastTag();
-        assertEquals(null, lastTag);
         assertEquals(null, lastLog);
+        Clog.popTag();
 
         Clog.clearTagWhitelist();
         Clog.clearTagBlacklist();
