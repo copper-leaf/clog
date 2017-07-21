@@ -3,26 +3,18 @@
 plugins {
     id 'java'
     id 'jacoco'
-    id "com.eden.orchidPlugin" version "v0.1.7"
+//    id "com.eden.orchidPlugin" version "v0.1.7"
 }
 
 group 'com.eden'
-version = 'v1.3.0'
+version = 'v1.4.0'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 repositories {
-    jcenter()
+    maven { url 'http://jcenter.bintray.com/' }
     maven { url 'https://jitpack.io' }
-}
-
-configurations {
-    orchidDocs
-}
-
-sourceSets {
-    orchidDocs
 }
 
 dependencies {
@@ -31,17 +23,16 @@ dependencies {
 
     compile 'org.fusesource.jansi:jansi:1.14'
 
-    orchidDocsCompile 'io.github.javaeden.orchid:OrchidCore:v0.1.0'
-    orchidDocsCompile 'io.github.javaeden.orchid:OrchidJavadoc:v0.1.0'
-    orchidDocsCompile 'io.github.javaeden.orchid:OrchidPages:v0.1.0'
-    orchidDocsCompile 'io.github.javaeden.orchid:OrchidBsDoc:v0.1.0'
+//    orchidDocsCompile 'io.github.javaeden.orchid:OrchidAll:v0.1.0'
+//    orchidDocsCompile 'com.github.JavaEden.Orchid:All:-SNAPSHOT'
+
 }
 
-orchid {
-    version = "${project.version}"
-    theme   = "com.eden.orchid.bsdoc.BSDocTheme"
-    baseUrl = ""
-}
+//orchid {
+//    version = "${project.version}"
+//    theme   = "com.eden.orchid.bsdoc.BSDocTheme"
+//    baseUrl = ""
+//}
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'

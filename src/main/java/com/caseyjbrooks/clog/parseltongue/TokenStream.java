@@ -51,7 +51,12 @@ class TokenStream {
                             return new Token(Token.Type.HASH, "#");
                         }
                     case '{':
-                        return new Token(Token.Type.LCURLYBRACE, "{");
+                        if(chars.peekFirst() == '}') {
+                            return new Token(Token.Type.CLOG_SIMPLE, "{}");
+                        }
+                        else {
+                            return new Token(Token.Type.LCURLYBRACE, "{");
+                        }
                     case '}':
                         return new Token(Token.Type.RCURLYBRACE, "}");
                     case '[':
@@ -128,6 +133,12 @@ class TokenStream {
                     chars.removeFirst();
                     column++;
                     ungetTokens.push(new Token(Token.Type.CLOG_START));
+                    return new Token(Token.Type.ANY, s);
+                }
+                else if(ch == '{' && chars.peekFirst() == '}') {
+//                    chars.removeFirst();
+//                    column++;
+                    ungetTokens.push(new Token(Token.Type.CLOG_SIMPLE));
                     return new Token(Token.Type.ANY, s);
                 }
                 else {

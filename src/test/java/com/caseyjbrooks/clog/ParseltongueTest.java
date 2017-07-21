@@ -257,6 +257,29 @@ public class ParseltongueTest {
         expectedOutput = "1: 10, 2: 20, 3: , 4: 40. a1: 10, a2: 20, a3: , a4: 40.";
         output = parseltongue.format(input, 10, 20, 30, 40);
         assertEquals(expectedOutput, output);
+
+        // test that if we leave out anything inside the braces, we print objects in order
+        input = "1: #{}, 2: #{}, 3: #{}, 4: #{}.";
+        expectedOutput = "1: 10, 2: 20, 3: 30, 4: 40.";
+        output = parseltongue.format(input, 10, 20, 30, 40);
+        assertEquals(expectedOutput, output);
+
+        // test that if we leave out anything inside the braces, we print objects in order, using SLF4J-style formatters
+        input = "1: {}, 2: {}, 3: {}, 4: {}.";
+        expectedOutput = "1: 10, 2: 20, 3: 30, 4: 40.";
+        output = parseltongue.format(input, 10, 20, 30, 40);
+        assertEquals(expectedOutput, output);
+
+        // test that SLF4J-style formatters don't allow spells, instead just printing the item out directly
+        input = "{ repeat(2) }";
+        expectedOutput = "{ repeat(2) }";
+        output = parseltongue.format(input, 10, 20, 30, 40);
+        assertEquals(expectedOutput, output);
+
+        input = "{ | repeat(2) }";
+        expectedOutput = "{ | repeat(2) }";
+        output = parseltongue.format(input, 10, 20, 30, 40);
+        assertEquals(expectedOutput, output);
     }
 
 // Test that data is moved through the pipeline correctly, accounting for errors
@@ -400,7 +423,7 @@ public class ParseltongueTest {
         // parentheses as params
         input = "Enter Pipeline --> #{ $1 | uppercaseAll()[2] }";
         expectedOutput = "Enter Pipeline --> HERMIONE";
-        output = parseltongue.format(input, namesArray, 0);
+        output = parseltongue.format(input, new Object[]{ namesArray });
         assertEquals(expectedOutput, output);
     }
 

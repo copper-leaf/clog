@@ -167,6 +167,8 @@ public class Parseltongue implements ClogFormatter {
         String input;
         String output;
 
+        private int autoParamCounter;
+
         private ArrayList<String> messages;
 
         public String parse(String input, Object[] params) {
@@ -186,6 +188,7 @@ public class Parseltongue implements ClogFormatter {
 
             this.ts = new TokenStream(input);
 
+            autoParamCounter = 0;
             while(ts.hasTokens()) {
                 any();
 
@@ -204,7 +207,7 @@ public class Parseltongue implements ClogFormatter {
             output += t.getStringValue();
         }
 
-        //clog ::= CLOG_START reagent spellbook RCURLYBRACE
+        //clog ::= CLOG_START reagent spellbook RCURLYBRACE | CLOG_SIMPLE RCURLYBRACE
         private void clog() {
             Token a = ts.get();
 
@@ -236,6 +239,33 @@ public class Parseltongue implements ClogFormatter {
                         }
                     }
                     else {
+                        unclog();
+                    }
+                }
+                else {
+                    unclog();
+                    results.add(null);
+                }
+            }
+            else if(a != null && a.equals(Token.Type.CLOG_SIMPLE)) {
+                ParseltonguePair<Boolean, Object> object = autoParam();
+
+                if(object.first) {
+                    Token b = ts.get();
+                    if (b != null && b.equals(Token.Type.RCURLYBRACE)) {
+                        if (object.second != null) {
+                            output += object.second.toString();
+                        }
+                    }
+                    else {
+                        ts.unget(b);
+
+                        if (b != null) {
+                            messages.add("Expecting '}' after simple clog, got '" + b.getStringValue() + "' (at column " + ts.getColumn() + ")");
+                        } else {
+                            messages.add("Expecting '}' after simple clog, got 'null' (at column " + ts.getColumn() + ")");
+                        }
+
                         unclog();
                     }
                 }
@@ -361,7 +391,7 @@ public class Parseltongue implements ClogFormatter {
             }
         }
 
-        //reagent ::= param indexer | result indexer | booleanLit | integerLit | doubleLit | stringLit
+        //reagent ::= param indexer | result indexer | booleanLit | integerLit | doubleLit | stringLit | autoParam
         private ParseltonguePair<Boolean, Object> reagent() {
             ParseltonguePair<Boolean, Object> param = param();
             if(param.first) {
@@ -396,6 +426,11 @@ public class Parseltongue implements ClogFormatter {
             ParseltonguePair<Boolean, NullObject> nullLit = nullLit();
             if(nullLit.first) {
                 return new ParseltonguePair<Boolean, Object>(true, nullLit.second);
+            }
+
+            ParseltonguePair<Boolean, Object> autoParam = autoParam();
+            if(autoParam.first) {
+                return autoParam;
             }
 
             return new ParseltonguePair<>(false, null);
@@ -577,6 +612,27 @@ public class Parseltongue implements ClogFormatter {
             }
 
             ts.unget(a);
+            return new ParseltonguePair<>(false, null);
+        }
+
+        //result ::= ATSIGN NUMBER
+        private ParseltonguePair<Boolean, Object> autoParam() {
+            Token a = ts.get();
+
+            if(a != null && a.equals(Token.Type.RCURLYBRACE)) {
+                ts.unget(a);
+                autoParamCounter++;
+                if(autoParamCounter > 0 && (autoParamCounter - 1) < params.size()) {
+                    return new ParseltonguePair<>(true, params.get(autoParamCounter - 1));
+                }
+                else {
+                    return new ParseltonguePair<>(true, null);
+                }
+            }
+            else {
+                ts.unget(a);
+            }
+
             return new ParseltonguePair<>(false, null);
         }
 

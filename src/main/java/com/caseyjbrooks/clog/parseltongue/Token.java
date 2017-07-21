@@ -5,6 +5,7 @@ class Token {
         ANY,
 
         CLOG_START,
+        CLOG_SIMPLE,
 
         PIPE,
         HASH,
@@ -52,4 +53,8 @@ class Token {
     int getIntValue() { return intValue; }
 
     boolean equals(Type type) { return this.type == type; }
+
+    public Type getType() {
+        return type;
+    }
 }
