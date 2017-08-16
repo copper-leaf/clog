@@ -85,7 +85,7 @@ public class Clog {
      *
      * @return the current Clog profile instance
      */
-    private static Clog getInstance() {
+    public static Clog getInstance() {
         if (instance == null) {
             if (profiles == null || profiles.get(null) == null) {
                 instance = new Clog();
@@ -845,8 +845,8 @@ public class Clog {
      *
      * @param minPriority  the minimum priority to log
      */
-    public void setMinPriority(Clog.Priority minPriority) {
-        this.minPriority = minPriority;
+    public static void setMinPriority(Clog.Priority minPriority) {
+        getInstance().minPriority = minPriority;
     }
 
     /**
@@ -854,8 +854,8 @@ public class Clog {
      *
      * @param maxPriority  the maximum priority to log
      */
-    public void setMaxPriority(Clog.Priority maxPriority) {
-        this.maxPriority = maxPriority;
+    public static void setMaxPriority(Clog.Priority maxPriority) {
+        getInstance().maxPriority = maxPriority;
     }
 
 // Set and get the default logger tag.

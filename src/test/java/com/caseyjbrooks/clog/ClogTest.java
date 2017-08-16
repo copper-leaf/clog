@@ -239,31 +239,31 @@ public class ClogTest {
         Clog.pushTag("testPriorities");
 
         // Test using known priorities
-        clog.setMinPriority(Clog.Priority.WARNING);
+        Clog.setMinPriority(Clog.Priority.WARNING);
         Clog.i("Test using known priorities");
         assertEquals(null, Clog.getLastLog());
 
-        clog.setMinPriority(Clog.Priority.DEBUG);
+        Clog.setMinPriority(Clog.Priority.DEBUG);
         Clog.i("Test using known priorities");
         assertEquals("Test using known priorities", Clog.getLastLog());
         Clog.flush();
 
         // Test by using Strings to find priorities by name
-        clog.setMinPriority(Clog.Priority.getByKey("warning"));
+        Clog.setMinPriority(Clog.Priority.getByKey("warning"));
         Clog.i("Test by using Strings to find priorities by name");
         assertEquals(null, Clog.getLastLog());
 
-        clog.setMinPriority(Clog.Priority.getByKey("debug"));
+        Clog.setMinPriority(Clog.Priority.getByKey("debug"));
         Clog.i("Test by using Strings to find priorities by name");
         assertEquals("Test by using Strings to find priorities by name", Clog.getLastLog());
         Clog.flush();
 
         // Test by using Strings to find priorities by key
-        clog.setMinPriority(Clog.Priority.getByKey(Clog.KEY_W));
+        Clog.setMinPriority(Clog.Priority.getByKey(Clog.KEY_W));
         Clog.i("Test by using Strings to find priorities by key");
         assertEquals(null, Clog.getLastLog());
 
-        clog.setMinPriority(Clog.Priority.getByKey(Clog.KEY_D));
+        Clog.setMinPriority(Clog.Priority.getByKey(Clog.KEY_D));
         Clog.i("Test by using Strings to find priorities by key");
         assertEquals("Test by using Strings to find priorities by key", Clog.getLastLog());
         Clog.flush();
