@@ -14,7 +14,7 @@ public class ClogTest {
     public void testBasicLogging() throws Exception {
 
         HashMap<String, ClogLogger> profileOneLoggers = new HashMap<>();
-        profileOneLoggers.put(null, new DefaultLogger(null, 0));
+        profileOneLoggers.put(null, new DefaultLogger(Clog.Priority.DEFAULT));
         ClogFormatter profileOneFormatter = new Parseltongue();
         Clog profileOne = new Clog(profileOneLoggers, profileOneFormatter);
         Clog.addProfile(null, profileOne);
@@ -81,20 +81,20 @@ public class ClogTest {
         HashMap<String, ClogLogger> profileTwoLoggers = new HashMap<>();
         HashMap<String, ClogLogger> profileThreeLoggers = new HashMap<>();
 
-        profileOneLoggers.put(null, new DefaultLogger(null, 0));
+        profileOneLoggers.put(null, new DefaultLogger());
 
-        profileTwoLoggers.put(null, new DefaultLogger(null, 0));
-        profileTwoLoggers.put("i", new DefaultLogger(null, 0));
-        profileTwoLoggers.put("d", new DefaultLogger(null, 0));
-        profileTwoLoggers.put("e", new DefaultLogger(null, 0));
+        profileTwoLoggers.put(null, new DefaultLogger());
+        profileTwoLoggers.put("i", new DefaultLogger());
+        profileTwoLoggers.put("d", new DefaultLogger());
+        profileTwoLoggers.put("e", new DefaultLogger());
 
-        profileThreeLoggers.put(null, new DefaultLogger(null, 0));
-        profileThreeLoggers.put("i", new DefaultLogger(null, 0));
-        profileThreeLoggers.put("d", new DefaultLogger(null, 0));
-        profileThreeLoggers.put("e", new DefaultLogger(null, 0));
-        profileThreeLoggers.put("v", new DefaultLogger(null, 0));
-        profileThreeLoggers.put("w", new DefaultLogger(null, 0));
-        profileThreeLoggers.put("wtf", new DefaultLogger(null, 0));
+        profileThreeLoggers.put(null, new DefaultLogger());
+        profileThreeLoggers.put("i", new DefaultLogger());
+        profileThreeLoggers.put("d", new DefaultLogger());
+        profileThreeLoggers.put("e", new DefaultLogger());
+        profileThreeLoggers.put("v", new DefaultLogger());
+        profileThreeLoggers.put("w", new DefaultLogger());
+        profileThreeLoggers.put("wtf", new DefaultLogger());
 
         ClogFormatter profileOneFormatter = new Parseltongue();
         ClogFormatter profileTwoFormatter = new Parseltongue();
@@ -152,7 +152,7 @@ public class ClogTest {
     public void testFiltering() {
 
         HashMap<String, ClogLogger> profileOneLoggers = new HashMap<>();
-        profileOneLoggers.put(null, new DefaultLogger(null, 0));
+        profileOneLoggers.put(null, new DefaultLogger());
         ClogFormatter profileOneFormatter = new Parseltongue();
         Clog profileOne = new Clog(profileOneLoggers, profileOneFormatter);
         Clog.addProfile(null, profileOne);
@@ -195,13 +195,13 @@ public class ClogTest {
 
         // Test that output from the default logger can show colors
         HashMap<String, ClogLogger> loggers = new HashMap<>();
-        loggers.put(null,  new DefaultLogger(null,      0));
-        loggers.put(Clog.KEY_V, new DefaultLogger(Clog.KEY_V,     1));
-        loggers.put(Clog.KEY_D, new DefaultLogger(Clog.KEY_D,     2));
-        loggers.put(Clog.KEY_I, new DefaultLogger(Clog.KEY_I,     3));
-        loggers.put(Clog.KEY_W, new DefaultLogger(Clog.KEY_W,     4));
-        loggers.put(Clog.KEY_E, new DefaultLogger(Clog.KEY_E,     5));
-        loggers.put(Clog.KEY_WTF, new DefaultLogger(Clog.KEY_WTF, 6));
+        loggers.put(null,  new DefaultLogger());
+        loggers.put(Clog.KEY_V, new DefaultLogger(Clog.Priority.VERBOSE));
+        loggers.put(Clog.KEY_D, new DefaultLogger(Clog.Priority.DEBUG));
+        loggers.put(Clog.KEY_I, new DefaultLogger(Clog.Priority.INFO));
+        loggers.put(Clog.KEY_W, new DefaultLogger(Clog.Priority.WARNING));
+        loggers.put(Clog.KEY_E, new DefaultLogger(Clog.Priority.ERROR));
+        loggers.put(Clog.KEY_WTF, new DefaultLogger(Clog.Priority.FATAL));
 
         Clog clog = new Clog(loggers, new Parseltongue());
 
@@ -217,5 +217,57 @@ public class ClogTest {
         //test that the color spell works
 
         Clog.log("Log #{$0 | fg('BLUE') }me,#{$0 | reset } dog!");
+    }
+
+    @Test
+    public void testPriorities() {
+
+        // Test that output from the default logger can show colors
+        HashMap<String, ClogLogger> loggers = new HashMap<>();
+        loggers.put(null,  new DefaultLogger());
+        loggers.put(Clog.KEY_V, new DefaultLogger(Clog.Priority.VERBOSE));
+        loggers.put(Clog.KEY_D, new DefaultLogger(Clog.Priority.DEBUG));
+        loggers.put(Clog.KEY_I, new DefaultLogger(Clog.Priority.INFO));
+        loggers.put(Clog.KEY_W, new DefaultLogger(Clog.Priority.WARNING));
+        loggers.put(Clog.KEY_E, new DefaultLogger(Clog.Priority.ERROR));
+        loggers.put(Clog.KEY_WTF, new DefaultLogger(Clog.Priority.FATAL));
+
+        Clog clog = new Clog(loggers, new Parseltongue());
+        Clog.setCurrentProfile("test3", clog);
+
+
+        Clog.pushTag("testPriorities");
+
+        // Test using known priorities
+        clog.setMinPriority(Clog.Priority.WARNING);
+        Clog.i("Test using known priorities");
+        assertEquals(null, Clog.getLastLog());
+
+        clog.setMinPriority(Clog.Priority.DEBUG);
+        Clog.i("Test using known priorities");
+        assertEquals("Test using known priorities", Clog.getLastLog());
+        Clog.flush();
+
+        // Test by using Strings to find priorities by name
+        clog.setMinPriority(Clog.Priority.getByKey("warning"));
+        Clog.i("Test by using Strings to find priorities by name");
+        assertEquals(null, Clog.getLastLog());
+
+        clog.setMinPriority(Clog.Priority.getByKey("debug"));
+        Clog.i("Test by using Strings to find priorities by name");
+        assertEquals("Test by using Strings to find priorities by name", Clog.getLastLog());
+        Clog.flush();
+
+        // Test by using Strings to find priorities by key
+        clog.setMinPriority(Clog.Priority.getByKey(Clog.KEY_W));
+        Clog.i("Test by using Strings to find priorities by key");
+        assertEquals(null, Clog.getLastLog());
+
+        clog.setMinPriority(Clog.Priority.getByKey(Clog.KEY_D));
+        Clog.i("Test by using Strings to find priorities by key");
+        assertEquals("Test by using Strings to find priorities by key", Clog.getLastLog());
+        Clog.flush();
+
+        Clog.popTag();
     }
 }

@@ -19,11 +19,13 @@ public class DefaultLogger implements ClogLogger {
         AnsiConsole.systemInstall();
     }
 
-    private String logger;
-    private int priority;
+    private Clog.Priority priority;
 
-    public DefaultLogger(String logger, int priority) {
-        this.logger = logger;
+    public DefaultLogger() {
+        this(Clog.Priority.DEFAULT);
+    }
+
+    public DefaultLogger(Clog.Priority priority) {
         this.priority = priority;
     }
 
@@ -45,27 +47,28 @@ public class DefaultLogger implements ClogLogger {
     }
 
     @Override
-    public int priority() {
+    public Clog.Priority priority() {
         return priority;
     }
 
     private Ansi getAnsiLevelString() {
-        if(logger != null) {
-            switch (logger) {
-                case Clog.KEY_V:
+        if(priority != null) {
+            switch (priority) {
+                case VERBOSE:
                     return ansi().fg(GREEN).a("[VERBOSE] ").reset();
-                case Clog.KEY_D:
+                case DEBUG:
                     return ansi().fg(BLUE).a("[DEBUG] ").reset();
-                case Clog.KEY_I:
+                case INFO:
                     return ansi().fg(CYAN).a("[INFO] ").reset();
-                case Clog.KEY_W:
+                case WARNING:
                     return ansi().fg(YELLOW).a("[WARN] ").reset();
-                case Clog.KEY_E:
+                case ERROR:
                     return ansi().fg(RED).a("[ERROR] ").reset();
-                case Clog.KEY_WTF:
+                case FATAL:
                     return ansi().fg(MAGENTA).a("[FATAL] ").reset();
+                case DEFAULT:
                 default:
-                    break;
+                    return ansi().fg(MAGENTA).a("").reset();
             }
         }
 

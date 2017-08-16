@@ -18,6 +18,42 @@ public class Clog {
     public static final String KEY_E = "e";
     public static final String KEY_WTF = "wtf";
 
+    public enum Priority {
+        VERBOSE(KEY_V,   1),
+        DEBUG(  KEY_D,   2),
+        INFO(   KEY_I,   3),
+        DEFAULT(null,    4),
+        WARNING(KEY_E,   5),
+        ERROR(  KEY_E,   6),
+        FATAL(  KEY_WTF, 7);
+
+        private final int priority;
+        private final String key;
+
+        Priority(String key, int priority) {
+            this.key = key;
+            this.priority = priority;
+        }
+
+        public int getPriority() {
+            return priority;
+        }
+
+        public String getKey() {
+            return key;
+        }
+
+        public static Priority getByKey(String key) {
+            for(Priority priority : Priority.values()) {
+                if(priority.toString().equalsIgnoreCase(key) || (priority.getKey() == null && key == null) || (priority.getKey() != null && priority.getKey().equalsIgnoreCase(key))) {
+                    return priority;
+                }
+            }
+
+            return Priority.DEFAULT;
+        }
+    }
+
     private static final String CLASS_NAME = Clog.class.getName();
     private static HashMap<String, Clog> profiles;
     private static Clog instance;
@@ -35,8 +71,8 @@ public class Clog {
     private List<String> loggerWhitelist;
     private List<String> loggerBlacklist;
 
-    private Integer minPriority;
-    private Integer maxPriority;
+    private Clog.Priority minPriority;
+    private Clog.Priority maxPriority;
 
     static {
         profiles = new HashMap<>();
@@ -67,13 +103,13 @@ public class Clog {
     private Clog() {
         tagStack = new Stack<>();
         loggers = new HashMap<>();
-        loggers.put(null,  new DefaultLogger(null,      0));
-        loggers.put(KEY_V, new DefaultLogger(KEY_V,     1));
-        loggers.put(KEY_D, new DefaultLogger(KEY_D,     2));
-        loggers.put(KEY_I, new DefaultLogger(KEY_I,     3));
-        loggers.put(KEY_W, new DefaultLogger(KEY_W,     4));
-        loggers.put(KEY_E, new DefaultLogger(KEY_E,     5));
-        loggers.put(KEY_WTF, new DefaultLogger(KEY_WTF, 6));
+        loggers.put(null,  new DefaultLogger(  Priority.DEFAULT));
+        loggers.put(KEY_V, new DefaultLogger(  Priority.VERBOSE));
+        loggers.put(KEY_D, new DefaultLogger(  Priority.DEBUG));
+        loggers.put(KEY_I, new DefaultLogger(  Priority.INFO));
+        loggers.put(KEY_W, new DefaultLogger(  Priority.WARNING));
+        loggers.put(KEY_E, new DefaultLogger(  Priority.ERROR));
+        loggers.put(KEY_WTF, new DefaultLogger(Priority.FATAL));
         formatter = new Parseltongue();
 
         tagWhitelist = new ArrayList<>();
@@ -513,10 +549,10 @@ public class Clog {
             }
 
             if (currentLogger == null) {
-                currentLogger = new DefaultLogger(null, 0);
+                currentLogger = new DefaultLogger();
             }
         } else {
-            currentLogger = new DefaultLogger(null, 0);
+            currentLogger = new DefaultLogger();
         }
 
         // check logger against the whitelist, blacklist, and priority levels
@@ -540,11 +576,11 @@ public class Clog {
             return 0;
         }
 
-        if(minPriority != null && currentLogger.priority() < minPriority) {
+        if(minPriority != null && currentLogger.priority().getPriority() < minPriority.getPriority()) {
             return 0;
         }
 
-        if(maxPriority != null && currentLogger.priority() > maxPriority) {
+        if(maxPriority != null && currentLogger.priority().getPriority() > maxPriority.getPriority()) {
             return 0;
         }
 
@@ -809,7 +845,7 @@ public class Clog {
      *
      * @param minPriority  the minimum priority to log
      */
-    public void setMinPriority(Integer minPriority) {
+    public void setMinPriority(Clog.Priority minPriority) {
         this.minPriority = minPriority;
     }
 
@@ -818,7 +854,7 @@ public class Clog {
      *
      * @param maxPriority  the maximum priority to log
      */
-    public void setMaxPriority(Integer maxPriority) {
+    public void setMaxPriority(Clog.Priority maxPriority) {
         this.maxPriority = maxPriority;
     }
 

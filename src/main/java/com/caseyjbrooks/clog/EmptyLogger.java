@@ -22,7 +22,7 @@ public class EmptyLogger implements ClogLogger {
     }
 
     @Override
-    public int priority() {
-        return 100;
+    public Clog.Priority priority() {
+        return Clog.Priority.DEFAULT;
     }
 }
