@@ -13,13 +13,14 @@ public class AndroidClog {
     public static Clog getDevelopmentClog() {
         ClogFormatter formatter = new Parseltongue();
         HashMap<String, ClogLogger> loggers = new HashMap<>();
-        loggers.put(null, new ClogI());
-        loggers.put("d", new ClogD());
-        loggers.put("e", new ClogE());
-        loggers.put("i", new ClogI());
-        loggers.put("v", new ClogV());
-        loggers.put("w", new ClogW());
-        loggers.put("wtf", new ClogWTF());
+
+        loggers.put(null,         new AndroidLogger(Clog.Priority.DEFAULT));
+        loggers.put(Clog.KEY_V,   new AndroidLogger(Clog.Priority.VERBOSE));
+        loggers.put(Clog.KEY_D,   new AndroidLogger(Clog.Priority.DEBUG));
+        loggers.put(Clog.KEY_I,   new AndroidLogger(Clog.Priority.INFO));
+        loggers.put(Clog.KEY_W,   new AndroidLogger(Clog.Priority.WARNING));
+        loggers.put(Clog.KEY_E,   new AndroidLogger(Clog.Priority.ERROR));
+        loggers.put(Clog.KEY_WTF, new AndroidLogger(Clog.Priority.FATAL));
 
         return new Clog(loggers, formatter);
     }
