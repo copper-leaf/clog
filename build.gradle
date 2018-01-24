@@ -81,6 +81,14 @@ artifacts {
     archives javadocJar
 }
 
+if(project.sourceSets.main.allJava.files?.empty) {
+    project.tasks.assemble.dependsOn orchidBuild
+    project.tasks.orchidBuild.mustRunAfter javadoc
+    project.tasks.orchidBuild.onlyIf {
+        !(project.hasProperty('noJavadoc') && project.property('noJavadoc')) && !project.orchid.noJavadoc
+    }
+}
+
 // Jacoco Code Coverage
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -177,7 +185,7 @@ afterEvaluate { project ->
         override = true
 
         pkg {
-            repo = "${rootProject.name}"
+            repo = "Eden"
             name = "${project.name}"
             userOrg = 'javaeden'
             licenses = ['MIT']
