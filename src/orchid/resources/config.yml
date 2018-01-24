@@ -1,0 +1,41 @@
+
+site:
+  about:
+    siteName: Clog
+    siteDescription: Simple yet powerful logging and string formatting for Java
+
+theme:
+  social:
+    github: 'JavaEden/Clog'
+  primaryColor: '#2a623d'
+  menu:
+    - type: 'link'
+      title: 'Home'
+      url: '/'
+    - type: 'wiki'
+      topLevel: false
+    - type: 'pages'
+      atRoot: true
+    - type: 'javadocPackages'
+    - type: 'javadocClasses'
+
+allPages:
+  components:
+    - type: pageContent
+      order: 10
+    - type: prism
+      githubTheme: 'darcula'
+      languages:
+        - 'yaml'
+        - 'java'
+        - 'groovy'
+        - 'markdown'
+      plugins:
+        - 'line-numbers'
+        - 'line-highlight'
+        - 'toolbar'
+        - 'show-language'
+        - 'copy-to-clipboard'
+
+staticPages:
+  layout: geopattern2
