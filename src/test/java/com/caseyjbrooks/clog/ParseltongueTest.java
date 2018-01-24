@@ -87,6 +87,32 @@ public class ParseltongueTest {
         expectedOutput = "ParselTongueTestClass";
         output = parseltongue.format(input, new ParselTongueTestClass());
         assertEquals(expectedOutput, output);
+
+        // test that Clog-style formatting works the same as SLF4j-style formatting, and that both work together
+        input = "#{ $1 }, #{ $2 }";
+        expectedOutput = "Harry, Ron";
+        output = parseltongue.format(input, names.get(0), names.get(1));
+        assertEquals(expectedOutput, output);
+
+        input = "{}, {}";
+        expectedOutput = "Harry, Ron";
+        output = parseltongue.format(input, names.get(0), names.get(1));
+        assertEquals(expectedOutput, output);
+
+        input = "#{ $1 }, {}";
+        expectedOutput = "Harry, Ron";
+        output = parseltongue.format(input, names.get(0), names.get(1));
+        assertEquals(expectedOutput, output);
+
+        input = "{}, #{ $2 }";
+        expectedOutput = "Harry, Ron";
+        output = parseltongue.format(input, names.get(0), names.get(1));
+        assertEquals(expectedOutput, output);
+
+        input = "{}, #{ $2 }, {}, #{ $4 }, {}";
+        expectedOutput = "Harry, Ron, Hermione, Fred and George, Hermione";
+        output = parseltongue.format(input, names.get(0), names.get(1), names.get(2), names.get(3), names.get(2));
+        assertEquals(expectedOutput, output);
     }
 
 // Brute-force test all possible parameter types are working

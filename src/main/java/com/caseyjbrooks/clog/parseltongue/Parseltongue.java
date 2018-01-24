@@ -447,9 +447,11 @@ public class Parseltongue implements ClogFormatter {
                     int index = b.getIntValue();
 
                     if(index > 0 && (index - 1) < params.size()) {
+                        autoParamCounter++;
                         return new ParseltonguePair<>(true, params.get(index - 1));
                     }
                     else {
+                        autoParamCounter++;
                         return new ParseltonguePair<>(true, null);
                     }
                 }
@@ -615,7 +617,7 @@ public class Parseltongue implements ClogFormatter {
             return new ParseltonguePair<>(false, null);
         }
 
-        //result ::= ATSIGN NUMBER
+        //autoParam ::=
         private ParseltonguePair<Boolean, Object> autoParam() {
             Token a = ts.get();
 
