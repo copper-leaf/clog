@@ -19,7 +19,7 @@ public class DefaultLogger implements ClogLogger {
         AnsiConsole.systemInstall();
     }
 
-    private Clog.Priority priority;
+    private final Clog.Priority priority;
 
     public DefaultLogger() {
         this(Clog.Priority.DEFAULT);
@@ -51,7 +51,7 @@ public class DefaultLogger implements ClogLogger {
         return priority;
     }
 
-    private Ansi getAnsiLevelString() {
+    Ansi getAnsiLevelString() {
         if(priority != null) {
             switch (priority) {
                 case VERBOSE:
@@ -68,7 +68,7 @@ public class DefaultLogger implements ClogLogger {
                     return ansi().fg(MAGENTA).a("[FATAL] ").reset();
                 case DEFAULT:
                 default:
-                    return ansi().fg(MAGENTA).a("").reset();
+                    return ansi().a("");
             }
         }
 

@@ -158,7 +158,7 @@ Under the hood, the String formatter and all loggers are held within instances o
 
     // Create your clog profile with its loggers and chosen String formatter (see below)
     ClogFormatter formatter = new Parseltongue();
-    HashMap<String, ClogLogger> loggers = new HashMap<String, ClogLogger>();
+    Map<String, ClogLogger> loggers = new HashMap<String, ClogLogger>();
     loggers.put(null, new ClogI());
     loggers.put("d", new ClogD());
     loggers.put("e", new ClogE());

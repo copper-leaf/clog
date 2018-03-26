@@ -1,16 +1,10 @@
 package com.caseyjbrooks.clog;
 
-import com.caseyjbrooks.clog.parseltongue.Parseltongue;
-
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Stack;
+import java.util.Map;
 
 public class Clog {
+
     public static final String KEY_V = "v";
     public static final String KEY_D = "d";
     public static final String KEY_I = "i";
@@ -54,29 +48,15 @@ public class Clog {
         }
     }
 
-    private static final String CLASS_NAME = Clog.class.getName();
-    private static HashMap<String, Clog> profiles;
-    private static Clog instance;
-
-    private HashMap<String, ClogLogger> loggers;
-    private ClogFormatter formatter;
-    private String lastTag;
-    private String lastLog;
-
-    private Stack<String> tagStack;
-
-    private List<String> tagWhitelist;
-    private List<String> tagBlacklist;
-
-    private List<String> loggerWhitelist;
-    private List<String> loggerBlacklist;
-
-    private Clog.Priority minPriority;
-    private Clog.Priority maxPriority;
+    private static Map<String, ProfileSupplier> profileSuppliers;
+    private static Map<String, ClogProfile> profiles;
+    private static String currentProfileKey;
+    private static ClogProfile currentProfile;
 
     static {
+        profileSuppliers = new HashMap<>();
         profiles = new HashMap<>();
-        profiles.put(null, new Clog());
+        profiles.put(null, new ClogProfile());
     }
 
     /**
@@ -85,62 +65,22 @@ public class Clog {
      *
      * @return the current Clog profile instance
      */
-    public static Clog getInstance() {
-        if (instance == null) {
-            if (profiles == null || profiles.get(null) == null) {
-                instance = new Clog();
+    public static ClogProfile getInstance() {
+        if (currentProfile == null) {
+            if (profiles == null || profiles.get(currentProfileKey) == null) {
+                if (profileSuppliers != null && profileSuppliers.get(currentProfileKey) != null) {
+                    currentProfile = profileSuppliers.get(currentProfileKey).get();
+                    profiles.put(currentProfileKey, currentProfile);
+                }
+                else {
+                    currentProfile = new ClogProfile();
+                }
             } else {
-                instance = profiles.get(null);
+                currentProfile = profiles.get(null);
             }
         }
 
-        return instance;
-    }
-
-    /**
-     * Initialize Clog with the default configuration, using a simple logger and the Parseltongue formatter
-     */
-    private Clog() {
-        tagStack = new Stack<>();
-        loggers = new HashMap<>();
-        loggers.put(null,  new DefaultLogger(  Priority.DEFAULT));
-        loggers.put(KEY_V, new DefaultLogger(  Priority.VERBOSE));
-        loggers.put(KEY_D, new DefaultLogger(  Priority.DEBUG));
-        loggers.put(KEY_I, new DefaultLogger(  Priority.INFO));
-        loggers.put(KEY_W, new DefaultLogger(  Priority.WARNING));
-        loggers.put(KEY_E, new DefaultLogger(  Priority.ERROR));
-        loggers.put(KEY_WTF, new DefaultLogger(Priority.FATAL));
-        formatter = new Parseltongue();
-
-        tagWhitelist = new ArrayList<>();
-        tagBlacklist = new ArrayList<>();
-
-        loggerWhitelist = new ArrayList<>();
-        loggerBlacklist = new ArrayList<>();
-
-        minPriority = null;
-        maxPriority = null;
-    }
-
-    /**
-     * Initialize a custom Clog instance to be used as a custom profile
-     *
-     * @param loggers
-     * @param formatter
-     */
-    public Clog(HashMap<String, ClogLogger> loggers, ClogFormatter formatter) {
-        this.tagStack = new Stack<>();
-        this.loggers = loggers;
-        this.formatter = formatter;
-
-        tagWhitelist = new ArrayList<>();
-        tagBlacklist = new ArrayList<>();
-
-        loggerWhitelist = new ArrayList<>();
-        loggerBlacklist = new ArrayList<>();
-
-        minPriority = null;
-        maxPriority = null;
+        return currentProfile;
     }
 
 // Log messages with Clog
@@ -153,27 +93,15 @@ public class Clog {
      * @param tr An exception to log
      */
     public static String getStackTraceString(Throwable tr) {
-        if (tr == null) {
-            return "";
-        }
-        // This is to reduce the amount of log spew that apps do in the non-error
-        // condition of the network being unavailable.
-        Throwable t = tr;
-        while (t != null) {
-            if (t instanceof UnknownHostException) {
-                return "";
-            }
-            t = t.getCause();
-        }
-        StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw, false);
-        tr.printStackTrace(pw);
-        pw.flush();
-        return sw.toString();
+        return getInstance().getStackTraceString(tr);
     }
 
     public static String format(String message, Object... args) {
-        return getInstance().formatter.format(message, args);
+        return getInstance().format(message, args);
+    }
+
+    public static ClogProfile tag(String tag) {
+        return getInstance().tag(tag);
     }
 
 // Generic key-valued logging calls
@@ -188,7 +116,7 @@ public class Clog {
      * @return int
      */
     public static int logger(String logger, Throwable throwable) {
-        return getInstance().loggerInternal(logger, null, null, throwable);
+        return getInstance().logger(logger, throwable);
     }
 
     /**
@@ -202,7 +130,7 @@ public class Clog {
      * @return int
      */
     public static int logger(String logger, String message, Object... args) {
-        return getInstance().loggerInternal(logger, message, null, args);
+        return getInstance().logger(logger, message, args);
     }
 
     /**
@@ -216,7 +144,7 @@ public class Clog {
      * @param args (optional) the arguments to pass to the formatter
      */
     public static int logger(String logger, String message, Throwable throwable, Object... args) {
-        return getInstance().loggerInternal(logger, message, throwable, args);
+        return getInstance().logger(logger, message, throwable, args);
     }
 
 // Default logging calls. Calls to generic logger function with key 'null'
@@ -230,7 +158,7 @@ public class Clog {
      * @return int
      */
     public static int log(Throwable throwable) {
-        return logger(null, throwable);
+        return getInstance().log(throwable);
     }
 
     /**
@@ -243,7 +171,7 @@ public class Clog {
      * @return int
      */
     public static int log(String message, Object... args) {
-        return logger(null, message, args);
+        return getInstance().log(message, args);
     }
 
     /**
@@ -256,7 +184,7 @@ public class Clog {
      * @param args (optional) the arguments to pass to the formatter
      */
     public static int log(String message, Throwable throwable, Object... args) {
-        return logger(null, message, throwable, args);
+        return getInstance().log(message, throwable, args);
     }
 
 // Verbose-level logging calls. Calls to generic logger function with key 'v'
@@ -270,7 +198,7 @@ public class Clog {
      * @return int
      */
     public static int v(Throwable throwable) {
-        return logger(KEY_V, throwable);
+        return getInstance().v(throwable);
     }
 
     /**
@@ -283,7 +211,7 @@ public class Clog {
      * @return int
      */
     public static int v(String message, Object... args) {
-        return logger(KEY_V, message, args);
+        return getInstance().v(message, args);
     }
 
     /**
@@ -296,7 +224,7 @@ public class Clog {
      * @param args (optional) the arguments to pass to the formatter
      */
     public static int v(String message, Throwable throwable, Object... args) {
-        return logger(KEY_V, message, throwable, args);
+        return getInstance().v(message, throwable, args);
     }
 
 // Debug-level logging calls. Calls to generic logger function with key 'd'
@@ -310,7 +238,7 @@ public class Clog {
      * @return int
      */
     public static int d(Throwable throwable) {
-        return logger(KEY_D, throwable);
+        return getInstance().d(throwable);
     }
 
     /**
@@ -323,7 +251,7 @@ public class Clog {
      * @return int
      */
     public static int d(String message, Object... args) {
-        return logger(KEY_D, message, args);
+        return getInstance().d(message, args);
     }
 
     /**
@@ -336,7 +264,7 @@ public class Clog {
      * @param args (optional) the arguments to pass to the formatter
      */
     public static int d(String message, Throwable throwable, Object... args) {
-        return logger(KEY_D, message, throwable, args);
+        return getInstance().d(message, throwable, args);
     }
 
 // Info-level logging calls. Calls to generic logger function with key 'i'
@@ -350,7 +278,7 @@ public class Clog {
      * @return int
      */
     public static int i(Throwable throwable) {
-        return logger(KEY_I, throwable);
+        return getInstance().i(throwable);
     }
 
     /**
@@ -363,7 +291,7 @@ public class Clog {
      * @return int
      */
     public static int i(String message, Object... args) {
-        return logger(KEY_I, message, args);
+        return getInstance().i(message, args);
     }
 
     /**
@@ -376,7 +304,7 @@ public class Clog {
      * @param args (optional) the arguments to pass to the formatter
      */
     public static int i(String message, Throwable throwable, Object... args) {
-        return logger(KEY_I, message, throwable, args);
+        return getInstance().i(message, throwable, args);
     }
 
 // Warning-level logging calls. Calls to generic logger function with key 'w'
@@ -390,7 +318,7 @@ public class Clog {
      * @return int
      */
     public static int w(Throwable throwable) {
-        return logger(KEY_W, throwable);
+        return getInstance().w(throwable);
     }
 
     /**
@@ -403,7 +331,7 @@ public class Clog {
      * @return int
      */
     public static int w(String message, Object... args) {
-        return logger(KEY_W, message, args);
+        return getInstance().w(message, args);
     }
 
     /**
@@ -416,7 +344,7 @@ public class Clog {
      * @param args (optional) the arguments to pass to the formatter
      */
     public static int w(String message, Throwable throwable, Object... args) {
-        return logger(KEY_W, message, throwable, args);
+        return getInstance().w(message, throwable, args);
     }
 
 // Error-level logging calls. Calls to generic logger function with key 'e'
@@ -430,7 +358,7 @@ public class Clog {
      * @return int
      */
     public static int e(Throwable throwable) {
-        return logger(KEY_E, throwable);
+        return getInstance().e(throwable);
     }
 
     /**
@@ -443,7 +371,7 @@ public class Clog {
      * @return int
      */
     public static int e(String message, Object... args) {
-        return logger(KEY_E, message, args);
+        return getInstance().e(message, args);
     }
 
     /**
@@ -456,7 +384,7 @@ public class Clog {
      * @param args (optional) the arguments to pass to the formatter
      */
     public static int e(String message, Throwable throwable, Object... args) {
-        return logger(KEY_E, message, throwable, args);
+        return getInstance().e(message, throwable, args);
     }
 
 // Fatal-level (What a Terrible Failure) logging calls. Calls to generic logger function with key 'wtf'
@@ -470,7 +398,7 @@ public class Clog {
      * @return int
      */
     public static int wtf(Throwable throwable) {
-        return logger(KEY_WTF, throwable);
+        return getInstance().wtf(throwable);
     }
 
     /**
@@ -483,7 +411,7 @@ public class Clog {
      * @return int
      */
     public static int wtf(String message, Object... args) {
-        return logger(KEY_WTF, message, args);
+        return getInstance().wtf(message, args);
     }
 
     /**
@@ -496,119 +424,7 @@ public class Clog {
      * @param args (optional) the arguments to pass to the formatter
      */
     public static int wtf(String message, Throwable throwable, Object... args) {
-        return logger(KEY_WTF, message, throwable, args);
-    }
-
-// All above logging calls come here, so that all logging logic is managed in one place
-//--------------------------------------------------------------------------------------------------
-
-    /**
-     * Format and log a message, tag, and throwable to the specified logger
-     *
-     * @param logger  the key of the specific logger
-     * @param message the string to be formatted and logged
-     * @param args    the list of objects to format into the format string
-     * @return int
-     */
-    private int loggerInternal(String logger, String message, Throwable throwable, Object... args) {
-        ClogLogger currentLogger = null;
-        String currentTag = getTag();
-        String currentMessage;
-
-        // check tag against the whitelist and blacklist
-        boolean inWhitelist = false;
-        for(String whiteListedTag : tagWhitelist) {
-            if(currentTag.equals(whiteListedTag)) {
-                inWhitelist = true;
-                break;
-            }
-        }
-
-        boolean inBlacklist = false;
-        for(String blackListedTag : tagBlacklist) {
-            if(currentTag.equals(blackListedTag)) {
-                inBlacklist = true;
-                break;
-            }
-        }
-
-        if((tagWhitelist.size() > 0 && !inWhitelist) || (tagBlacklist.size() > 0 && inBlacklist)) {
-            return 0;
-        }
-
-        // get a logger to log to
-        if (loggers != null) {
-            if (loggers.containsKey(logger)) {
-                currentLogger = loggers.get(logger);
-            }
-
-            if (currentLogger == null) {
-                if (loggers.containsKey(null)) {
-                    currentLogger = loggers.get(null);
-                }
-            }
-
-            if (currentLogger == null) {
-                currentLogger = new DefaultLogger();
-            }
-        } else {
-            currentLogger = new DefaultLogger();
-        }
-
-        // check logger against the whitelist, blacklist, and priority levels
-        inWhitelist = false;
-        for(String whiteListedLogger : loggerWhitelist) {
-            if(logger.equals(whiteListedLogger)) {
-                inWhitelist = true;
-                break;
-            }
-        }
-
-        inBlacklist = false;
-        for(String blackListedLogger : loggerBlacklist) {
-            if(logger.equals(blackListedLogger)) {
-                inBlacklist = true;
-                break;
-            }
-        }
-
-        if((loggerWhitelist.size() > 0 && !inWhitelist) || (loggerBlacklist.size() > 0 && inBlacklist)) {
-            return 0;
-        }
-
-        if(minPriority != null && currentLogger.priority().getPriority() < minPriority.getPriority()) {
-            return 0;
-        }
-
-        if(maxPriority != null && currentLogger.priority().getPriority() > maxPriority.getPriority()) {
-            return 0;
-        }
-
-        if (currentLogger.isActive()) {
-            currentTag = getTag();
-
-            if (message != null) {
-                currentMessage = formatter.format(message, args);
-            } else {
-                if (throwable != null) {
-                    currentMessage = getStackTraceString(throwable);
-                } else {
-                    currentMessage = "";
-                }
-            }
-
-            if (throwable == null) {
-                lastTag = currentTag;
-                lastLog = currentMessage;
-                return currentLogger.log(currentTag, currentMessage);
-            } else {
-                lastTag = currentTag;
-                lastLog = currentMessage;
-                return currentLogger.log(currentTag, currentMessage, throwable);
-            }
-        }
-
-        return 0;
+        return getInstance().wtf(message, throwable, args);
     }
 
 // Configure Clog
@@ -620,8 +436,8 @@ public class Clog {
      * @param key  the key of the profile
      * @param clog the profile
      */
-    public static void addProfile(String key, Clog clog) {
-        profiles.put(key, clog);
+    public static void addProfile(String key, ProfileSupplier clog) {
+        profileSuppliers.put(key, clog);
     }
 
     /**
@@ -638,8 +454,10 @@ public class Clog {
      *
      * @param key the key of the profile to use
      */
-    public static void setCurrentProfile(String key) {
-        Clog.instance = profiles.get(key);
+    public static ClogProfile setCurrentProfile(String key) {
+        Clog.currentProfileKey = key;
+        Clog.currentProfile = profiles.get(key);
+        return getInstance();
     }
 
     /**
@@ -648,9 +466,9 @@ public class Clog {
      * @param key
      * @param clog
      */
-    public static void setCurrentProfile(String key, Clog clog) {
+    public static ClogProfile setCurrentProfile(String key, ProfileSupplier clog) {
         addProfile(key, clog);
-        setCurrentProfile(key);
+        return setCurrentProfile(key);
     }
 
     /**
@@ -658,7 +476,7 @@ public class Clog {
      *
      * @return the map of profiles
      */
-    public static HashMap<String, Clog> getProfiles() {
+    public static Map<String, ClogProfile> getProfiles() {
         return profiles;
     }
 
@@ -667,299 +485,7 @@ public class Clog {
      *
      * @param profiles the profile set to use
      */
-    public static void setAllProfiles(HashMap<String, Clog> profiles) {
+    public static void setAllProfiles(Map<String, ClogProfile> profiles) {
         Clog.profiles = profiles;
-    }
-
-
-    /**
-     * Get the loggers for the current profile
-     *
-     * @return the map of loggers
-     */
-    public static HashMap<String, ClogLogger> getLoggers() {
-        return getInstance().loggers;
-    }
-
-    /**
-     * Get the keys for all loggers in the current profile
-     *
-     * @return a list of String keys which map to loggers
-     */
-    public static ArrayList<String> getLoggerKeys() {
-        return new ArrayList<>(getInstance().loggers.keySet());
-    }
-
-    /**
-     * Replace all loggers in the current profile with a new set
-     *
-     * @param loggers the new hashmap of loggers
-     */
-    public static void setLoggers(HashMap<String, ClogLogger> loggers) {
-        getInstance().loggers = loggers;
-    }
-
-    /**
-     * Add a new logger to the current profile, replacing any existing logger already set with the key
-     *
-     * @param key    the logger key
-     * @param logger the logger to add or replace
-     */
-    public static void addLogger(String key, ClogLogger logger) {
-        getInstance().loggers.put(key, logger);
-    }
-
-    /**
-     * Sets the default logger to use with the current profile, replacing any existing default logger.
-     * This default logger will be used in calls to Clog.log(...) or Clog.logger(null, ...)
-     *
-     * @param logger the logger to add or replace
-     */
-    public static void setDefaultLogger(ClogLogger logger) {
-        getInstance().loggers.put(null, logger);
-    }
-
-    /**
-     * Remove the logger at the specified key from the current profile
-     *
-     * @param key the key mapping to the logger to be removed
-     */
-    public static void removeLogger(String key) {
-        getInstance().loggers.remove(key);
-    }
-
-    /**
-     * Set the Clog formatter implementation to be used in the current profile
-     *
-     * @param formatter the formatter implementation to use
-     */
-    public static void setFormatter(ClogFormatter formatter) {
-        getInstance().formatter = formatter;
-    }
-
-    /**
-     * Get the Clog formatter implementation used in the current profile
-     *
-     * @return the current formatter
-     */
-    public static ClogFormatter getFormatter() {
-        return getInstance().formatter;
-    }
-
-    /**
-     * Get the tag from the most recently logged message in the current profile. Mostly used for testing.
-     *
-     * @return the tag on last message logged
-     */
-    public static String getLastTag() {
-        return getInstance().lastTag;
-    }
-
-    /**
-     * Get the most recently logged message in the current profile. Mostly used for testing.
-     *
-     * @return the last message logged
-     */
-    public static String getLastLog() {
-        return getInstance().lastLog;
-    }
-
-    /**
-     * Flushes the last tag and last log from the current profile. Mostly used for testing.
-     */
-    public static void flush() {
-        getInstance().lastTag = null;
-        getInstance().lastLog = null;
-    }
-
-    /**
-     * Adds the tag to a whitelist. Only logging messages whose tag is in the whitelist will be logged. If the whitelist
-     * is empty, no tag whitelist filtering will be done.
-     *
-     * @param tag  the tag to whitelist
-     */
-    public static void addTagToWhitelist(String tag) {
-        getInstance().tagWhitelist.add(tag);
-    }
-
-    /**
-     * Adds the tag to a blacklist. Only logging messages whose tag is not in the blacklist will be logged. If the
-     * blacklist is empty, no tag blacklist filtering will be done.
-     *
-     * @param tag  the tag to blacklist
-     */
-    public static void addTagToBlacklist(String tag) {
-        getInstance().tagBlacklist.add(tag);
-    }
-
-    /**
-     * Clears the tag whitelist of all entries.
-     */
-    public static void clearTagWhitelist() {
-        getInstance().tagWhitelist.clear();
-    }
-
-    /**
-     * Clears the tag blacklist of all entries.
-     */
-    public static void clearTagBlacklist() {
-        getInstance().tagBlacklist.clear();
-    }
-
-    /**
-     * Adds the logger to a whitelist. Only logging messages whose logger is in the whitelist will be logged. If the
-     * whitelist is empty, no logger whitelist filtering will be done.
-     *
-     * @param tag  the tag to whitelist
-     */
-    public static void addLoggerToWhitelist(String tag) {
-        getInstance().loggerWhitelist.add(tag);
-    }
-
-    /**
-     * Adds the tag to a blacklist. Only logging messages whose logger is not in the blacklist will be logged. If the
-     * blacklist is empty, no logger blacklist filtering will be done.
-     *
-     * @param tag  the tag to blacklist
-     */
-    public static void addLoggerToBlacklist(String tag) {
-        getInstance().loggerBlacklist.add(tag);
-    }
-
-    /**
-     * Clears the logger whitelist of all entries.
-     */
-    public static void clearLoggerWhitelist() {
-        getInstance().loggerWhitelist.clear();
-    }
-
-    /**
-     * Clears the logger blacklist of all entries.
-     */
-    public static void clearLoggerBlacklist() {
-        getInstance().loggerBlacklist.clear();
-    }
-
-    /**
-     * Sets the minimum priority of loggers to log messages from
-     *
-     * @param minPriority  the minimum priority to log
-     */
-    public static void setMinPriority(Clog.Priority minPriority) {
-        getInstance().minPriority = minPriority;
-    }
-
-    /**
-     * Sets the maximum priority of loggers to log messages from
-     *
-     * @param maxPriority  the maximum priority to log
-     */
-    public static void setMaxPriority(Clog.Priority maxPriority) {
-        getInstance().maxPriority = maxPriority;
-    }
-
-// Set and get the default logger tag.
-//--------------------------------------------------------------------------------------------------
-
-    /**
-     * Set the tag to use for subsequent logging calls. Be sure to push the tag as close the logging call as possible,
-     * and to pop this tag off the stack when finished.
-     *
-     * @param tag the tag to use
-     */
-    public static void pushTag(String tag) {
-        getInstance().tagStack.push(tag);
-    }
-
-    /**
-     * Remove the latest tag from the tag stack.
-     */
-    public static void popTag() {
-        getInstance().tagStack.pop();
-    }
-
-    /**
-     * Remove the current tag from the tag stack.
-     */
-    public static String getCurrentTag() {
-        return getTag();
-    }
-
-    /**
-     * Get the default tag in the current profile. If the default tag is defined, use that,
-     * otherwise attempt to find the caller simple class name and use that as the tag.
-     *
-     * @return the default tag
-     */
-    private static String getTag() {
-        if (getInstance().tagStack.size() > 0) {
-            return getInstance().tagStack.peek();
-        } else {
-            return findCallerClassName();
-        }
-    }
-
-    /**
-     * Finds the external class name that directly called a Clog method. Copied from the Android
-     * Open Source Project LogUtil.java class.
-     *
-     * @return The simple class name (or full-qualified if an error occurs getting a ref to
-     * the class) of the external class that called a CLog method, or "Unknown" if
-     * the stack trace is empty or only contains CLog class names.
-     */
-    private static String findCallerClassName() {
-        return findCallerClassName(null);
-    }
-
-    /**
-     * Finds the external class name that directly called a CLog method. Copied from the Android
-     * Open Source Project LogUtil.java class.
-     *
-     * @param t (Optional) the stack trace to search within, exposed for unit testing
-     * @return The simple class name (or full-qualified if an error occurs getting a ref to
-     * the class) of the external class that called a CLog method, or "Unknown" if
-     * the stack trace is empty or only contains CLog class names.
-     */
-    private static String findCallerClassName(Throwable t) {
-        String className = "Unknown";
-        if (t == null) {
-            t = new Throwable();
-        }
-        StackTraceElement[] frames = t.getStackTrace();
-        if (frames.length == 0) {
-            return className;
-        }
-        // starting with the first frame's class name (this CLog class)
-        // keep iterating until a frame of a different class name is found
-        int f;
-        for (f = 0; f < frames.length; f++) {
-            className = frames[f].getClassName();
-            if (!className.equals(CLASS_NAME)) {
-                break;
-            }
-        }
-        return parseClassName(className);
-    }
-
-    /**
-     * Parses the simple class name out of the full class name. If the formatting already
-     * looks like a simple class name, then just returns that. Copied from the Android
-     * Open Source Project LogUtil.java class.
-     *
-     * @param fullName the full class name to parse
-     * @return The simple class name
-     */
-    private static String parseClassName(String fullName) {
-        int lastdot = fullName.lastIndexOf('.');
-        String simpleName = fullName;
-        if (lastdot != -1) {
-            simpleName = fullName.substring(lastdot + 1);
-        }
-        // handle inner class names
-        int lastdollar = simpleName.lastIndexOf('$');
-        if (lastdollar != -1) {
-            simpleName = simpleName.substring(0, lastdollar);
-        }
-        return simpleName;
     }
 }

@@ -2,15 +2,15 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 buildscript {
-    ext.orchidVersion = '0.7.9'
-    ext.orchidPluginVersion = 'v0.4.0'
+    ext.orchid_version = '0.7.36'
+    ext.orchid_plugin_version = 'v0.4.1'
     repositories {
         jcenter()
         maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
-        classpath "gradle.plugin.com.eden.orchidPlugin:buildSrc:${orchidPluginVersion}"
+        classpath "gradle.plugin.com.eden.orchidPlugin:buildSrc:${orchid_plugin_version}"
     }
 }
 apply plugin: "java"
@@ -37,15 +37,17 @@ repositories {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+    testCompile 'org.mockito:mockito-core:2.+'
 
     compile 'org.fusesource.jansi:jansi:1.14'
 
-    orchidCompile "io.github.javaeden.orchid:OrchidCore:${orchidVersion}"
-    orchidCompile "io.github.javaeden.orchid:OrchidBsDoc:${orchidVersion}"
-    orchidCompile "io.github.javaeden.orchid:OrchidJavadoc:${orchidVersion}"
-    orchidCompile "io.github.javaeden.orchid:OrchidPages:${orchidVersion}"
-    orchidCompile "io.github.javaeden.orchid:OrchidWiki:${orchidVersion}"
-    orchidCompile "io.github.javaeden.orchid:OrchidChangelog:${orchidVersion}"
+    orchidCompile "io.github.javaeden.orchid:OrchidCore:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidBsDoc:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidJavadoc:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidPages:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidWiki:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidChangelog:${orchid_version}"
 }
 
 // Javadoc and Orchid
