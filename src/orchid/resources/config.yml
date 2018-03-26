@@ -18,6 +18,8 @@ theme:
       atRoot: true
     - type: 'javadocPackages'
     - type: 'javadocClasses'
+  trianglifyOptions:
+    x_colors: ['#000', '#2a623d', '#000']
 
 allPages:
   components:
