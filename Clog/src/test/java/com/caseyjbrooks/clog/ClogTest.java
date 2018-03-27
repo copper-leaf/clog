@@ -16,8 +16,8 @@ public class ClogTest {
         Map<String, ClogLogger> profileOneLoggers = new HashMap<>();
         profileOneLoggers.put(null, new DefaultLogger(Clog.Priority.DEFAULT));
         ClogFormatter profileOneFormatter = new Parseltongue();
-        ClogProfile profileOne = new ClogProfile(profileOneLoggers, profileOneFormatter);
-        Clog.addProfile(null, () -> profileOne);
+        final ClogProfile profileOne = new ClogProfile(profileOneLoggers, profileOneFormatter);
+        Clog.addProfile(null, new ProfileSupplier() {@Override public ClogProfile get() { return profileOne; }});
         Clog.setCurrentProfile(null);
 
         String lastLog;
@@ -113,13 +113,13 @@ public class ClogTest {
         ClogFormatter profileTwoFormatter = new Parseltongue();
         ClogFormatter profileThreeFormatter = new Parseltongue();
 
-        ClogProfile profileOne = new ClogProfile(profileOneLoggers, profileOneFormatter);
-        ClogProfile profileTwo = new ClogProfile(profileTwoLoggers, profileTwoFormatter);
-        ClogProfile profileThree = new ClogProfile(profileThreeLoggers, profileThreeFormatter);
+        final ClogProfile profileOne = new ClogProfile(profileOneLoggers, profileOneFormatter);
+        final ClogProfile profileTwo = new ClogProfile(profileTwoLoggers, profileTwoFormatter);
+        final ClogProfile profileThree = new ClogProfile(profileThreeLoggers, profileThreeFormatter);
 
-        Clog.addProfile("one", () -> profileOne);
-        Clog.addProfile("two", () -> profileTwo);
-        Clog.addProfile("three", () -> profileThree);
+        Clog.addProfile("one", new ProfileSupplier() {@Override public ClogProfile get() { return profileOne; }});
+        Clog.addProfile("two", new ProfileSupplier() {@Override public ClogProfile get() { return profileTwo; }});
+        Clog.addProfile("three", new ProfileSupplier() {@Override public ClogProfile get() { return profileThree; }});
 
         // as a proof of concept, I will log a message on each, then since each profile holds its
         // own last logged message, I will go back and check the messages of each profile, and also
@@ -167,8 +167,8 @@ public class ClogTest {
         Map<String, ClogLogger> profileOneLoggers = new HashMap<>();
         profileOneLoggers.put(null, new DefaultLogger());
         ClogFormatter profileOneFormatter = new Parseltongue();
-        ClogProfile profileOne = new ClogProfile(profileOneLoggers, profileOneFormatter);
-        Clog.addProfile(null, () -> profileOne);
+        final ClogProfile profileOne = new ClogProfile(profileOneLoggers, profileOneFormatter);
+        Clog.addProfile(null, new ProfileSupplier() {@Override public ClogProfile get() { return profileOne; }});
         Clog.setCurrentProfile(null);
 
         String lastLog;
@@ -216,9 +216,8 @@ public class ClogTest {
         loggers.put(Clog.KEY_E, new DefaultLogger(Clog.Priority.ERROR));
         loggers.put(Clog.KEY_WTF, new DefaultLogger(Clog.Priority.FATAL));
 
-        ClogProfile clog = new ClogProfile(loggers, new Parseltongue());
-
-        Clog.setCurrentProfile("test2", () -> clog);
+        final ClogProfile clog = new ClogProfile(loggers, new Parseltongue());
+        Clog.setCurrentProfile("test2", new ProfileSupplier() {@Override public ClogProfile get() { return clog; }});
 
         Clog.v("Log me, dog!");
         Clog.d("Log me, dog!");
@@ -245,8 +244,8 @@ public class ClogTest {
         loggers.put(Clog.KEY_E, new DefaultLogger(Clog.Priority.ERROR));
         loggers.put(Clog.KEY_WTF, new DefaultLogger(Clog.Priority.FATAL));
 
-        ClogProfile clog = new ClogProfile(loggers, new Parseltongue());
-        Clog.setCurrentProfile("test3", () -> clog);
+        final ClogProfile clog = new ClogProfile(loggers, new Parseltongue());
+        Clog.setCurrentProfile("test3", new ProfileSupplier() {@Override public ClogProfile get() { return clog; }});
 
 
         Clog.getInstance().pushTag("testPriorities");

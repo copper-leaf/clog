@@ -39,4 +39,5 @@ public interface ClogLogger {
      * @return  the priority of this Logger
      */
     Clog.Priority priority();
+
 }

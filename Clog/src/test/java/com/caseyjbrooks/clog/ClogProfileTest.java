@@ -102,50 +102,50 @@ public class ClogProfileTest {
     public void testLoggingNullNoThrowable() throws Exception {
         underTest.loggerInternal(null, message, null, args);
         verify(mockLoggerAtNull, times(1)).log(anyString(), anyString());
-        verify(mockLoggerAtNull, never()).log(anyString(), anyString(), any());
+        verify(mockLoggerAtNull, never()).log(anyString(), anyString(), (Throwable) any());
         verify(mockActiveLogger,  never()).log(anyString(), anyString());
-        verify(mockActiveLogger,  never()).log(anyString(), anyString(), any());
+        verify(mockActiveLogger,  never()).log(anyString(), anyString(), (Throwable) any());
     }
 
     @Test
     public void testLoggingNullThrowable() throws Exception {
         underTest.loggerInternal(null, message, throwable, args);
         verify(mockLoggerAtNull, never()).log(anyString(), anyString());
-        verify(mockLoggerAtNull, times(1)).log(anyString(), anyString(), any());
+        verify(mockLoggerAtNull, times(1)).log(anyString(), anyString(), (Throwable) any());
         verify(mockActiveLogger,  never()).log(anyString(), anyString());
-        verify(mockActiveLogger,  never()).log(anyString(), anyString(), any());
+        verify(mockActiveLogger,  never()).log(anyString(), anyString(), (Throwable) any());
     }
 
     @Test
     public void testLoggingActiveNoThrowable() throws Exception {
         underTest.loggerInternal(mockActiveLoggerKey, message, null, args);
         verify(mockLoggerAtNull, never()).log(anyString(), anyString());
-        verify(mockLoggerAtNull, never()).log(anyString(), anyString(), any());
+        verify(mockLoggerAtNull, never()).log(anyString(), anyString(), (Throwable) any());
         verify(mockActiveLogger,  times(1)).log(anyString(), anyString());
-        verify(mockActiveLogger,  never()).log(anyString(), anyString(), any());
+        verify(mockActiveLogger,  never()).log(anyString(), anyString(), (Throwable) any());
     }
 
     @Test
     public void testLoggingActiveThrowable() throws Exception {
         underTest.loggerInternal(mockActiveLoggerKey, message, throwable, args);
         verify(mockLoggerAtNull, never()).log(anyString(), anyString());
-        verify(mockLoggerAtNull, never()).log(anyString(), anyString(), any());
+        verify(mockLoggerAtNull, never()).log(anyString(), anyString(), (Throwable) any());
         verify(mockActiveLogger,  never()).log(anyString(), anyString());
-        verify(mockActiveLogger,  times(1)).log(anyString(), anyString(), any());
+        verify(mockActiveLogger,  times(1)).log(anyString(), anyString(), (Throwable) any());
     }
 
     @Test
     public void testLoggingInactiveNoThrowable() throws Exception {
         underTest.loggerInternal(mockInactiveLoggerKey, message, null, args);
         verify(mockInactiveLogger, never()).log(anyString(), anyString());
-        verify(mockInactiveLogger, never()).log(anyString(), anyString(), any());
+        verify(mockInactiveLogger, never()).log(anyString(), anyString(), (Throwable) any());
     }
 
     @Test
     public void testLoggingInactiveThrowable() throws Exception {
         underTest.loggerInternal(mockActiveLoggerKey, message, throwable, args);
         verify(mockInactiveLogger, never()).log(anyString(), anyString());
-        verify(mockInactiveLogger, never()).log(anyString(), anyString(), any());
+        verify(mockInactiveLogger, never()).log(anyString(), anyString(), (Throwable) any());
     }
 
     @Test

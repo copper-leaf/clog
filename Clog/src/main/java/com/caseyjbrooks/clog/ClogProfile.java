@@ -1,14 +1,5 @@
 package com.caseyjbrooks.clog;
 
-import com.caseyjbrooks.clog.log.IClog;
-import com.caseyjbrooks.clog.log.ICommonClog;
-import com.caseyjbrooks.clog.log.IDebugClog;
-import com.caseyjbrooks.clog.log.IDefaultClog;
-import com.caseyjbrooks.clog.log.IErrorClog;
-import com.caseyjbrooks.clog.log.IFatalClog;
-import com.caseyjbrooks.clog.log.IInfoClog;
-import com.caseyjbrooks.clog.log.IVerboseClog;
-import com.caseyjbrooks.clog.log.IWarningClog;
 import com.caseyjbrooks.clog.parseltongue.Parseltongue;
 
 import java.io.PrintWriter;
@@ -20,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-public class ClogProfile implements IClog {
+public class ClogProfile extends IClog {
 
     private Map<String, ClogLogger> loggers;
     private ClogFormatter formatter;
@@ -530,15 +521,7 @@ public class ClogProfile implements IClog {
                 Clog.class.getName(),
                 this.getClass().getName(),
                 ClogProfile.class.getName(),
-                IClog.class.getName(),
-                ICommonClog.class.getName(),
-                IDebugClog.class.getName(),
-                IDefaultClog.class.getName(),
-                IErrorClog.class.getName(),
-                IFatalClog.class.getName(),
-                IInfoClog.class.getName(),
-                IVerboseClog.class.getName(),
-                IWarningClog.class.getName()
+                IClog.class.getName()
         };
 
         for(String s : classNames) {

@@ -5,6 +5,7 @@ package com.caseyjbrooks.clog;
  * to an output String.
  */
 public interface ClogFormatter {
+
     /**
      * Transform a String containing markup using the optional provided params
      *
@@ -13,4 +14,5 @@ public interface ClogFormatter {
      * @return  the rendered output String
      */
     String format(String message, Object... params);
+
 }
