@@ -1,0 +1,144 @@
+apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+project.group = rootProject.group
+project.version = rootProject.version
+project.description = 'Clog logger implementation for the standard Android Log'
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        minSdkVersion 9
+        targetSdkVersion 26
+        versionCode 2
+        versionName "1.6.1"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    api project(':Clog')
+}
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+                groupId project.group
+                artifactId project.name
+
+                // Add your description here
+                name project.name
+                description project.description
+                url "https://javaeden.github.io/Clog/${project.name}"
+
+                // Set your license
+                licenses {
+                    license {
+                        name 'MIT'
+                        url 'https://opensource.org/licenses/mit'
+                        distribution 'repo'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'JavaEden'
+                        name 'Casey Brooks'
+                        email 'cjbrooks12@gmail.com'
+                    }
+                }
+                scm {
+                    url 'https://github.com/JavaEden/Clog.git'
+                    connection 'https://github.com/JavaEden/Clog.git'
+                    developerConnection 'https://github.com/JavaEden/Clog.git'
+
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+}
+
+task javadoc(type: Javadoc) {
+    source = android.sourceSets.main.java.srcDirs
+    classpath += project.files(android.getBootClasspath().join(File.pathSeparator))
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+artifacts {
+    archives javadocJar
+    archives sourcesJar
+}
+
+// Bintray
+
+bintray {
+    user = "${project.properties['bintray_username']}"
+    key = "${project.properties['bintray_apiKey']}"
+    configurations = ['archives']
+
+    dryRun = project.hasProperty('dryDeploy')
+    publish = !project.hasProperty('dryDeploy')
+    override = true
+
+    pkg {
+        repo = "Eden"
+        name = "${project.name}"
+        userOrg = 'javaeden'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/JavaEden/Clog.git'
+
+        version {
+            name = "${project.version}"
+            desc = "${project.name} ${project.version}"
+            released = new Date()
+
+            gpg {
+                sign = true
+            }
+            mavenCentralSync {
+                sync = (project.hasProperty('includeMavenCentralSync'))
+                user = "${project.properties['mavenCentral_username']}"
+                password = "${project.properties['mavenCentral_password']}"
+            }
+        }
+    }
+}
+
+task publish {
+    doLast { }
+}
+
+project.tasks.publish.dependsOn bintrayUpload
+
+task deploy {
+    dependsOn project.tasks.publish
+    doLast { }
+}
+
+task prepareDocumentation {
+    doLast {
+        copy {
+            from file("$buildDir/docs/orchid")
+            into file("${rootProject.buildDir}/docs/orchid/android-clog")
+        }
+    }
+}
+
+rootProject.tasks.prepareDocumentation.dependsOn project.tasks.prepareDocumentation

@@ -12,3 +12,4 @@ rootProject.name = 'Clog'
 
 include ':Clog'
 include ':Clog4j'
+include ':AndroidClog'
