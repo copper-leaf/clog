@@ -7,12 +7,18 @@ buildscript {
     repositories {
         jcenter()
         maven { url "https://plugins.gradle.org/m2/" }
+        maven { url 'https://maven.google.com' }
+        maven { url "https://jitpack.io" }
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
         classpath "gradle.plugin.com.eden.orchidPlugin:buildSrc:${orchid_plugin_version}"
+        classpath 'com.android.tools.build:gradle:3.0.1'
+        classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
     }
 }
+
+apply plugin: 'base'
 
 // Configure Project
 //----------------------------------------------------------------------------------------------------------------------
@@ -45,4 +51,12 @@ task getReleaseNotes {
             println "No release notes"
         }
     }
+}
+
+
+task prepareDocumentation {
+}
+task deploy {
+    dependsOn prepareDocumentation
+    doLast { }
 }

@@ -10,6 +10,7 @@ apply plugin: 'maven-publish'
 
 project.group = rootProject.group
 project.version = rootProject.version
+project.description = 'Simple yet powerful logging and string formatting for Java'
 
 sourceCompatibility = '1.7'
 targetCompatibility = '1.7'
@@ -44,10 +45,10 @@ orchid {
     theme = "BsDoc"
 
     if(System.getenv('JITPACK')) {
-        baseUrl = "https://jitpack.io/com/github/JavaEden/Clog/${System.getenv('VERSION')}/javadoc"
+        baseUrl = "https://jitpack.io/com/github/JavaEden/Clog/${project.name}/${System.getenv('VERSION')}/javadoc"
     }
     else if(project.hasProperty('env') && project.property('env') == 'prod') {
-        baseUrl = "https://javaeden.github.io/Clog"
+        baseUrl = "https://javaeden.github.io/Clog/${project.name}"
     }
     else {
         baseUrl = "http://localhost:8080"
@@ -125,9 +126,9 @@ afterEvaluate { project ->
                 version "${project.version}"
                 pom.withXml {
                     def root = asNode()
-                    root.appendNode('description', 'Simple yet powerful logging and string formatting for Java')
+                    root.appendNode('description', project.description)
                     root.appendNode('name', 'Clog')
-                    root.appendNode('url', 'https://javaeden.github.io/Clog')
+                    root.appendNode('url', "https://javaeden.github.io/Clog/${project.name}")
                     root.children().last() + pomConfig
                 }
             }
@@ -152,7 +153,7 @@ afterEvaluate { project ->
 
             version {
                 name = "${project.version}"
-                desc = "Clog ${project.name} ${project.version}"
+                desc = "${project.name} ${project.version}"
                 released = new Date()
 
                 gpg {
@@ -174,3 +175,14 @@ task deploy {
     dependsOn project.tasks.publish
     doLast { }
 }
+
+task prepareDocumentation {
+    doLast {
+        copy {
+            from file("$buildDir/docs/orchid")
+            into file("${rootProject.buildDir}/docs/orchid/${project.name}")
+        }
+    }
+}
+
+rootProject.tasks.prepareDocumentation.dependsOn project.tasks.prepareDocumentation

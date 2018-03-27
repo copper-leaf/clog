@@ -1,0 +1,189 @@
+apply plugin: "java"
+apply plugin: "jacoco"
+apply plugin: "idea"
+apply plugin: "com.eden.orchidPlugin"
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
+
+// Configure Project
+//----------------------------------------------------------------------------------------------------------------------
+
+project.group = rootProject.group
+project.version = rootProject.version
+project.description = 'Clog logger implementation for SLF4j'
+
+sourceCompatibility = '1.7'
+targetCompatibility = '1.7'
+
+repositories {
+    jcenter()
+    maven { url 'https://dl.bintray.com/javaeden/Orchid/' }
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+    testCompile 'org.mockito:mockito-core:2.+'
+
+    compile 'org.slf4j:slf4j-api:1.7.22'
+    compile project(':Clog')
+
+    orchidCompile "io.github.javaeden.orchid:OrchidCore:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidBsDoc:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidJavadoc:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidPages:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidWiki:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidChangelog:${orchid_version}"
+}
+
+// Javadoc and Orchid
+//----------------------------------------------------------------------------------------------------------------------
+
+orchid {
+    version = "${project.version}"
+    theme = "BsDoc"
+
+    if(System.getenv('JITPACK')) {
+        baseUrl = "https://jitpack.io/com/github/JavaEden/Clog/${project.name}/${System.getenv('VERSION')}/javadoc"
+    }
+    else if(project.hasProperty('env') && project.property('env') == 'prod') {
+        baseUrl = "https://javaeden.github.io/Clog/${project.name}"
+    }
+    else {
+        baseUrl = "http://localhost:8080"
+    }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from project.sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+if(project.sourceSets.main.allJava.files?.empty) {
+    project.tasks.assemble.dependsOn orchidBuild
+    project.tasks.orchidBuild.mustRunAfter javadoc
+    project.tasks.orchidBuild.onlyIf {
+        !(project.hasProperty('noJavadoc') && project.property('noJavadoc')) && !project.orchid.noJavadoc
+    }
+}
+
+// Jacoco Code Coverage
+//----------------------------------------------------------------------------------------------------------------------
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
+}
+check.dependsOn jacocoTestReport
+
+// Publish to Bintray
+//----------------------------------------------------------------------------------------------------------------------
+
+afterEvaluate { project ->
+    def pomConfig = {
+        scm {
+            url 'https://github.com/JavaEden/Clog.git'
+            connection 'https://github.com/JavaEden/Clog.git'
+            developerConnection 'https://github.com/JavaEden/Clog.git'
+        }
+        licenses {
+            license {
+                name 'MIT'
+                url 'https://opensource.org/licenses/mit'
+                distribution 'repo'
+            }
+        }
+        developers {
+            developer {
+                id 'JavaEden'
+                name 'Casey Brooks'
+                email 'cjbrooks12@gmail.com'
+            }
+        }
+    }
+
+    project.publishing {
+        publications {
+            ClogPublication(MavenPublication) {
+                from project.components.java
+                artifact project.sourcesJar
+                artifact project.javadocJar
+                groupId "${project.group}"
+                artifactId "${project.name}"
+                version "${project.version}"
+                pom.withXml {
+                    def root = asNode()
+                    root.appendNode('description', project.description)
+                    root.appendNode('name', 'Clog')
+                    root.appendNode('url', "https://javaeden.github.io/Clog/${project.name}")
+                    root.children().last() + pomConfig
+                }
+            }
+        }
+    }
+
+    bintray {
+        user = "${project.properties['bintray_username']}"
+        key = "${project.properties['bintray_apiKey']}"
+        publications = ['ClogPublication']
+
+        dryRun = project.hasProperty('dryDeploy')
+        publish = !project.hasProperty('dryDeploy')
+        override = true
+
+        pkg {
+            repo = "Eden"
+            name = "${project.name}"
+            userOrg = 'javaeden'
+            licenses = ['MIT']
+            vcsUrl = 'https://github.com/JavaEden/Clog.git'
+
+            version {
+                name = "${project.version}"
+                desc = "${project.name} ${project.version}"
+                released = new Date()
+
+                gpg {
+                    sign = true
+                }
+                mavenCentralSync {
+                    sync = (project.hasProperty('includeMavenCentralSync'))
+                    user = "${project.properties['mavenCentral_username']}"
+                    password = "${project.properties['mavenCentral_password']}"
+                }
+            }
+        }
+    }
+}
+
+project.tasks.publish.dependsOn bintrayUpload
+
+task deploy {
+    dependsOn project.tasks.publish
+    doLast { }
+}
+
+task prepareDocumentation {
+    doLast {
+        copy {
+            from file("$buildDir/docs/orchid")
+            into file("${rootProject.buildDir}/docs/orchid/${project.name}")
+        }
+    }
+}
+
+rootProject.tasks.prepareDocumentation.dependsOn project.tasks.prepareDocumentation

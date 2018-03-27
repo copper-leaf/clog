@@ -11,3 +11,4 @@ apply plugin: 'net.vivin.gradle-semantic-build-versioning'
 rootProject.name = 'Clog'
 
 include ':Clog'
+include ':Clog4j'
