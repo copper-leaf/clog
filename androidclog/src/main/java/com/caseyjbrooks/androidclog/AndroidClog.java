@@ -1,16 +1,20 @@
 package com.caseyjbrooks.androidclog;
 
+import android.content.Context;
+
 import com.caseyjbrooks.clog.Clog;
 import com.caseyjbrooks.clog.ClogFormatter;
 import com.caseyjbrooks.clog.ClogLogger;
+import com.caseyjbrooks.clog.ClogProfile;
 import com.caseyjbrooks.clog.EmptyLogger;
+import com.caseyjbrooks.clog.ProfileSupplier;
 import com.caseyjbrooks.clog.parseltongue.Parseltongue;
 
 import java.util.HashMap;
 
 public class AndroidClog {
 
-    public static Clog getDevelopmentClog() {
+    public static ClogProfile getDevelopmentClog() {
         ClogFormatter formatter = new Parseltongue();
         HashMap<String, ClogLogger> loggers = new HashMap<>();
 
@@ -22,20 +26,41 @@ public class AndroidClog {
         loggers.put(Clog.KEY_E,   new AndroidLogger(Clog.Priority.ERROR));
         loggers.put(Clog.KEY_WTF, new AndroidLogger(Clog.Priority.FATAL));
 
-        return new Clog(loggers, formatter);
+        return new ClogProfile(loggers, formatter);
     }
 
-    public static Clog getProductionClog() {
+    public static ClogProfile getProductionClog() {
         ClogFormatter formatter = new Parseltongue();
         HashMap<String, ClogLogger> loggers = new HashMap<>();
-        loggers.put(null, new EmptyLogger());
-        loggers.put("d", new EmptyLogger());
-        loggers.put("e", new EmptyLogger());
-        loggers.put("i", new EmptyLogger());
-        loggers.put("v", new EmptyLogger());
-        loggers.put("w", new EmptyLogger());
-        loggers.put("wtf", new EmptyLogger());
 
-        return new Clog(loggers, formatter);
+        loggers.put(null,         new EmptyLogger());
+        loggers.put(Clog.KEY_V,   new EmptyLogger());
+        loggers.put(Clog.KEY_D,   new EmptyLogger());
+        loggers.put(Clog.KEY_I,   new EmptyLogger());
+        loggers.put(Clog.KEY_W,   new EmptyLogger());
+        loggers.put(Clog.KEY_E,   new EmptyLogger());
+        loggers.put(Clog.KEY_WTF, new EmptyLogger());
+
+        return new ClogProfile(loggers, formatter);
     }
+
+    public static void init(Context context, boolean debug) {
+        if(debug) {
+            Clog.setCurrentProfile("debug", new ProfileSupplier() {
+                @Override
+                public ClogProfile get() {
+                    return getDevelopmentClog();
+                }
+            });
+        }
+        else {
+            Clog.setCurrentProfile("prod", new ProfileSupplier() {
+                @Override
+                public ClogProfile get() {
+                    return getProductionClog();
+                }
+            });
+        }
+    }
+
 }
