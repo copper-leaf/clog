@@ -19,15 +19,25 @@ Android Clog provides simple Android Log implementations for Clog. The mapping b
 
 `Clog.wtf(...) --> Log.wtf(...)`
 
-In addition, Clog tags work exactly like Android Log tags, like so:
+In addition, Clog gets rid of the annoying Android Log tags. By default, the Tag passed to the Android logger is the simple classname of the calling class:
 
 ```
-d(String tag, String message) {
-  Log.d(tag, message);
-}
+Clog.d(String message) -> Log.d(callerClassName, message)
 ```
 
-Getting Android Clog integrated into your project is easy. Add the following to your Activity's `onCreate()`:
+If, for some reason, you need to set the Tag to something other than the caller class's name, you can push a Tag into Clog:
+
+```
+Clog.pushTag(tag);
+```
+
+Just make sure to pop it back off when you're done, otherwise other places will be logged with that tag as well.
+
+```
+Clog.popTag();
+```
+
+Getting Android Clog integrated into your project is easy. Add the following to your Activity's or Application's `onCreate()`:
 
 ```java
 if(BuildConfig.DEBUG) {
@@ -44,7 +54,7 @@ In development, all logs will be directed to the standard Log implementations sh
 Clog and Android Clog is distrubuted through JitPack.io.
 
 [![](https://jitpack.io/v/JavaEden/Android-Clog.svg)](https://jitpack.io/#JavaEden/Android-Clog)
-[![JitPack Javadoc](https://img.shields.io/github/tag/JavaEden/Clog.svg?maxAge=2592000&label=javadoc)](https://jitpack.io/com/github/JavaEden/Clog/v1.2.4/javadoc/)
+[![JitPack Javadoc](https://img.shields.io/github/tag/JavaEden/Clog.svg?maxAge=2592000&label=javadoc)](https://jitpack.io/com/github/JavaEden/Clog/v1.6.1/javadoc/)
 
 In your project-level `build.gradle`:
 
@@ -61,8 +71,6 @@ In your module's `build.gradle` (replace the version with the most recent releas
 ```groovy
 dependencies {
     ...
-    compile('com.github.JavaEden:Android-Clog:v1.2.4@aar') {
-        transitive = true;
-    }
+    api 'com.github.JavaEden:Android-Clog:v1.6.1'
 }
 ```
