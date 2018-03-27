@@ -32,9 +32,10 @@ dependencies {
     orchidCompile "io.github.javaeden.orchid:OrchidCore:${orchid_version}"
     orchidCompile "io.github.javaeden.orchid:OrchidBsDoc:${orchid_version}"
     orchidCompile "io.github.javaeden.orchid:OrchidJavadoc:${orchid_version}"
-    orchidCompile "io.github.javaeden.orchid:OrchidPages:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidPluginDocs:${orchid_version}"
     orchidCompile "io.github.javaeden.orchid:OrchidWiki:${orchid_version}"
     orchidCompile "io.github.javaeden.orchid:OrchidChangelog:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidSyntaxHighlighter:${orchid_version}"
 }
 
 // Javadoc and Orchid
@@ -45,10 +46,10 @@ orchid {
     theme = "BsDoc"
 
     if(System.getenv('JITPACK')) {
-        baseUrl = "https://jitpack.io/com/github/JavaEden/Clog/${project.name}/${System.getenv('VERSION')}/javadoc"
+        baseUrl = "https://jitpack.io/com/github/JavaEden/Clog/${System.getenv('VERSION')}/javadoc"
     }
     else if(project.hasProperty('env') && project.property('env') == 'prod') {
-        baseUrl = "https://javaeden.github.io/Clog/${project.name}"
+        baseUrl = "https://javaeden.github.io/Clog"
     }
     else {
         baseUrl = "http://localhost:8080"
@@ -180,7 +181,7 @@ task prepareDocumentation {
     doLast {
         copy {
             from file("$buildDir/docs/orchid")
-            into file("${rootProject.buildDir}/docs/orchid/${project.name}")
+            into file("${rootProject.buildDir}/docs/orchid/")
         }
     }
 }

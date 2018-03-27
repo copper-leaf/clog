@@ -1,3 +1,6 @@
+---
+---
+
 # Logging
 
 ### The Basics

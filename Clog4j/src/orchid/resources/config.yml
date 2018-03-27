@@ -11,11 +11,18 @@ theme:
   menu:
     - type: 'link'
       title: 'Home'
-      url: '/'
+      url: '#{$0|baseUrl}/'
     - type: 'wiki'
-      topLevel: false
-    - type: 'pages'
-      atRoot: true
+      title: 'Wiki'
+    - type: 'dropdown'
+      title: 'Integrations'
+      menu:
+        - type: 'link'
+          title: 'Clog4j'
+          url: '#{$0|baseUrl}/clog4j'
+        - type: 'link'
+          title: 'Android Clog'
+          url: '#{$0|baseUrl}/android-clog'
     - type: 'javadocPackages'
     - type: 'javadocClasses'
   trianglifyOptions:
@@ -38,6 +45,3 @@ allPages:
         - 'toolbar'
         - 'show-language'
         - 'copy-to-clipboard'
-
-staticPages:
-  layout: geopattern2
