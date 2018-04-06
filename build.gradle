@@ -2,8 +2,7 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 buildscript {
-    ext.orchid_version = '0.7.36'
-    ext.orchid_plugin_version = 'v0.4.1'
+    ext.orchid_version = '0.8.2'
     repositories {
         jcenter()
         maven { url "https://plugins.gradle.org/m2/" }
@@ -11,7 +10,8 @@ buildscript {
         maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath "gradle.plugin.com.eden.orchidPlugin:buildSrc:${orchid_plugin_version}"
+        classpath "gradle.plugin.com.eden:orchidPlugin:$orchid_version"
+        classpath "gradle.plugin.com.eden:orchidJavadocPlugin:$orchid_version"
         classpath 'com.android.tools.build:gradle:3.0.1'
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'

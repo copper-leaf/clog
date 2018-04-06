@@ -2,6 +2,7 @@ apply plugin: "java"
 apply plugin: "jacoco"
 apply plugin: "idea"
 apply plugin: "com.eden.orchidPlugin"
+apply plugin: "com.eden.orchidJavadocPlugin"
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
 
