@@ -53,12 +53,6 @@ public class Clog {
     private static String currentProfileKey;
     private static ClogProfile currentProfile;
 
-    static {
-        profileSuppliers = new HashMap<>();
-        profiles = new HashMap<>();
-        profiles.put(null, new ClogProfile());
-    }
-
     /**
      * Get the instance of Clog to log to. If the instance is defined, use that profile, otherwise
      * create a new default profile.
@@ -437,6 +431,7 @@ public class Clog {
      * @param clog the profile
      */
     public static void addProfile(String key, ProfileSupplier clog) {
+        if(profileSuppliers == null) profileSuppliers = new HashMap<>();
         profileSuppliers.put(key, clog);
     }
 
@@ -446,6 +441,7 @@ public class Clog {
      * @param key the key of the profile to remove
      */
     public static void removeProfile(String key) {
+        if(profiles == null) profiles = new HashMap<>();
         profiles.remove(key);
     }
 
@@ -455,6 +451,7 @@ public class Clog {
      * @param key the key of the profile to use
      */
     public static ClogProfile setCurrentProfile(String key) {
+        if(profiles == null) profiles = new HashMap<>();
         Clog.currentProfileKey = key;
         Clog.currentProfile = profiles.get(key);
         return getInstance();
@@ -477,6 +474,7 @@ public class Clog {
      * @return the map of profiles
      */
     public static Map<String, ClogProfile> getProfiles() {
+        if(profiles == null) profiles = new HashMap<>();
         return profiles;
     }
 
@@ -486,6 +484,7 @@ public class Clog {
      * @param profiles the profile set to use
      */
     public static void setAllProfiles(Map<String, ClogProfile> profiles) {
+        if(profiles == null) throw new NullPointerException("profiles cannot be null");
         Clog.profiles = profiles;
     }
 }
