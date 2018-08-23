@@ -1,7 +1,9 @@
-
-# Overview
+# Clog
 
 > Clog is a simple-to-use yet powerful and customizable logging utility for Java. It is based on the Android Log class interface, but improves it with features like custom loggers with multiple profiles and powerful String formatting with the Parseltongue formatting language. You'll wonder how you ever got by without it.
+
+[![Build Status](https://travis-ci.org/JavaEden/Clog.svg?branch=master)](https://travis-ci.org/JavaEden/Clog)
+[![Latest Version](https://api.bintray.com/packages/javaeden/Eden/Clog/images/download.svg) ](https://bintray.com/javaeden/Eden/Clog/_latestVersion)
 
 Clog is designed to replace and extend the functionality of the basic Android Log class, but is built on pure Java so it can be used anywhere. It provides a generic interface with loggers provided at runtime, so that you can do things like log messages to your console during development, but write them to a file or send to a server in production.
 
