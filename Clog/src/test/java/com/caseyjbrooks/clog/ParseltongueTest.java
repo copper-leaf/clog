@@ -371,6 +371,35 @@ public class ParseltongueTest {
         assertEquals(expectedOutput, output);
     }
 
+    @Test
+    public void testWithSpellObject() {
+        Parseltongue parseltongue = new Parseltongue();
+        parseltongue.findSpells(new TestClass());
+
+        String input, expectedOutput, output;
+
+        input = "";
+        expectedOutput = "";
+        output = parseltongue.format(input);
+        assertEquals(expectedOutput, output);
+
+        input = "Enter Pipeline --> #{ $0 }";
+        expectedOutput = "Enter Pipeline --> ";
+        output = parseltongue.format(input);
+        assertEquals(expectedOutput, output);
+
+        // test normal pipeline flow, with input started by real object
+        input = "Enter Pipeline --> #{ $1 | staticSpell }";
+        expectedOutput = "Enter Pipeline --> 1 static";
+        output = parseltongue.format(input, "1");
+        assertEquals(expectedOutput, output);
+
+        input = "Enter Pipeline --> #{ $1 | nonStaticSpell }";
+        expectedOutput = "Enter Pipeline --> 1 non-static";
+        output = parseltongue.format(input, "1");
+        assertEquals(expectedOutput, output);
+    }
+
 // Test that lists and arrays can be indexed by position, and collections and other classes that can
 // get an object by a string index can be found, and any generic object's property can be found
 //--------------------------------------------------------------------------------------------------
@@ -548,5 +577,17 @@ public class ParseltongueTest {
         }
 
         return output;
+    }
+
+    public static class TestClass {
+        @Spell
+        public static String staticSpell(Object data) {
+            return data + " static";
+        }
+
+        @Spell
+        public String nonStaticSpell(Object data) {
+            return data + " non-static";
+        }
     }
 }

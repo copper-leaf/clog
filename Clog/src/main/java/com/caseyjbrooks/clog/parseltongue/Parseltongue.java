@@ -4,6 +4,7 @@ import com.caseyjbrooks.clog.ClogFormatter;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +29,28 @@ public class Parseltongue implements ClogFormatter {
                     spellName = method.getName();
                 }
 
-                spells.add(new MethodIncantation(spellName, method));
+                if(Modifier.isStatic(method.getModifiers())) {
+                    spells.add(new MethodIncantation(spellName, null, method));
+                }
+            }
+        }
+    }
+
+    public void findSpells(Object o) {
+        for (final Method method : o.getClass().getDeclaredMethods()) {
+            if (method.isAnnotationPresent(Spell.class)) {
+                Spell methodAnnotation = method.getAnnotation(Spell.class);
+                String spellName = methodAnnotation.name();
+                if(spellName.length() == 0) {
+                    spellName = method.getName();
+                }
+
+                if(Modifier.isStatic(method.getModifiers())) {
+                    spells.add(new MethodIncantation(spellName, null, method));
+                }
+                else {
+                    spells.add(new MethodIncantation(spellName, o, method));
+                }
             }
         }
     }

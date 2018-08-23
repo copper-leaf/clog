@@ -6,10 +6,12 @@ import java.util.ArrayList;
 public final class MethodIncantation implements Incantation {
 
     private final String name;
+    private final Object host;
     private final Method method;
 
-    public MethodIncantation(String name, Method method) {
+    public MethodIncantation(String name, Object host, Method method) {
         this.name = name;
+        this.host = host;
         this.method = method;
     }
 
@@ -96,7 +98,7 @@ public final class MethodIncantation implements Incantation {
                 }
 
                 try {
-                    return method.invoke(null, objects);
+                    return method.invoke(host, objects);
                 }
                 catch(Exception e) {
 //                    e.printStackTrace();
