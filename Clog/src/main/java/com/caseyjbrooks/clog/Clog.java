@@ -98,6 +98,10 @@ public class Clog {
         return getInstance().tag(tag);
     }
 
+    public static ClogProfile noTag() {
+        return getInstance().tag(null);
+    }
+
 // Generic key-valued logging calls
 //--------------------------------------------------------------------------------------------------
 

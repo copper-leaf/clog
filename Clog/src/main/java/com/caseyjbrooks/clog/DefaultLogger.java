@@ -36,13 +36,13 @@ public class DefaultLogger implements ClogLogger {
 
     @Override
     public int log(String tag, String message) {
-        AnsiConsole.out.println(getAnsiLevelString().a(tag + ": ").a(message));
+        AnsiConsole.out.println(getAnsiLevelString().a(getTagString(tag)).a(message));
         return 0;
     }
 
     @Override
     public int log(String tag, String message, Throwable throwable) {
-        AnsiConsole.out.println(getAnsiLevelString().a(tag + ": ").a(message).a(" (" + throwable.getMessage() + ")"));
+        AnsiConsole.out.println(getAnsiLevelString().a(getTagString(tag)).a(message).a(getThrowableString(throwable)));
         return 0;
     }
 
@@ -73,5 +73,18 @@ public class DefaultLogger implements ClogLogger {
         }
 
         return Ansi.ansi();
+    }
+
+    private String getTagString(String tag) {
+        if(tag != null && tag.length() > 0) {
+            return tag + ": ";
+        }
+        else {
+            return "";
+        }
+    }
+
+    private String getThrowableString(Throwable throwable) {
+        return " (" + throwable.getMessage() + ")";
     }
 }
