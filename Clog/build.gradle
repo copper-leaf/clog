@@ -2,7 +2,6 @@ apply plugin: "java"
 apply plugin: "jacoco"
 apply plugin: "idea"
 apply plugin: "com.eden.orchidPlugin"
-apply plugin: "com.eden.orchidJavadocPlugin"
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
 
@@ -31,6 +30,7 @@ dependencies {
     orchidCompile "io.github.javaeden.orchid:OrchidWiki:${orchid_version}"
     orchidCompile "io.github.javaeden.orchid:OrchidChangelog:${orchid_version}"
     orchidCompile "io.github.javaeden.orchid:OrchidSyntaxHighlighter:${orchid_version}"
+    orchidCompile files(org.gradle.internal.jvm.Jvm.current().toolsJar)
 }
 
 // Javadoc and Orchid
@@ -40,13 +40,12 @@ orchid {
     version = "${project.version}"
     theme = "BsDoc"
 
-    if(System.getenv('JITPACK')) {
-        baseUrl = "https://jitpack.io/com/github/JavaEden/Clog/${System.getenv('VERSION')}/javadoc"
-    }
-    else if(project.hasProperty('env') && project.property('env') == 'prod') {
+    if(project.hasProperty('env') && project.property('env') == 'prod') {
+        environment = "production"
         baseUrl = "https://javaeden.github.io/Clog"
     }
     else {
+        environment = "debug"
         baseUrl = "http://localhost:8080"
     }
 }
@@ -56,9 +55,9 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from project.sourceSets.main.allSource
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
+task javadocJar(type: Jar, dependsOn: orchidBuild) {
     classifier = 'javadoc'
-    from javadoc.destinationDir
+    from files(project.buildDir.absolutePath + '/docs/orchid')
 }
 
 artifacts {
@@ -66,13 +65,9 @@ artifacts {
     archives javadocJar
 }
 
-if(project.sourceSets.main.allJava.files?.empty) {
-    project.tasks.assemble.dependsOn orchidBuild
-    project.tasks.orchidBuild.mustRunAfter javadoc
-    project.tasks.orchidBuild.onlyIf {
-        !(project.hasProperty('noJavadoc') && project.property('noJavadoc')) && !project.orchid.noJavadoc
-    }
-}
+project.tasks.javadoc.onlyIf { false }
+project.tasks.assemble.dependsOn orchidBuild
+project.tasks.orchidBuild.mustRunAfter javadoc
 
 // Jacoco Code Coverage
 //----------------------------------------------------------------------------------------------------------------------

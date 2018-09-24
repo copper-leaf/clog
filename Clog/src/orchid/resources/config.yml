@@ -14,7 +14,7 @@ theme:
       url: '#{$0|baseUrl}/'
     - type: 'wiki'
       title: 'Wiki'
-    - type: 'dropdown'
+    - type: 'submenu'
       title: 'Integrations'
       menu:
         - type: 'link'
