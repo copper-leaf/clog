@@ -1,7 +1,5 @@
 ---
-
 title: Android Clog
-
 ---
 
 # Using Clog with Android

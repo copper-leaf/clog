@@ -25,12 +25,12 @@ dependencies {
 
     orchidCompile "io.github.javaeden.orchid:OrchidCore:${orchid_version}"
     orchidCompile "io.github.javaeden.orchid:OrchidBsDoc:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidPages:${orchid_version}"
     orchidCompile "io.github.javaeden.orchid:OrchidJavadoc:${orchid_version}"
     orchidCompile "io.github.javaeden.orchid:OrchidPluginDocs:${orchid_version}"
     orchidCompile "io.github.javaeden.orchid:OrchidWiki:${orchid_version}"
     orchidCompile "io.github.javaeden.orchid:OrchidChangelog:${orchid_version}"
     orchidCompile "io.github.javaeden.orchid:OrchidSyntaxHighlighter:${orchid_version}"
-    orchidCompile files(org.gradle.internal.jvm.Jvm.current().toolsJar)
 }
 
 // Javadoc and Orchid
@@ -39,14 +39,13 @@ dependencies {
 orchid {
     version = "${project.version}"
     theme = "BsDoc"
+    baseUrl = "https://javaeden.github.io/Clog"
 
     if(project.hasProperty('env') && project.property('env') == 'prod') {
         environment = "production"
-        baseUrl = "https://javaeden.github.io/Clog"
     }
     else {
         environment = "debug"
-        baseUrl = "http://localhost:8080"
     }
 }
 
@@ -127,8 +126,8 @@ afterEvaluate { project ->
     }
 
     bintray {
-        user = "${project.properties['bintray_username']}"
-        key = "${project.properties['bintray_apiKey']}"
+        user = "${project.property('bintray_username')}"
+        key = "${project.property('bintray_apiKey')}"
         publications = ['ClogPublication']
 
         dryRun = project.hasProperty('dryDeploy')
@@ -152,8 +151,8 @@ afterEvaluate { project ->
                 }
                 mavenCentralSync {
                     sync = (project.hasProperty('includeMavenCentralSync'))
-                    user = "${project.properties['mavenCentral_username']}"
-                    password = "${project.properties['mavenCentral_password']}"
+                    user = "${project.property('mavenCentral_username')}"
+                    password = "${project.property('mavenCentral_password')}"
                 }
             }
         }
@@ -161,19 +160,10 @@ afterEvaluate { project ->
 }
 
 project.tasks.publish.dependsOn bintrayUpload
+project.tasks.publish.dependsOn orchidDeploy
+
 
 task deploy {
     dependsOn project.tasks.publish
     doLast { }
 }
-
-task prepareDocumentation {
-    doLast {
-        copy {
-            from file("$buildDir/docs/orchid")
-            into file("${rootProject.buildDir}/docs/orchid/")
-        }
-    }
-}
-
-rootProject.tasks.prepareDocumentation.dependsOn project.tasks.prepareDocumentation

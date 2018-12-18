@@ -2,17 +2,18 @@
 //----------------------------------------------------------------------------------------------------------------------
 
 buildscript {
-    ext.orchid_version = '0.12.1'
+    ext.orchid_version = '0.15.0'
     repositories {
+        google()
         jcenter()
         maven { url "https://plugins.gradle.org/m2/" }
-        maven { url 'https://maven.google.com' }
-        maven { url "https://jitpack.io" }
+        maven { url 'https://dl.bintray.com/javaeden/Orchid/' }
+        maven { url 'https://jitpack.io' }
     }
     dependencies {
         classpath "gradle.plugin.com.eden:orchidPlugin:$orchid_version"
         classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.0'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.4'
         classpath 'com.github.dcendents:android-maven-gradle-plugin:2.0'
     }
 }
@@ -26,9 +27,10 @@ group 'com.eden'
 
 allprojects {
     repositories {
+        google()
         jcenter()
+        maven { url "https://kotlin.bintray.com/kotlinx" }
         maven { url 'https://dl.bintray.com/javaeden/Orchid/' }
-        maven { url 'https://maven.google.com' }
         maven { url 'https://jitpack.io' }
     }
 }
@@ -46,25 +48,6 @@ task getReleaseName {
     }
 }
 
-task getReleaseNotes {
-    doLast {
-        def versionFilename = project.version.toString().replaceAll("\\.", "_") + ".md"
-        def fullVersionFilename = "$projectDir/src/orchid/resources/changelog/$versionFilename"
-        def versionFile = file(fullVersionFilename)
-
-        if(versionFile.exists()) {
-            println versionFile.text.split("---").last().trim()
-        }
-        else {
-            println "No release notes"
-        }
-    }
-}
-
-
-task prepareDocumentation {
-}
 task deploy {
-    dependsOn prepareDocumentation
     doLast { }
 }

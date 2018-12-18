@@ -38,24 +38,16 @@ jobs:
       os: linux
       jdk: openjdk8
       install: ./gradlew assemble -Penv=prod -Prelease
-      script: ./gradlew deploy -Penv=prod -Prelease
-      after_success:
-        - bash <(curl -s https://codecov.io/bash)
+      before_script:
         - git config --local user.name "Travis CI Deployment Bot"
         - git config --local user.email "deploy@travis-ci.org"
         - ./gradlew tag -Prelease
         - export GRADLE_PROJECT_RELEASE_NAME=$(./gradlew getReleaseName --quiet)
         - export GRADLE_PROJECT_RELEASE_NOTES=$(./gradlew getReleaseNotes --quiet)
-      deploy:
-        - provider: releases
-          skip_cleanup: true
-          api_key: $GITHUB_TOKEN
-          name: v${GRADLE_PROJECT_RELEASE_NAME} Release
-        - provider: pages
-          skip_cleanup: true
-          github_token: $GITHUB_TOKEN
-          local_dir: build/docs/orchid
-          target_branch: gh-pages
+      script: ./gradlew deploy -Penv=prod -Prelease
+      after_success:
+        - bash <(curl -s https://codecov.io/bash)
+
 
 stages:
   - test

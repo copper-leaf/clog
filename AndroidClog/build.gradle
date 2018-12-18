@@ -89,8 +89,8 @@ artifacts {
 // Bintray
 
 bintray {
-    user = "${project.properties['bintray_username']}"
-    key = "${project.properties['bintray_apiKey']}"
+    user = "${project.property('bintray_username')}"
+    key = "${project.property('bintray_apiKey')}"
     configurations = ['archives']
 
     dryRun = project.hasProperty('dryDeploy')
@@ -114,8 +114,8 @@ bintray {
             }
             mavenCentralSync {
                 sync = (project.hasProperty('includeMavenCentralSync'))
-                user = "${project.properties['mavenCentral_username']}"
-                password = "${project.properties['mavenCentral_password']}"
+                user = "${project.property('mavenCentral_username')}"
+                password = "${project.property('mavenCentral_password')}"
             }
         }
     }
@@ -131,14 +131,3 @@ task deploy {
     dependsOn project.tasks.publish
     doLast { }
 }
-
-task prepareDocumentation {
-    doLast {
-        copy {
-            from file("$buildDir/docs/orchid")
-            into file("${rootProject.buildDir}/docs/orchid/android-clog")
-        }
-    }
-}
-
-rootProject.tasks.prepareDocumentation.dependsOn project.tasks.prepareDocumentation

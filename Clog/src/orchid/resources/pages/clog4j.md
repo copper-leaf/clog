@@ -1,7 +1,5 @@
 ---
-
 title: Clog4j
-
 ---
 
 # Using Clog with SLF4j

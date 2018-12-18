@@ -1,7 +1,6 @@
 apply plugin: "java"
 apply plugin: "jacoco"
 apply plugin: "idea"
-apply plugin: "com.eden.orchidPlugin"
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
 
@@ -23,29 +22,6 @@ dependencies {
 
     compile 'org.slf4j:slf4j-api:1.7.22'
     compile project(':Clog')
-
-    orchidCompile "io.github.javaeden.orchid:OrchidCore:${orchid_version}"
-    orchidCompile "io.github.javaeden.orchid:OrchidBsDoc:${orchid_version}"
-    orchidCompile "io.github.javaeden.orchid:OrchidJavadoc:${orchid_version}"
-    orchidCompile "io.github.javaeden.orchid:OrchidSyntaxHighlighter:${orchid_version}"
-    orchidCompile files(org.gradle.internal.jvm.Jvm.current().toolsJar)
-}
-
-// Javadoc and Orchid
-//----------------------------------------------------------------------------------------------------------------------
-
-orchid {
-    version = "${project.version}"
-    theme = "BsDoc"
-
-    if(project.hasProperty('env') && project.property('env') == 'prod') {
-        environment = "production"
-        baseUrl = "https://javaeden.github.io/Clog/clog4j"
-    }
-    else {
-        environment = "debug"
-        baseUrl = "http://localhost:8080"
-    }
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -53,19 +29,15 @@ task sourcesJar(type: Jar, dependsOn: classes) {
     from project.sourceSets.main.allSource
 }
 
-task javadocJar(type: Jar, dependsOn: orchidBuild) {
+task javadocJar(type: Jar, dependsOn: classes) {
     classifier = 'javadoc'
-    from files(project.buildDir.absolutePath + '/docs/orchid')
+    from files(project.buildDir.absolutePath + '/docs/javadoc')
 }
 
 artifacts {
     archives sourcesJar
     archives javadocJar
 }
-
-project.tasks.javadoc.onlyIf { false }
-project.tasks.assemble.dependsOn orchidBuild
-project.tasks.orchidBuild.mustRunAfter javadoc
 
 // Jacoco Code Coverage
 //----------------------------------------------------------------------------------------------------------------------
@@ -125,8 +97,8 @@ afterEvaluate { project ->
     }
 
     bintray {
-        user = "${project.properties['bintray_username']}"
-        key = "${project.properties['bintray_apiKey']}"
+        user = "${project.property('bintray_username')}"
+        key = "${project.property('bintray_apiKey')}"
         publications = ['ClogPublication']
 
         dryRun = project.hasProperty('dryDeploy')
@@ -150,8 +122,8 @@ afterEvaluate { project ->
                 }
                 mavenCentralSync {
                     sync = (project.hasProperty('includeMavenCentralSync'))
-                    user = "${project.properties['mavenCentral_username']}"
-                    password = "${project.properties['mavenCentral_password']}"
+                    user = "${project.property('mavenCentral_username')}"
+                    password = "${project.property('mavenCentral_password')}"
                 }
             }
         }
@@ -164,14 +136,3 @@ task deploy {
     dependsOn project.tasks.publish
     doLast { }
 }
-
-task prepareDocumentation {
-    doLast {
-        copy {
-            from file("$buildDir/docs/orchid")
-            into file("${rootProject.buildDir}/docs/orchid/clog4j")
-        }
-    }
-}
-
-rootProject.tasks.prepareDocumentation.dependsOn project.tasks.prepareDocumentation

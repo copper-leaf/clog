@@ -9,20 +9,16 @@ theme:
     github: 'JavaEden/Clog'
   primaryColor: '#2a623d'
   menu:
-    - type: 'link'
-      title: 'Home'
-      url: '#{$0|baseUrl}/'
     - type: 'wiki'
-      title: 'Wiki'
+      asSubmenu: true
+      submenuTitle: 'Wiki'
     - type: 'submenu'
       title: 'Integrations'
       menu:
-        - type: 'link'
-          title: 'Clog4j'
-          url: '#{$0|baseUrl}/clog4j'
-        - type: 'link'
-          title: 'Android Clog'
-          url: '#{$0|baseUrl}/android-clog'
+        - type: 'page'
+          itemId: 'Clog4j'
+        - type: 'page'
+          itemId: 'Android Clog'
     - type: 'javadocPackages'
     - type: 'javadocClasses'
   trianglifyOptions:
@@ -46,5 +42,11 @@ allPages:
         - 'show-language'
         - 'copy-to-clipboard'
 
-wiki:
-  includeIndexInPageTitle: false
+services:
+  publications:
+    stages:
+      - type: ghPages
+        username: 'cjbrooks12'
+        repo: 'JavaEden/Clog'
+      - type: githubReleases
+        repo: 'JavaEden/Clog'
