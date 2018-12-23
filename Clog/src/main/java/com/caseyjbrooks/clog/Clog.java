@@ -99,7 +99,7 @@ public class Clog {
     }
 
     public static ClogProfile noTag() {
-        return getInstance().tag(null);
+        return getInstance().tag("");
     }
 
 // Generic key-valued logging calls

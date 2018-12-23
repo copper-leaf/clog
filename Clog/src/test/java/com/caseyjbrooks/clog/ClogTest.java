@@ -282,4 +282,28 @@ public class ClogTest {
 
         Clog.getInstance().popTag();
     }
+
+    @Test
+    public void testMessageWithDefaultTag() {
+        Clog.log("Test using default tag");
+        assertEquals("ClogTest", Clog.getInstance().getLastTag());
+        assertEquals("Test using default tag", Clog.getInstance().getLastLog());
+        Clog.getInstance().flush();
+    }
+
+    @Test
+    public void testMessageWithManualTag() {
+        Clog.tag("Custom Tag").log("Test using manual tag");
+        assertEquals("Custom Tag", Clog.getInstance().getLastTag());
+        assertEquals("Test using manual tag", Clog.getInstance().getLastLog());
+        Clog.getInstance().flush();
+    }
+
+    @Test
+    public void testMessageWithNoTag() {
+        Clog.noTag().log("Test using no tag");
+        assertEquals("", Clog.getInstance().getLastTag());
+        assertEquals("Test using no tag", Clog.getInstance().getLastLog());
+        Clog.getInstance().flush();
+    }
 }

@@ -37,14 +37,12 @@ jobs:
     - stage: release
       os: linux
       jdk: openjdk8
-      install: ./gradlew assemble -Penv=prod -Prelease
       before_script:
         - git config --local user.name "Travis CI Deployment Bot"
         - git config --local user.email "deploy@travis-ci.org"
         - ./gradlew tag -Prelease
-        - export GRADLE_PROJECT_RELEASE_NAME=$(./gradlew getReleaseName --quiet)
-        - export GRADLE_PROJECT_RELEASE_NOTES=$(./gradlew getReleaseNotes --quiet)
-      script: ./gradlew deploy -Penv=prod -Prelease
+        - git push --tags
+      script: ./gradlew assemble deploy -Penv=prod -Prelease
       after_success:
         - bash <(curl -s https://codecov.io/bash)
 
