@@ -1,4 +1,0 @@
-autobump {
-    majorPattern            = ~/^\[major\]/
-    minorPattern            = ~/^\[minor\]/
-}
