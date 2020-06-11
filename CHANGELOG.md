@@ -1,5 +1,9 @@
 ## 3.0.0
 
+- Fixes issue of `v`, `d`, and `i` logs not working on JS 
+
+## 3.0.0
+
 - Complete rewrite in Kotlin Multiplatform. Currently supported plain JVM, Android, iOS, and JS platforms.
 - Parseltongue and rich message formatting has been removed in favor of only simple `{}` formatting tags.
 - Public API has been cleaned up and streamlined for the 80% use-case.
