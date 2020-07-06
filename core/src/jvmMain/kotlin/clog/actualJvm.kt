@@ -10,6 +10,7 @@ import clog.impl.DefaultLogger
 import clog.impl.DefaultMessageFormatter
 import clog.impl.DefaultTagProvider
 import clog.impl.InferredTagFinder
+import clog.impl.Slf4jMessageFormatter
 
 actual fun inferCurrentTag(): String? = InferredTagFinder(
     InferredTagFinder::class.java.name,
@@ -22,4 +23,6 @@ actual fun inferCurrentTag(): String? = InferredTagFinder(
 actual fun createDefaultLogger(): ClogLogger = DefaultLogger()
 actual fun createDefaultTagProvider(): ClogTagProvider = DefaultTagProvider()
 actual fun createDefaultFilter(): ClogFilter = DefaultFilter()
-actual fun createDefaultMessageFormatter(): ClogMessageFormatter = DefaultMessageFormatter()
+actual fun createDefaultMessageFormatter(): ClogMessageFormatter = Slf4jMessageFormatter(
+    DefaultMessageFormatter()
+)

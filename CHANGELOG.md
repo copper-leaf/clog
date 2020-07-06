@@ -1,4 +1,8 @@
-## 3.0.0
+## 3.1.0
+
+- Adds support for simple slf4j MDC binding
+
+## 3.0.1
 
 - Fixes issue of `v`, `d`, and `i` logs not working on JS 
 

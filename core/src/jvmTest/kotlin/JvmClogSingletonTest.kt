@@ -4,6 +4,7 @@ import clog.impl.DefaultFilter
 import clog.impl.DefaultLogger
 import clog.impl.DefaultMessageFormatter
 import clog.impl.DefaultTagProvider
+import clog.impl.Slf4jMessageFormatter
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -14,7 +15,8 @@ class JvmClogSingletonTest {
             assertEquals(DefaultLogger::class, logger::class)
             assertEquals(DefaultTagProvider::class, tagProvider::class)
             assertEquals(DefaultFilter::class, filter::class)
-            assertEquals(DefaultMessageFormatter::class, messageFormatter::class)
+            assertEquals(Slf4jMessageFormatter::class, messageFormatter::class)
+            assertEquals(DefaultMessageFormatter::class, (messageFormatter as Slf4jMessageFormatter).delegate::class)
         }
     }
 
