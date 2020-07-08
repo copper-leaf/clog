@@ -1,5 +1,5 @@
 plugins {
-    id("com.eden.orchidPlugin") version "0.20.0"
+    id("com.eden.orchidPlugin") version "0.21.1"
     `clog-base`
 }
 
@@ -21,7 +21,6 @@ var releaseVersion: String by project.extra
 orchid {
     githubToken = ghToken
     version = releaseVersion
-    args = listOf("--experimentalSourceDoc")
 }
 
 val build by tasks
