@@ -1,12 +1,12 @@
-## 3.1.0
+## 3.1.1 - 2019-07-08
+
+- Fixes issue of `v`, `d`, and `i` logs not working on JS
+ 
+## 3.1.0 - 2019-07-06
 
 - Adds support for simple slf4j MDC binding
 
-## 3.0.1
-
-- Fixes issue of `v`, `d`, and `i` logs not working on JS 
-
-## 3.0.0
+## 3.0.0 - 2020-06-10
 
 - Complete rewrite in Kotlin Multiplatform. Currently supported plain JVM, Android, iOS, and JS platforms.
 - Parseltongue and rich message formatting has been removed in favor of only simple `{}` formatting tags.
