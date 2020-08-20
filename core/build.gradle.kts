@@ -8,6 +8,8 @@ plugins {
 
 val ghUser: String by extra
 val ghToken: String by extra
+val bintrayUser: String by extra
+val bintrayToken: String by extra
 
 android {
     compileSdkVersion(29)
@@ -135,6 +137,13 @@ publishing {
             credentials {
                 username = ghUser
                 password = ghToken
+            }
+        }
+        maven(url = "https://api.bintray.com/maven/javaeden/Eden/Clog/;publish=1;override=1;") {
+            name = "Bintray"
+            credentials {
+                username = bintrayUser
+                password = bintrayToken
             }
         }
     }

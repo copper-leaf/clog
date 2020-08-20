@@ -1,6 +1,7 @@
-## 3.1.2 - 2020-08-20
+## 3.2.0 - 2020-08-20
 
 - Enables SLF4J support on Android platform
+- Publishes artifacts to Bintray
 
 ## 3.1.1 - 2020-07-08
 
