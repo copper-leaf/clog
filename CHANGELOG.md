@@ -1,8 +1,12 @@
-## 3.1.1 - 2019-07-08
+## 3.1.2 - 2020-08-20
+
+- Enables SLF4J support on Android platform
+
+## 3.1.1 - 2020-07-08
 
 - Fixes issue of `v`, `d`, and `i` logs not working on JS
  
-## 3.1.0 - 2019-07-06
+## 3.1.0 - 2020-07-06
 
 - Adds support for simple slf4j MDC binding
 

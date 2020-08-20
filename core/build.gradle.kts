@@ -93,6 +93,7 @@ kotlin {
         val androidMain by getting {
             dependencies {
                 implementation(Kotlin.stdlib.jdk7)
+                implementation("org.slf4j:slf4j-api:_")
             }
         }
         val androidTest by getting {
@@ -123,19 +124,17 @@ kotlin {
     }
 }
 
-afterEvaluate {
-    publishing {
-        repositories {
-            // publish to the project buildDir to make sure things are getting published correctly
-            maven(url = "${project.buildDir}/.m2/repository") {
-                name = "project"
-            }
-            maven(url = "https://maven.pkg.github.com/copper-leaf/clog") {
-                name = "GitHubPackages"
-                credentials {
-                    username = ghUser
-                    password = ghToken
-                }
+publishing {
+    repositories {
+        // publish to the project buildDir to make sure things are getting published correctly
+        maven(url = "${project.buildDir}/.m2/repository") {
+            name = "project"
+        }
+        maven(url = "https://maven.pkg.github.com/copper-leaf/clog") {
+            name = "GitHubPackages"
+            credentials {
+                username = ghUser
+                password = ghToken
             }
         }
     }

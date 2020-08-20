@@ -80,4 +80,18 @@ class ClogSingletonTest {
             assertEquals("m2", logger.lastMessage)
         }
     }
+
+    @Test
+    fun testMinPriorityFilter() {
+        clogTest { logger ->
+            Clog.getInstance().setMinPriority(Clog.Priority.ERROR)
+
+            Clog.v("m1")
+            assertFalse(logger.messageWasLogged)
+
+            Clog.e("m2")
+            assertTrue(logger.messageWasLogged)
+            assertEquals("m2", logger.lastMessage)
+        }
+    }
 }

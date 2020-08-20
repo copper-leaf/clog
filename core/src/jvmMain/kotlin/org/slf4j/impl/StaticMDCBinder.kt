@@ -10,15 +10,15 @@ object StaticMDCBinder {
     fun getSingleton(): StaticMDCBinder = this
 
     fun getMDCA(): MDCAdapter {
-        return LogbackMDCAdapter()
+        return ClogMDCAdapter()
     }
 
     fun getMDCAdapterClassStr(): String {
-        return LogbackMDCAdapter::class.qualifiedName!!
+        return ClogMDCAdapter::class.qualifiedName!!
     }
 }
 
-class LogbackMDCAdapter : MDCAdapter {
+class ClogMDCAdapter : MDCAdapter {
 
     private val backingMap = ThreadLocal.withInitial { ConcurrentHashMap<String, String>() }
 
