@@ -132,14 +132,7 @@ publishing {
         maven(url = "${project.buildDir}/.m2/repository") {
             name = "project"
         }
-        maven(url = "https://maven.pkg.github.com/copper-leaf/clog") {
-            name = "GitHubPackages"
-            credentials {
-                username = ghUser
-                password = ghToken
-            }
-        }
-        maven(url = "https://api.bintray.com/maven/copper-leaf/copper-leaf/clog/;publish=1;override=1;") {
+        maven(url = "https://api.bintray.com/maven/copper-leaf/oss/clog/;publish=1;override=1;") {
             name = "Bintray"
             credentials {
                 username = bintrayUser

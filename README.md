@@ -36,12 +36,12 @@ Clog is designed with the following goals in mind:
 ```kotlin
 repositories {
     jcenter()
-    maven(url = "https://dl.bintray.com/copper-leaf/copper-leaf")
+    maven(url = "https://dl.bintray.com/copper-leaf/oss")
 }
 
 // for plain JVM or Android projects
 dependencies {
-    implementation("clog:core:{{site.version}}")
+    implementation("io.copper-leaf:clog:{{site.version}}")
 }
 
 // for multiplatform projects

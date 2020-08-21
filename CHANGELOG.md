@@ -1,6 +1,6 @@
-## 3.4.0 - 2020-08-21
+## 3.4.1 - 2020-08-21
 
-- Bintray 
+- Rename groupId to fix Bintray publishing 
 
 ## 3.3.0 - 2020-08-21
 
