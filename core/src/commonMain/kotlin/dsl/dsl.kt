@@ -2,8 +2,10 @@
 package clog.dsl
 
 import clog.Clog
+import clog.api.ClogLogger
 import clog.api.ClogMessageFormatter
 import clog.api.ClogProfile
+import clog.impl.DelegatingLogger
 import clog.impl.DisableInProductionFilter
 
 // Logging DSL
@@ -93,5 +95,15 @@ inline fun Clog.maybeTag(tag: String?): ClogProfile {
 inline fun Clog.configureLoggingInProduction(isDebug: Boolean) {
     updateProfile {
         it.copy(filter = DisableInProductionFilter(isDebug, it.filter))
+    }
+}
+
+/**
+ * Adds an additional [ClogLogger] as a logging target.
+ */
+inline fun Clog.addLogger(logger: ClogLogger) {
+    updateProfile {
+        val delegatingLogger = it.logger as? DelegatingLogger ?: DelegatingLogger(listOf(it.logger))
+        it.copy(logger = delegatingLogger + logger)
     }
 }

@@ -223,5 +223,33 @@ implementation for each supported platform:
 ### Turn off logging in production
 
 ```kotlin
-Clog.configureLoggingInProduction(BuildConfig.DEBUG)
+val isDebug = ...
+Clog.configureLoggingInProduction(isDebug)
+```
+
+### Use a custom logger
+
+Replaces the current logging target with a custom one.
+
+```kotlin
+val customLogger = object : ClogLogger {
+    override fun log(priority: Clog.Priority, tag: String?, message: String) {
+        ...
+    }
+}
+Clog.updateProfile { it.copy(logger = customLogger) }
+```
+
+### Using multiple logging targets
+
+Add an additional logger to the current instance. Calling `addLogger` multiple times will continue adding loggers, and
+messages will be delegated to all loggers.
+
+```kotlin
+val customLogger = object : ClogLogger {
+    override fun log(priority: Clog.Priority, tag: String?, message: String) {
+        ...
+    }
+}
+Clog.addLogger(customLogger)
 ```
