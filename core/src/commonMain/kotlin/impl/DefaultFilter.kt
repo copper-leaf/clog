@@ -6,6 +6,12 @@ import co.touchlab.stately.collections.IsoMutableCollection
 import co.touchlab.stately.collections.IsoMutableSet
 import co.touchlab.stately.concurrency.AtomicReference
 
+/**
+ * Filters messages based on tag and priority.
+ *
+ * Messages will be logged if the tag passes both the blacklist and the whitelist, and has a priority greater than or
+ * equal to the configured minimum.
+ */
 class DefaultFilter : ClogFilter {
 
     private val tagWhitelist: IsoMutableCollection<String> = IsoMutableSet()

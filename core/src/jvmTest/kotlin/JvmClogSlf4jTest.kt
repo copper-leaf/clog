@@ -1,5 +1,6 @@
 package clog
 
+import clog.impl.clogTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

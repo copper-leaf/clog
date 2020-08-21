@@ -11,7 +11,7 @@ private const val ansiMagenta = "[35m"
 private const val ansiCyan = "[36m"
 private const val ansiReset = "[0m"
 
-val Clog.Priority.ansiColorStart: String
+internal val Clog.Priority.ansiColorStart: String
     get() {
         return when (this) {
             Clog.Priority.VERBOSE -> "$ansiControlCode$ansiGreen"
@@ -24,7 +24,7 @@ val Clog.Priority.ansiColorStart: String
         }
     }
 
-val Clog.Priority.ansiColorEnd: String
+internal val Clog.Priority.ansiColorEnd: String
     get() {
         return when (this) {
             Clog.Priority.DEFAULT -> ""

@@ -1,10 +1,27 @@
-# Clog
+---
+---
 
-Zero-config Kotlin multiplatform logging utility
+## Clog
+
+Zero-config Kotlin multiplatform logging utility, strongly inspired by the [SLF4J](http://www.slf4j.org/) and 
+[Timber](https://github.com/JakeWharton/timber) APIs.
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/copper-leaf/clog)
 
-## Supported Platforms/Features
+Clog is designed with the following goals in mind:
+
+- **Zero setup required**: just add the dependency and start logging
+- **Support natural logging for each platform**: use `actual/expect` declarations to provide natural logging targets for 
+    each platform, rather than printing everything to stdout
+- **Be a central logger**: Unlike many other Kotlin/Multiplatform loggers which simply delegate to SLF4j, Clog is designed
+    to be the central logger instead of a wrapper around another logger. Clog _is_ an SLF4J implementation, so logs from 
+    other libraries will be passed through to Clog and can be configured and filtered using Clog's APIs.
+- **Support existing standards for logging**: with the API of Timber and semantics compatible with SLF4J, Clog is a 
+    natural way to transition your JVM-specific logging into the Kotlin/Multiplatform world
+- **Customization is there if you need it**: the Clog singleton can be easily configured with custom classes to apply 
+    your own formatting, filtering, and logging targets
+
+### Supported Platforms/Features
 
 | Platform | Logging Target   | ANSI Colors | Tag Inference | Message Formatting | SLF4J Integration | SLF4J MDC Support |
 | -------- | ---------------- | ----------- | ------------- | ------------------ | ----------------- | ----------------- |
@@ -14,22 +31,17 @@ Zero-config Kotlin multiplatform logging utility
 | iOS      | NSLog            | ❌          | ❌             | ✅                 | ❌                | ❌                 |
 {.table}
 
-## Installation
+### Installation
 
 ```kotlin
 repositories {
     jcenter()
-    maven(url = "https://maven.pkg.github.com/copper-leaf/clog") {
-        credentials {
-            username = project.properties["github_username"]?.toString() ?: ""
-            password = project.properties["githubToken"]?.toString() ?: ""
-        }
-    }
+    maven(url = "https://dl.bintray.com/javaeden/Eden")
 }
 
 // for plain JVM or Android projects
 dependencies {
-    implementation("clog:core:{version}")
+    implementation("clog:core:{{site.version}}")
 }
 
 // for multiplatform projects
@@ -37,7 +49,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("clog:core:{version}")
+                implementation("clog:core:{{site.version}}")
             }
         }
     }
@@ -45,6 +57,24 @@ kotlin {
 ```
 
 ## Usage
+
+Clog's logging levels generally follow the SLF4J logging levels, and the API follows a similar API as 
+[android.util.log](https://developer.android.com/reference/android/util/Log) or 
+[Timber](https://github.com/JakeWharton/timber).
+
+| Clog Level | Clog Method  | SLF4J Level      |
+| ---------- | ------------ | ---------------- |
+| Verbose    | `Clog.v()`   | `logger.trace()` |
+| Debug      | `Clog.d()`   | `logger.debug()` |
+| Info       | `Clog.i()`   | `logger.info()` |
+| Default    | `Clog.log()` | N/A |
+| Warning    | `Clog.w()`   | `logger.warn()` |
+| Error      | `Clog.e()`   | `logger.error()` |
+| Fatal      | `Clog.wtf()` | N/A |
+{.table}
+
+In general, a log consists of a _message_ (which may be formatted with params in SLF4J-style), a _tag_, and a 
+_log level_. Below is a description of the API
 
 ### Normal log messages
 
@@ -54,6 +84,7 @@ Tag will be inferred on supported platforms, based on the calling class
 Clog.v("message")
 Clog.d("message")
 Clog.i("message")
+Clog.log("message")
 Clog.w("message")
 Clog.e("message")
 Clog.wtf("message")
@@ -185,4 +216,12 @@ implementation for each supported platform:
 | `ClogMessageFormatter` | Formats a message string to pass to the `ClogLogger`                        | `Slf4jMessageFormatter(DefaultMessageFormatter())` | `DefaultMessageFormatter()` | `DefaultMessageFormatter()` | `DefaultMessageFormatter()` |
 | `ClogFilter`           | Determines whether to format and log a message                              | `DefaultFilter()`                                  | `DefaultFilter()`           | `DefaultFilter()`           | `DefaultFilter()`           |
 | `ClogLogger`           | Prints a formatted log to a lower-level platform-specific logger or console | `DefaultLogger()`                                  | `AndroidLogger()`           | `JsConsoleLogger()`         | `NsLogger()`                |
+{.table}
 
+## Recipes
+
+### Turn off logging in production
+
+```kotlin
+Clog.configureLoggingInProduction(BuildConfig.DEBUG)
+```

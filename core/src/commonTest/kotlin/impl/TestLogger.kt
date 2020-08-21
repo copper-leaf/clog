@@ -1,7 +1,9 @@
-package clog
+package clog.impl
 
+import clog.Clog
 import clog.api.ClogLogger
 import clog.api.ClogProfile
+import clog.dsl.updateProfile
 import co.touchlab.stately.collections.IsoMutableList
 
 class TestLogger : ClogLogger {

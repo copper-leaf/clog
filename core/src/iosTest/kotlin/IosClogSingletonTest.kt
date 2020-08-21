@@ -4,6 +4,7 @@ import clog.impl.DefaultFilter
 import clog.impl.DefaultMessageFormatter
 import clog.impl.DefaultTagProvider
 import clog.impl.NsLogger
+import clog.impl.clogTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

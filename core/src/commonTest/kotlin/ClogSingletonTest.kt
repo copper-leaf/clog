@@ -1,5 +1,7 @@
 package clog
 
+import clog.dsl.configureLoggingInProduction
+import clog.impl.clogTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -92,6 +94,32 @@ class ClogSingletonTest {
             Clog.e("m2")
             assertTrue(logger.messageWasLogged)
             assertEquals("m2", logger.lastMessage)
+        }
+    }
+
+    @Test
+    fun testLogInProductionFilter_notProd() {
+        clogTest { logger ->
+            Clog.configureLoggingInProduction(false)
+
+            Clog.v("m1")
+            assertTrue(logger.messageWasLogged)
+
+            Clog.e("m2")
+            assertTrue(logger.messageWasLogged)
+        }
+    }
+
+    @Test
+    fun testLogInProductionFilter_prod() {
+        clogTest { logger ->
+            Clog.configureLoggingInProduction(true)
+
+            Clog.v("m1")
+            assertFalse(logger.messageWasLogged)
+
+            Clog.e("m2")
+            assertFalse(logger.messageWasLogged)
         }
     }
 }
