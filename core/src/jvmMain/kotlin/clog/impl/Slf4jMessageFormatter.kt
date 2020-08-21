@@ -20,6 +20,6 @@ class Slf4jMessageFormatter(
     }
 
     companion object {
-        val REGEX = """%X\{(.*?)}""".toRegex()
+        val REGEX = """%X\{(.*?)\}""".toRegex()
     }
 }

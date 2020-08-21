@@ -18,6 +18,6 @@ class DefaultMessageFormatter : ClogMessageFormatter {
     }
 
     companion object {
-        val REGEX = """\{}""".toRegex()
+        val REGEX = """\{\}""".toRegex()
     }
 }

@@ -1,3 +1,7 @@
+## 3.4.2 - 2020-08-21
+
+- Fix regex patterns causing crash on Android
+
 ## 3.4.1 - 2020-08-21
 
 - Rename groupId to fix Bintray publishing 
