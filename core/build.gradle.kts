@@ -139,7 +139,7 @@ publishing {
                 password = ghToken
             }
         }
-        maven(url = "https://api.bintray.com/maven/cjbrooks12/maven/clog/;publish=1;override=1;") {
+        maven(url = "https://api.bintray.com/maven/copper-leaf/copper-leaf/clog/;publish=1;override=1;") {
             name = "Bintray"
             credentials {
                 username = bintrayUser

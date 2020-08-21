@@ -1,3 +1,7 @@
+## 3.4.0 - 2020-08-21
+
+- Bintray 
+
 ## 3.3.0 - 2020-08-21
 
 - Adds helper methods to disable logging in production, and to configure multiple logging targets

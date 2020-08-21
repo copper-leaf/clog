@@ -36,7 +36,7 @@ Clog is designed with the following goals in mind:
 ```kotlin
 repositories {
     jcenter()
-    maven(url = "https://dl.bintray.com/javaeden/Eden")
+    maven(url = "https://dl.bintray.com/copper-leaf/copper-leaf")
 }
 
 // for plain JVM or Android projects

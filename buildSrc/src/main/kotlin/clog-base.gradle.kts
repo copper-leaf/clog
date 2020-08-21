@@ -161,4 +161,4 @@ releaseVersion = projectVersion.releaseVersion
 fullVersion = projectVersion.fullVersion
 
 version = projectVersion
-group = "clog"
+group = "io.copper-leaf"

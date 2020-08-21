@@ -28,3 +28,5 @@ rootProject.name = "clog"
 
 include(":core")
 include(":docs")
+
+project(":core").name = "clog"
