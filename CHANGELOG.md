@@ -1,4 +1,8 @@
-## 3.5.0 - 2020-08-21
+## 3.5.1 - 2020-08-24
+
+- Removes compile dependencies on Stately `isolate` and `iso-collections` libraries now only used in tests
+
+## 3.5.0 - 2020-08-24
 
 - Adds exception tracking
 

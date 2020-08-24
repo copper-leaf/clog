@@ -67,14 +67,14 @@ kotlin {
                 implementation(Kotlin.stdlib.common)
                 implementation(KotlinX.coroutines.coreCommon)
                 implementation("co.touchlab:stately-concurrency:_")
-                implementation("co.touchlab:stately-isolate:_")
-                implementation("co.touchlab:stately-iso-collections:_")
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(Kotlin.test.common)
                 implementation(Kotlin.test.annotationsCommon)
+                implementation("co.touchlab:stately-isolate:_")
+                implementation("co.touchlab:stately-iso-collections:_")
             }
         }
 

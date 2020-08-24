@@ -29,7 +29,7 @@ val orchidBuild by tasks
 val orchidDeploy by tasks
 
 orchidBuild.mustRunAfter(check)
-build.dependsOn(orchidBuild)
+//build.dependsOn(orchidBuild)
 
 val publish by tasks.registering {
     dependsOn(orchidDeploy)
