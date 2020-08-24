@@ -3,7 +3,6 @@ package clog
 import clog.api.ClogFilter
 import clog.api.ClogLogger
 import clog.api.ClogMessageFormatter
-import clog.api.ClogProfile
 import clog.api.ClogTagProvider
 import clog.impl.DefaultFilter
 import clog.impl.DefaultLogger

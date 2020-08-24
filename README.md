@@ -20,6 +20,9 @@ Clog is designed with the following goals in mind:
     natural way to transition your JVM-specific logging into the Kotlin/Multiplatform world
 - **Customization is there if you need it**: the Clog singleton can be easily configured with custom classes to apply 
     your own formatting, filtering, and logging targets
+- **Immutable loggers**: The ClogProfile and all classes implementing the logger are immutable, for multithreaded 
+    performance and safety. The global Clog instance is updated only by swapping out the backing instance, and you're 
+    free to bypass the global instance entirely and inject loggers instead.
 
 ### Supported Platforms/Features
 
@@ -101,6 +104,19 @@ Clog.tag("tag").e("message")
 Clog.tag("tag").wtf("message")
 ```
 
+### Log exceptions
+
+```kotlin
+val e = RuntimeException()
+Clog.v(e)
+Clog.d(e)
+Clog.i(e)
+Clog.log(e)
+Clog.w(e)
+Clog.e(e)
+Clog.wtf(e)
+```
+
 ### Message Formatting
 
 SLF4j-style formatting is supported, replacing `{}` with params passed to the logging call. This is supported on all
@@ -113,10 +129,10 @@ Clog.i("message {}", foo) // logs 'message bar'
 
 ### Priority Filter
 
-Messages can be filtered out by priority.
+Messages and exceptions can be filtered out by priority.
 
 ```kotlin
-Clog.getInstance().setMinPriority(Clog.Priority.ERROR)
+Clog.setMinPriority(Clog.Priority.ERROR)
 ```
 
 ### Tag whitelisting/blacklisting
@@ -124,8 +140,8 @@ Clog.getInstance().setMinPriority(Clog.Priority.ERROR)
 Messages can be filtered out by tags.
 
 ```kotlin
-Clog.getInstance().addTagToWhitelist("tag1")
-Clog.getInstance().addTagToBlacklist("tag2")
+Clog.addTagToWhitelist("tag1")
+Clog.addTagToBlacklist("tag2")
 ```
 
 ## Lambda DSL
@@ -139,11 +155,11 @@ inside the lambda.
 ```kotlin
 import clog.dsl.*
 
-v { "message" }
-d { "message" }
-i { "message" }
-w { "message" }
-e { "message" }
+v   { "message" }
+d   { "message" }
+i   { "message" }
+w   { "message" }
+e   { "message" }
 wtf { "message" }
 ```
 
@@ -152,11 +168,11 @@ wtf { "message" }
 ```kotlin
 import clog.dsl.*
 
-v("tag") { "message" }
-d("tag") { "message" }
-i("tag") { "message" }
-w("tag") { "message" }
-e("tag") { "message" }
+v("tag")   { "message" }
+d("tag")   { "message" }
+i("tag")   { "message" }
+w("tag")   { "message" }
+e("tag")   { "message" }
 wtf("tag") { "message" }
 ```
 
@@ -166,11 +182,11 @@ wtf("tag") { "message" }
 import clog.dsl.*
 
 val foo = "bar" 
-v {   format("message {}", foo) } // logs 'message bar'
-d {   format("message {}", foo) } // logs 'message bar'
-i {   format("message {}", foo) } // logs 'message bar'
-w {   format("message {}", foo) } // logs 'message bar'
-e {   format("message {}", foo) } // logs 'message bar'
+v   { format("message {}", foo) } // logs 'message bar'
+d   { format("message {}", foo) } // logs 'message bar'
+i   { format("message {}", foo) } // logs 'message bar'
+w   { format("message {}", foo) } // logs 'message bar'
+e   { format("message {}", foo) } // logs 'message bar'
 wtf { format("message {}", foo) } // logs 'message bar'
 ```
 
@@ -236,6 +252,9 @@ val customLogger = object : ClogLogger {
     override fun log(priority: Clog.Priority, tag: String?, message: String) {
         ...
     }
+    override fun logException(priority: Clog.Priority, tag: String?, throwable: Throwable) {
+        ...
+    }
 }
 Clog.updateProfile { it.copy(logger = customLogger) }
 ```
@@ -250,6 +269,22 @@ val customLogger = object : ClogLogger {
     override fun log(priority: Clog.Priority, tag: String?, message: String) {
         ...
     }
+    override fun logException(priority: Clog.Priority, tag: String?, throwable: Throwable) {
+        ...
+    }
 }
 Clog.addLogger(customLogger)
+```
+
+### Using Clog with dependency injection
+
+```kotlin
+// Given some classes that depend on a logger
+class Controller(val logger: ClogProfile) 
+
+// just declare a ClogProfile singleton with any configurations you need 
+val module = module { 
+  single { ClogProfile() } 
+  single { Controller(get()) } 
+} 
 ```

@@ -16,8 +16,8 @@ class AndroidClogSlf4jTest {
             slf4j.trace("m1")
 
             assertTrue(logger.messageWasLogged)
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
-            assertEquals("clog.AndroidClogSlf4jTest", logger.lastTag)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
+            assertEquals("clog.AndroidClogSlf4jTest", logger.lastMessageTag)
             assertEquals("m1", logger.lastMessage)
         }
     }
@@ -36,8 +36,8 @@ class AndroidClogSlf4jTest {
             o.doLog()
 
             assertTrue(logger.messageWasLogged)
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
-            assertEquals("clog.AndroidClogSlf4jTest", logger.lastTag)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
+            assertEquals("clog.AndroidClogSlf4jTest", logger.lastMessageTag)
             assertEquals("m1", logger.lastMessage)
         }
     }
@@ -54,8 +54,8 @@ class AndroidClogSlf4jTest {
             doLog()
 
             assertTrue(logger.messageWasLogged)
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
-            assertEquals("clog.AndroidClogSlf4jTest", logger.lastTag)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
+            assertEquals("clog.AndroidClogSlf4jTest", logger.lastMessageTag)
             assertEquals("m1", logger.lastMessage)
         }
     }

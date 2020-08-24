@@ -24,8 +24,8 @@ class AndroidClogSingletonTest {
         clogTest { logger ->
             Clog.v("m1")
 
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
-            assertEquals("AndroidClogSingletonTest", logger.lastTag)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
+            assertEquals("AndroidClogSingletonTest", logger.lastMessageTag)
             assertEquals("m1", logger.lastMessage)
         }
     }

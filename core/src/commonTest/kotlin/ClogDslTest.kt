@@ -1,5 +1,7 @@
 package clog
 
+import clog.dsl.addTagToBlacklist
+import clog.dsl.addTagToWhitelist
 import clog.dsl.v
 import clog.impl.clogTest
 import kotlin.test.Test
@@ -14,7 +16,7 @@ class ClogDslTest {
             v { "m1" }
 
             assertTrue(logger.messageWasLogged)
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
             assertEquals("m1", logger.lastMessage)
         }
     }
@@ -25,8 +27,8 @@ class ClogDslTest {
             v("t1") { "m1" }
 
             assertTrue(logger.messageWasLogged)
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
-            assertEquals("t1", logger.lastTag)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
+            assertEquals("t1", logger.lastMessageTag)
             assertEquals("m1", logger.lastMessage)
         }
     }
@@ -37,7 +39,7 @@ class ClogDslTest {
             v { format("m1: {}", "p1") }
 
             assertTrue(logger.messageWasLogged)
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
             assertEquals("m1: p1", logger.lastMessage)
         }
     }
@@ -48,7 +50,7 @@ class ClogDslTest {
             v { format("m1: {}, {}, {}, {}", "p1", 2, true, "p4" to "p5") }
 
             assertTrue(logger.messageWasLogged)
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
             assertEquals("m1: p1, 2, true, (p4, p5)", logger.lastMessage)
         }
     }
@@ -56,14 +58,14 @@ class ClogDslTest {
     @Test
     fun testTagBlacklisting() {
         clogTest { logger ->
-            Clog.getInstance().addTagToBlacklist("t1")
+            Clog.addTagToBlacklist("t1")
 
             v("t1") { "m1" }
             assertFalse(logger.messageWasLogged)
 
             v("t2") { "m2" }
             assertTrue(logger.messageWasLogged)
-            assertEquals("t2", logger.lastTag)
+            assertEquals("t2", logger.lastMessageTag)
             assertEquals("m2", logger.lastMessage)
         }
     }
@@ -71,14 +73,14 @@ class ClogDslTest {
     @Test
     fun testTagWhitelisting() {
         clogTest { logger ->
-            Clog.getInstance().addTagToWhitelist("t2")
+            Clog.addTagToWhitelist("t2")
 
             v("t1") { "m1" }
             assertFalse(logger.messageWasLogged)
 
             v("t2") { "m2" }
             assertTrue(logger.messageWasLogged)
-            assertEquals("t2", logger.lastTag)
+            assertEquals("t2", logger.lastMessageTag)
             assertEquals("m2", logger.lastMessage)
         }
     }

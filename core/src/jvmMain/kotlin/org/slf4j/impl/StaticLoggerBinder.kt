@@ -1,7 +1,8 @@
 package org.slf4j.impl
 
 import clog.Clog
-import clog.api.ClogProfile
+import clog.ClogProfile
+import clog.dsl.tag
 import clog.impl.DefaultTagProvider
 import org.slf4j.ILoggerFactory
 import org.slf4j.Logger

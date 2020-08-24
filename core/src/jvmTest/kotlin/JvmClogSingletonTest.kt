@@ -26,8 +26,8 @@ class JvmClogSingletonTest {
         clogTest { logger ->
             Clog.v("m1")
 
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
-            assertEquals("JvmClogSingletonTest", logger.lastTag)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
+            assertEquals("JvmClogSingletonTest", logger.lastMessageTag)
             assertEquals("m1", logger.lastMessage)
         }
     }
@@ -43,8 +43,8 @@ class JvmClogSingletonTest {
 
             o.doLog()
 
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
-            assertEquals("JvmClogSingletonTest", logger.lastTag)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
+            assertEquals("JvmClogSingletonTest", logger.lastMessageTag)
             assertEquals("m1", logger.lastMessage)
         }
     }
@@ -58,8 +58,8 @@ class JvmClogSingletonTest {
 
             doLog()
 
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
-            assertEquals("JvmClogSingletonTest", logger.lastTag)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
+            assertEquals("JvmClogSingletonTest", logger.lastMessageTag)
             assertEquals("m1", logger.lastMessage)
         }
     }

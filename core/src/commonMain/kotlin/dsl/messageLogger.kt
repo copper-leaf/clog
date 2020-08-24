@@ -1,14 +1,9 @@
-@file:Suppress("NOTHING_TO_INLINE")
 package clog.dsl
 
 import clog.Clog
-import clog.api.ClogLogger
 import clog.api.ClogMessageFormatter
-import clog.api.ClogProfile
-import clog.impl.DelegatingLogger
-import clog.impl.DisableInProductionFilter
 
-// Logging DSL
+// ClogMessageLogger DSL
 // ---------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -65,45 +60,4 @@ inline fun e(tag: String? = null, message: ClogMessageFormatter.() -> String) {
  */
 inline fun wtf(tag: String? = null, message: ClogMessageFormatter.() -> String) {
     Clog.maybeTag(tag).log(Clog.Priority.FATAL, message)
-}
-
-// Configuration DSL
-// ---------------------------------------------------------------------------------------------------------------------
-
-/**
- * Update the current [ClogProfile] instance, returning the new profile to set as the global profile.
- */
-inline fun Clog.updateProfile(block: (ClogProfile) -> ClogProfile) {
-    setProfile(
-        block(getInstance())
-    )
-}
-
-/**
- * If [tag] is not null, return a copy of the global [ClogProfile] with that tag specified. Otherwise, directly return
- * the global [ClogProfile].
- */
-inline fun Clog.maybeTag(tag: String?): ClogProfile {
-    return if (tag != null) tag(tag) else getInstance()
-}
-
-/**
- * Configures Clog to only log messages in debug builds. If [isDebug] is true, then logs will be filtered normally,
- * delegating to the previously-configured filter. If [isDebug] is false, then all logs will be ignored and no messages
- * will be logged.
- */
-inline fun Clog.configureLoggingInProduction(isDebug: Boolean) {
-    updateProfile {
-        it.copy(filter = DisableInProductionFilter(isDebug, it.filter))
-    }
-}
-
-/**
- * Adds an additional [ClogLogger] as a logging target.
- */
-inline fun Clog.addLogger(logger: ClogLogger) {
-    updateProfile {
-        val delegatingLogger = it.logger as? DelegatingLogger ?: DelegatingLogger(listOf(it.logger))
-        it.copy(logger = delegatingLogger + logger)
-    }
 }

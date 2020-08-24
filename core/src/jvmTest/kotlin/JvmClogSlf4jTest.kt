@@ -17,8 +17,8 @@ class JvmClogSlf4jTest {
             slf4j.trace("m1")
 
             assertTrue(logger.messageWasLogged)
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
-            assertEquals("clog.JvmClogSlf4jTest", logger.lastTag)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
+            assertEquals("clog.JvmClogSlf4jTest", logger.lastMessageTag)
             assertEquals("m1", logger.lastMessage)
         }
     }
@@ -37,8 +37,8 @@ class JvmClogSlf4jTest {
             o.doLog()
 
             assertTrue(logger.messageWasLogged)
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
-            assertEquals("clog.JvmClogSlf4jTest", logger.lastTag)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
+            assertEquals("clog.JvmClogSlf4jTest", logger.lastMessageTag)
             assertEquals("m1", logger.lastMessage)
         }
     }
@@ -55,8 +55,8 @@ class JvmClogSlf4jTest {
             doLog()
 
             assertTrue(logger.messageWasLogged)
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
-            assertEquals("clog.JvmClogSlf4jTest", logger.lastTag)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
+            assertEquals("clog.JvmClogSlf4jTest", logger.lastMessageTag)
             assertEquals("m1", logger.lastMessage)
         }
     }
@@ -70,8 +70,8 @@ class JvmClogSlf4jTest {
             slf4j.trace("m1 %X{akey}")
 
             assertTrue(logger.messageWasLogged)
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
-            assertEquals("clog.JvmClogSlf4jTest", logger.lastTag)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
+            assertEquals("clog.JvmClogSlf4jTest", logger.lastMessageTag)
             assertEquals("m1 avalue", logger.lastMessage)
 
             MDC.clear()

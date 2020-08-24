@@ -1,3 +1,7 @@
+## 3.5.0 - 2020-08-21
+
+- Adds exception tracking
+
 ## 3.4.2 - 2020-08-21
 
 - Fix regex patterns causing crash on Android

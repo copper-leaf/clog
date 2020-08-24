@@ -9,8 +9,13 @@ import clog.api.ClogLogger
 data class DelegatingLogger(
     val delegates: List<ClogLogger> = emptyList()
 ) : ClogLogger {
+
     override fun log(priority: Clog.Priority, tag: String?, message: String) {
         delegates.forEach { it.log(priority, tag, message) }
+    }
+
+    override fun logException(priority: Clog.Priority, tag: String?, throwable: Throwable) {
+        delegates.forEach { it.logException(priority, tag, throwable) }
     }
 
     /**

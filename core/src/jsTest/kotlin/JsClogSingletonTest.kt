@@ -24,8 +24,8 @@ class JsClogSingletonTest {
         clogTest { logger ->
             Clog.v("m1")
 
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
-            assertEquals(null, logger.lastTag)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
+            assertEquals(null, logger.lastMessageTag)
             assertEquals("m1", logger.lastMessage)
         }
     }

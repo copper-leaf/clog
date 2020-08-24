@@ -1,27 +1,60 @@
 package clog
 
+import clog.dsl.tag
 import kotlin.test.Test
 
 class TestPlatformLoggers {
     @Test
-    fun testBasicLog() {
-        Clog.v("m1")
-        Clog.d("m1")
-        Clog.i("m1")
-        Clog.log("m1")
-        Clog.w("m1")
-        Clog.e("m1")
-        Clog.wtf("m1")
+    fun testLoggingMessage() {
+        val message = "message 1"
+
+        Clog.v(message)
+        Clog.d(message)
+        Clog.i(message)
+        Clog.log(message)
+        Clog.w(message)
+        Clog.e(message)
+        Clog.wtf(message)
     }
 
     @Test
-    fun testLogWithTag() {
-        Clog.tag("t1").v("m1")
-        Clog.tag("t1").d("m1")
-        Clog.tag("t1").i("m1")
-        Clog.tag("t1").log("m1")
-        Clog.tag("t1").w("m1")
-        Clog.tag("t1").e("m1")
-        Clog.tag("t1").wtf("m1")
+    fun testLoggingMessageWithTag() {
+        val tag = "tag 2"
+        val message = "message 2"
+
+        Clog.tag(tag).v(message)
+        Clog.tag(tag).d(message)
+        Clog.tag(tag).i(message)
+        Clog.tag(tag).log(message)
+        Clog.tag(tag).w(message)
+        Clog.tag(tag).e(message)
+        Clog.tag(tag).wtf(message)
+    }
+
+    @Test
+    fun testLoggingThrowable() {
+        val throwable = RuntimeException("throwable 3")
+
+        Clog.v(throwable)
+        Clog.d(throwable)
+        Clog.i(throwable)
+        Clog.log(throwable)
+        Clog.w(throwable)
+        Clog.e(throwable)
+        Clog.wtf(throwable)
+    }
+
+    @Test
+    fun testLoggingThrowableWithTag() {
+        val tag = "tag 4"
+        val throwable = RuntimeException("throwable 4")
+
+        Clog.tag(tag).v(throwable)
+        Clog.tag(tag).d(throwable)
+        Clog.tag(tag).i(throwable)
+        Clog.tag(tag).log(throwable)
+        Clog.tag(tag).w(throwable)
+        Clog.tag(tag).e(throwable)
+        Clog.tag(tag).wtf(throwable)
     }
 }

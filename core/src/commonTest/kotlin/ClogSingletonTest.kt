@@ -1,7 +1,11 @@
 package clog
 
 import clog.dsl.addLogger
+import clog.dsl.addTagToBlacklist
+import clog.dsl.addTagToWhitelist
 import clog.dsl.configureLoggingInProduction
+import clog.dsl.setMinPriority
+import clog.dsl.tag
 import clog.impl.TestLogger
 import clog.impl.clogTest
 import kotlin.test.Test
@@ -11,25 +15,48 @@ import kotlin.test.assertTrue
 
 class ClogSingletonTest {
     @Test
-    fun testBasicLog() {
+    fun testMessageLog() {
         clogTest { logger ->
             Clog.v("m1")
 
             assertTrue(logger.messageWasLogged)
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
             assertEquals("m1", logger.lastMessage)
         }
     }
 
     @Test
-    fun testLogWithTag() {
+    fun testMessageLogWithTag() {
         clogTest { logger ->
             Clog.tag("t1").v("m1")
 
             assertTrue(logger.messageWasLogged)
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
-            assertEquals("t1", logger.lastTag)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
+            assertEquals("t1", logger.lastMessageTag)
             assertEquals("m1", logger.lastMessage)
+        }
+    }
+
+    @Test
+    fun testThrowableLog() {
+        clogTest { logger ->
+            Clog.v(RuntimeException("throwable 1"))
+
+            assertTrue(logger.throwableWasLogged)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastThrowablePriority)
+            assertEquals("throwable 1", logger.lastThrowable?.message)
+        }
+    }
+
+    @Test
+    fun testThrowableLogWithTag() {
+        clogTest { logger ->
+            Clog.tag("t1").v(RuntimeException("throwable 2"))
+
+            assertTrue(logger.throwableWasLogged)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastThrowablePriority)
+            assertEquals("t1", logger.lastThrowableTag)
+            assertEquals("throwable 2", logger.lastThrowable?.message)
         }
     }
 
@@ -39,7 +66,7 @@ class ClogSingletonTest {
             Clog.v("m1: {}", "p1")
 
             assertTrue(logger.messageWasLogged)
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
             assertEquals("m1: p1", logger.lastMessage)
         }
     }
@@ -50,7 +77,7 @@ class ClogSingletonTest {
             Clog.v("m1: {}, {}, {}, {}", "p1", 2, true, "p4" to "p5")
 
             assertTrue(logger.messageWasLogged)
-            assertEquals(Clog.Priority.VERBOSE, logger.lastPriority)
+            assertEquals(Clog.Priority.VERBOSE, logger.lastMessagePriority)
             assertEquals("m1: p1, 2, true, (p4, p5)", logger.lastMessage)
         }
     }
@@ -58,14 +85,14 @@ class ClogSingletonTest {
     @Test
     fun testTagBlacklisting() {
         clogTest { logger ->
-            Clog.getInstance().addTagToBlacklist("t1")
+            Clog.addTagToBlacklist("t1")
 
             Clog.tag("t1").v("m1")
             assertFalse(logger.messageWasLogged)
 
             Clog.tag("t2").v("m2")
             assertTrue(logger.messageWasLogged)
-            assertEquals("t2", logger.lastTag)
+            assertEquals("t2", logger.lastMessageTag)
             assertEquals("m2", logger.lastMessage)
         }
     }
@@ -73,14 +100,14 @@ class ClogSingletonTest {
     @Test
     fun testTagWhitelisting() {
         clogTest { logger ->
-            Clog.getInstance().addTagToWhitelist("t2")
+            Clog.addTagToWhitelist("t2")
 
             Clog.tag("t1").v("m1")
             assertFalse(logger.messageWasLogged)
 
             Clog.tag("t2").v("m2")
             assertTrue(logger.messageWasLogged)
-            assertEquals("t2", logger.lastTag)
+            assertEquals("t2", logger.lastMessageTag)
             assertEquals("m2", logger.lastMessage)
         }
     }
@@ -88,7 +115,7 @@ class ClogSingletonTest {
     @Test
     fun testMinPriorityFilter() {
         clogTest { logger ->
-            Clog.getInstance().setMinPriority(Clog.Priority.ERROR)
+            Clog.setMinPriority(Clog.Priority.ERROR)
 
             Clog.v("m1")
             assertFalse(logger.messageWasLogged)

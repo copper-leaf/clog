@@ -12,4 +12,8 @@ interface ClogLogger {
      * [message] already formatted at this point.
      */
     fun log(priority: Clog.Priority, tag: String?, message: String)
+
+    fun logException(priority: Clog.Priority, tag: String?, throwable: Throwable) {
+        log(priority, tag, throwable.message ?: "")
+    }
 }

@@ -1,11 +1,9 @@
-package clog.api
-
-import clog.Clog
+package clog
 
 /**
  * The entry-point for logging messages to Clog.
  */
-interface IClog {
+interface ClogMessageLogger {
 
     /**
      * Logs a message at the [Clog.Priority.VERBOSE] level with additional positional args.
