@@ -38,11 +38,9 @@ class TestLogger : ClogLogger {
     val lastThrowable: Throwable? get() = throwableEvents.lastOrNull()?.throwable
 }
 
-inline fun clogTest(block: (TestLogger) -> Unit) {
-    val originalProfile = Clog.getInstance()
-
+inline fun clogTest(originalProfile: ClogProfile = Clog.getInstance(), block: (TestLogger) -> Unit) {
     val testLogger = TestLogger()
-    Clog.updateProfile { ClogProfile(logger = testLogger) }
+    Clog.updateProfile { originalProfile.copy(logger = testLogger) }
     block(testLogger)
 
     Clog.setInstance(originalProfile)

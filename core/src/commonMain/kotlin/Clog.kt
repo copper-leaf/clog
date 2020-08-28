@@ -2,6 +2,7 @@ package clog
 
 import clog.api.ClogMessageFormatter
 import co.touchlab.stately.concurrency.AtomicReference
+import kotlin.jvm.JvmStatic
 
 /**
  * Holds a global instance of [ClogProfile] to process and handle logging message.
@@ -20,20 +21,22 @@ object Clog : ClogMessageLogger, ClogThrowableLogger {
 // Configuration
 // ---------------------------------------------------------------------------------------------------------------------
 
-    private val INSTANCE: AtomicReference<ClogProfile> = AtomicReference(ClogProfile())
+    private val atomicInstance: AtomicReference<ClogProfile> = AtomicReference(ClogProfile())
 
     /**
      * Get the current global instance of the ClogProfile.
      */
+    @JvmStatic
     fun getInstance(): ClogProfile {
-        return INSTANCE.get()
+        return atomicInstance.get()
     }
 
     /**
      * Sets the current global instance of the ClogProfile.
      */
+    @JvmStatic
     fun setInstance(profile: ClogProfile) {
-        INSTANCE.set(profile)
+        atomicInstance.set(profile)
     }
 
 // ClogMessageLogger implementation
@@ -42,50 +45,57 @@ object Clog : ClogMessageLogger, ClogThrowableLogger {
     /**
      * Log a message (formatted with the global [ClogMessageFormatter]) at the [Clog.Priority.VERBOSE] level.
      */
+    // @JvmStatic
     override fun v(message: String, vararg args: Any?) {
-        INSTANCE.get().v(message, *args)
+        getInstance().v(message, *args)
     }
 
     /**
      * Log a message (formatted with the global [ClogMessageFormatter]) at the [Clog.Priority.DEBUG] level.
      */
+    // @JvmStatic
     override fun d(message: String, vararg args: Any?) {
-        INSTANCE.get().d(message, *args)
+        getInstance().d(message, *args)
     }
 
     /**
      * Log a message (formatted with the global [ClogMessageFormatter]) at the [Clog.Priority.INFO] level.
      */
+    // @JvmStatic
     override fun i(message: String, vararg args: Any?) {
-        INSTANCE.get().i(message, *args)
+        getInstance().i(message, *args)
     }
 
     /**
      * Log a message (formatted with the global [ClogMessageFormatter]) at the [Clog.Priority.DEFAULT] level.
      */
+    // @JvmStatic
     override fun log(message: String, vararg args: Any?) {
-        INSTANCE.get().log(message, *args)
+        getInstance().log(message, *args)
     }
 
     /**
      * Log a message (formatted with the global [ClogMessageFormatter]) at the [Clog.Priority.WARNING] level.
      */
+    // @JvmStatic
     override fun w(message: String, vararg args: Any?) {
-        INSTANCE.get().w(message, *args)
+        getInstance().w(message, *args)
     }
 
     /**
      * Log a message (formatted with the global [ClogMessageFormatter]) at the [Clog.Priority.ERROR] level.
      */
+    // @JvmStatic
     override fun e(message: String, vararg args: Any?) {
-        INSTANCE.get().e(message, *args)
+        getInstance().e(message, *args)
     }
 
     /**
      * Log a message (formatted with the global [ClogMessageFormatter]) at the [Clog.Priority.FATAL] level.
      */
+    // @JvmStatic
     override fun wtf(message: String, vararg args: Any?) {
-        INSTANCE.get().wtf(message, *args)
+        getInstance().wtf(message, *args)
     }
 
 // ClogMessageLogger implementation
@@ -94,49 +104,56 @@ object Clog : ClogMessageLogger, ClogThrowableLogger {
     /**
      * Logs a [Throwable] at the [Clog.Priority.VERBOSE] level.
      */
+    // @JvmStatic
     override fun v(throwable: Throwable) {
-        INSTANCE.get().v(throwable)
+        getInstance().v(throwable)
     }
 
     /**
      * Logs a [Throwable] at the [Clog.Priority.DEBUG] level.
      */
+    // @JvmStatic
     override fun d(throwable: Throwable) {
-        INSTANCE.get().d(throwable)
+        getInstance().d(throwable)
     }
 
     /**
      * Logs a [Throwable] at the [Clog.Priority.INFO] level.
      */
+    // @JvmStatic
     override fun i(throwable: Throwable) {
-        INSTANCE.get().i(throwable)
+        getInstance().i(throwable)
     }
 
     /**
      * Logs a [Throwable] at the [Clog.Priority.DEFAULT] level.
      */
+    // @JvmStatic
     override fun log(throwable: Throwable) {
-        INSTANCE.get().log(throwable)
+        getInstance().log(throwable)
     }
 
     /**
      * Logs a [Throwable] at the [Clog.Priority.WARNING] level.
      */
+    // @JvmStatic
     override fun w(throwable: Throwable) {
-        INSTANCE.get().w(throwable)
+        getInstance().w(throwable)
     }
 
     /**
      * Logs a [Throwable] at the [Clog.Priority.ERROR] level.
      */
+    // @JvmStatic
     override fun e(throwable: Throwable) {
-        INSTANCE.get().w(throwable)
+        getInstance().e(throwable)
     }
 
     /**
      * Logs a [Throwable] at the [Clog.Priority.VERBOSE] level.
      */
+    // @JvmStatic
     override fun wtf(throwable: Throwable) {
-        INSTANCE.get().wtf(throwable)
+        getInstance().wtf(throwable)
     }
 }

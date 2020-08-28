@@ -14,7 +14,7 @@ val bintrayToken: String by extra
 android {
     compileSdkVersion(29)
     defaultConfig {
-        minSdkVersion(23)
+        minSdkVersion(21)
         targetSdkVersion(29)
         versionCode = 1
         versionName = project.version.toString()
@@ -65,7 +65,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(Kotlin.stdlib.common)
-                implementation(KotlinX.coroutines.coreCommon)
                 implementation("co.touchlab:stately-concurrency:_")
             }
         }
