@@ -7,9 +7,7 @@ import kotlin.jvm.JvmStatic
 /**
  * Holds a global instance of [ClogProfile] to process and handle logging message.
  */
-object Clog
-//: ClogMessageLogger, ClogThrowableLogger
-{
+object Clog {
     enum class Priority {
         VERBOSE,
         DEBUG,

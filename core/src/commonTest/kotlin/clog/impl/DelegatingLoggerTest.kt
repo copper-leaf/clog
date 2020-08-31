@@ -61,5 +61,4 @@ class DelegatingLoggerTest {
         assertFalse(logger3.throwableWasLogged)
         assertNull(logger3.lastThrowable?.message)
     }
-
 }

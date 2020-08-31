@@ -5,8 +5,6 @@ import kotlin.test.assertEquals
 
 class DefaultMessageFormatterTest {
 
-
-
     @Test
     fun testDefaultFormatterFormat() {
         val formatted = DefaultMessageFormatter().format("message 1={}, '2'={}, true={}", 1, "2", true)

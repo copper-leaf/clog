@@ -5,7 +5,6 @@ import clog.ClogProfile
 import clog.impl.DefaultTagProvider
 import clog.test.impl.TestLogger
 import clog.test.impl.clogTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -15,8 +14,6 @@ import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class ClogConfigurationDslTest {
-
-
 
     @Test
     fun testUpdateProfile() {

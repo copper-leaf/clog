@@ -3,14 +3,13 @@ package clog
 import clog.dsl.tag
 import clog.test.impl.clogProfileTest
 import clog.test.impl.clogTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ClogTest {
 
 // Singleton message logs with no tag
-//----------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
     private class ClogMessageTestCase(
         val doLog: (String, Array<Any?>) -> Unit,
@@ -99,7 +98,7 @@ class ClogTest {
     }
 
 // Singleton message logs with tag
-//----------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
     private class ClogMessageTestCaseWithProfile(
         val doLog: ClogProfile.(String, Array<Any?>) -> Unit,
@@ -140,7 +139,7 @@ class ClogTest {
     }
 
 // Singleton throwable logs with no tag
-//----------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
     private class ClogThrowableTestCase(
         val doLog: (Throwable) -> Unit,
@@ -175,7 +174,7 @@ class ClogTest {
     }
 
 // Singleton throwable logs with tag
-//----------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
     private class ClogThrowableTestCaseWithProfile(
         val doLog: ClogProfile.(Throwable) -> Unit,
@@ -214,5 +213,4 @@ class ClogTest {
             }
         }
     }
-
 }

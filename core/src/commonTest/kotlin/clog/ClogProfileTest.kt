@@ -4,12 +4,10 @@ import clog.api.ClogFilter
 import clog.impl.DefaultMessageFormatter
 import clog.impl.DefaultTagProvider
 import clog.test.impl.TestLogger
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNull
-import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
 class ClogProfileTest {

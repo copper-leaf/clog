@@ -3,13 +3,6 @@
 package clog.dsl
 
 import clog.Clog
-import clog.api.ClogLogger
-import clog.ClogProfile
-import clog.api.ClogFilter
-import clog.impl.DefaultTagProvider
-import clog.impl.DelegatingLogger
-import clog.impl.DisableInProductionFilter
-import kotlin.jvm.JvmStatic
 
 // Helper methods
 // ---------------------------------------------------------------------------------------------------------------------

@@ -55,5 +55,3 @@ inline fun clogProfileTest(testProfile: ClogProfile, block: (TestLogger) -> Unit
 
     Clog.setInstance(originalProfile)
 }
-
-//while ./gradlew clean jvmTest; do :; done

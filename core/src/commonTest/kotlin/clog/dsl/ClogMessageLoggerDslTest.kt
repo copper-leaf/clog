@@ -1,23 +1,18 @@
 package clog.dsl
 
 import clog.Clog
-import clog.ClogProfile
 import clog.api.ClogMessageFormatter
 import clog.test.impl.clogTest
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertSame
 
 class ClogMessageLoggerDslTest {
 
-
-
 // DSL message logs
-//----------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
     private class ClogDslMessageTestCase(
-        val doLog: (String?, ClogMessageFormatter.() -> String)->Unit,
+        val doLog: (String?, ClogMessageFormatter.() -> String) -> Unit,
         val expectedPriority: Clog.Priority,
         val expectedTag: String? = null
     )
@@ -130,5 +125,4 @@ class ClogMessageLoggerDslTest {
             }
         }
     }
-
 }
