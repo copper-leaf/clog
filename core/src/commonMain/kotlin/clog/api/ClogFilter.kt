@@ -14,7 +14,7 @@ interface ClogFilter {
      *
      * Returns a copy of this [ClogFilter] with this change to be set in the [ClogProfile].
      */
-    fun addTagToWhitelist(tag: String): ClogFilter
+    fun addTagToWhitelist(tag: String): ClogFilter = apply {}
 
     /**
      * Declare a tag that should be added to the blacklist. Only messages with a tag not in the blacklist will be
@@ -22,7 +22,7 @@ interface ClogFilter {
      *
      * Returns a copy of this [ClogFilter] with this change to be set in the [ClogProfile].
      */
-    fun addTagToBlacklist(tag: String): ClogFilter
+    fun addTagToBlacklist(tag: String): ClogFilter = apply {}
 
     /**
      * Set the minimum priority for log messages. Only messages with a level greater than or equal to [priority] will be
@@ -30,7 +30,7 @@ interface ClogFilter {
      *
      * Returns a copy of this [ClogFilter] with this change to be set in the [ClogProfile].
      */
-    fun setMinPriority(priority: Clog.Priority): ClogFilter
+    fun setMinPriority(priority: Clog.Priority): ClogFilter = apply {}
 
     /**
      * Given a [priority] and [tag], determine if a message should be logged. It should conform to the whitelist,

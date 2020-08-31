@@ -1,3 +1,7 @@
+## 3.5.3 - 2020-08-24
+
+- Adds utility methods for `Clog.shouldLog` and `Clog.format`
+
 ## 3.5.2 - 2020-08-24
 
 - ????

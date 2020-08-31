@@ -1,4 +1,4 @@
-package clog.impl
+package clog.test.impl
 
 import clog.Clog
 import clog.api.ClogLogger
@@ -38,10 +38,22 @@ class TestLogger : ClogLogger {
     val lastThrowable: Throwable? get() = throwableEvents.lastOrNull()?.throwable
 }
 
-inline fun clogTest(originalProfile: ClogProfile = Clog.getInstance(), block: (TestLogger) -> Unit) {
+inline fun clogTest(block: (TestLogger) -> Unit) {
+    val originalProfile = Clog.getInstance()
     val testLogger = TestLogger()
     Clog.updateProfile { originalProfile.copy(logger = testLogger) }
     block(testLogger)
 
     Clog.setInstance(originalProfile)
 }
+
+inline fun clogProfileTest(testProfile: ClogProfile, block: (TestLogger) -> Unit) {
+    val originalProfile = Clog.getInstance()
+    val testLogger = TestLogger()
+    Clog.updateProfile { testProfile.copy(logger = testLogger) }
+    block(testLogger)
+
+    Clog.setInstance(originalProfile)
+}
+
+//while ./gradlew clean jvmTest; do :; done

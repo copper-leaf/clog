@@ -5,7 +5,7 @@ import clog.impl.DefaultLogger
 import clog.impl.DefaultMessageFormatter
 import clog.impl.DefaultTagProvider
 import clog.impl.Slf4jMessageFormatter
-import clog.impl.clogTest
+import clog.test.impl.clogTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
