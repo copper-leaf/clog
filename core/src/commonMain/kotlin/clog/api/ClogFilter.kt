@@ -30,7 +30,7 @@ interface ClogFilter {
      *
      * Returns a copy of this [ClogFilter] with this change to be set in the [ClogProfile].
      */
-    fun setMinPriority(priority: Clog.Priority): ClogFilter = apply {}
+    fun setMinPriority(priority: Clog.Priority?): ClogFilter = apply {}
 
     /**
      * Given a [priority] and [tag], determine if a message should be logged. It should conform to the whitelist,

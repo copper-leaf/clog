@@ -100,6 +100,7 @@ kotlin {
         val androidTest by getting {
             dependencies {
                 implementation(Kotlin.test.junit)
+                implementation("io.mockk:mockk:1.10.0")
             }
         }
 

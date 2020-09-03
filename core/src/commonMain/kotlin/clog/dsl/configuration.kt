@@ -90,7 +90,7 @@ fun Clog.addTagToBlacklist(tag: String) {
  *
  * Returns a copy of this [ClogFilter] with this change to be set in the [ClogProfile].
  */
-fun Clog.setMinPriority(priority: Clog.Priority) {
+fun Clog.setMinPriority(priority: Clog.Priority?) {
     updateProfile {
         it.copy(filter = it.filter.setMinPriority(priority))
     }

@@ -1,3 +1,7 @@
+## 3.5.4 - 2020-09-03
+
+- On Android platform, detect if it's running in a unit test (with mocked `android.jar`) and use DefaultLogger() instead
+
 ## 3.5.3 - 2020-08-24
 
 - Adds utility methods for `Clog.shouldLog` and `Clog.format`

@@ -23,7 +23,7 @@ data class DefaultFilter(
         return copy(tagBlacklist = tagBlacklist + tag)
     }
 
-    override fun setMinPriority(priority: Clog.Priority): DefaultFilter {
+    override fun setMinPriority(priority: Clog.Priority?): DefaultFilter {
         return copy(minPriority = priority)
     }
 
