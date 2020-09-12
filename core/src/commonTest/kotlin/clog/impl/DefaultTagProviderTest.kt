@@ -1,6 +1,6 @@
 package clog.impl
 
-import clog.inferCurrentTag
+import clog.ClogPlatform
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -8,7 +8,7 @@ class DefaultTagProviderTest {
 
     @Test
     fun testDefaultTagProvider_noTag() {
-        assertEquals(inferCurrentTag(), DefaultTagProvider().get())
+        assertEquals(ClogPlatform.inferCurrentTag(), DefaultTagProvider().get())
     }
 
     @Test

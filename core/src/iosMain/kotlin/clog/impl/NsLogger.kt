@@ -6,6 +6,6 @@ import platform.Foundation.NSLog
 
 class NsLogger : ClogLogger {
     override fun log(priority: Clog.Priority, tag: String?, message: String) {
-        DefaultLogger.getDefaultLogMessage(priority, tag, message).also { NSLog(it) }
+        PrintlnLogger.getDefaultLogMessage(priority, tag, message).also { NSLog(it) }
     }
 }

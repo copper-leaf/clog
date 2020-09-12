@@ -1,3 +1,7 @@
+## 3.5.5 - 2020-09-11
+
+- Splits default logger into variants which do or do not use ANSI escape codes, and chooses default JVM and Android unit test implementations to account for Windows lack of ANSI support
+
 ## 3.5.4 - 2020-09-03
 
 - On Android platform, detect if it's running in a unit test (with mocked `android.jar`) and use DefaultLogger() instead

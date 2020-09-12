@@ -5,8 +5,8 @@ import clog.api.ClogLogger
 
 class JsConsoleLogger : ClogLogger {
     override fun log(priority: Clog.Priority, tag: String?, message: String) {
-        DefaultLogger
-            .getDefaultLogMessage(tag, message)
+        PrintlnLogger
+            .getDefaultLogMessage(Clog.Priority.DEFAULT, tag, message)
             .also {
                 when (priority) {
                     Clog.Priority.VERBOSE -> console.log(it)

@@ -11,10 +11,10 @@ import clog.api.ClogTagProvider
  * [tagProvider].
  */
 data class ClogProfile(
-    val logger: ClogLogger = createDefaultLogger(),
-    val tagProvider: ClogTagProvider = createDefaultTagProvider(),
-    val filter: ClogFilter = createDefaultFilter(),
-    val messageFormatter: ClogMessageFormatter = createDefaultMessageFormatter()
+    val logger: ClogLogger = ClogPlatform.createDefaultLogger(),
+    val tagProvider: ClogTagProvider = ClogPlatform.createDefaultTagProvider(),
+    val filter: ClogFilter = ClogPlatform.createDefaultFilter(),
+    val messageFormatter: ClogMessageFormatter = ClogPlatform.createDefaultMessageFormatter()
 ) : ClogMessageLogger, ClogThrowableLogger {
 
 // ClogMessageLogger implementation

@@ -3,13 +3,16 @@ package clog
 import android.util.Log
 import clog.dsl.setMinPriority
 import clog.impl.AndroidLogger
+import clog.impl.AnsiPrintlnLogger
 import clog.impl.DefaultFilter
-import clog.impl.DefaultLogger
 import clog.impl.DefaultMessageFormatter
 import clog.impl.DefaultTagProvider
+import clog.impl.PrintlnLogger
 import clog.test.impl.clogTest
 import io.mockk.every
+import io.mockk.mockkObject
 import io.mockk.mockkStatic
+import io.mockk.unmockkObject
 import io.mockk.unmockkStatic
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -47,15 +50,17 @@ class AndroidClogSingletonTest {
     }
 
     @Test
-    fun testDefaultConfiguration_inUnitTest() {
+    fun testDefaultConfiguration_inUnitTest_windows() {
         Clog.setMinPriority(Clog.Priority.WARNING)
         mockkStatic(Log::class)
         every { Log.d(any(), any()) } throws RuntimeException("")
+        mockkObject(ClogPlatform)
+        every { ClogPlatform.getProperty("isWindows") } returns true
         val underTest = ClogProfile()
         Clog.setMinPriority(null)
 
         with(underTest) {
-            assertEquals(DefaultLogger::class, logger::class)
+            assertEquals(PrintlnLogger::class, logger::class)
             assertEquals(DefaultTagProvider::class, tagProvider::class)
             assertEquals(DefaultFilter::class, filter::class)
             assertEquals(DefaultMessageFormatter::class, messageFormatter::class)
@@ -63,6 +68,30 @@ class AndroidClogSingletonTest {
 
         Clog.setMinPriority(Clog.Priority.WARNING)
         unmockkStatic(Log::class)
+        unmockkObject(ClogPlatform)
+        Clog.setMinPriority(null)
+    }
+
+    @Test
+    fun testDefaultConfiguration_inUnitTest_supportsAnsiCodes() {
+        Clog.setMinPriority(Clog.Priority.WARNING)
+        mockkStatic(Log::class)
+        every { Log.d(any(), any()) } throws RuntimeException("")
+        mockkObject(ClogPlatform)
+        every { ClogPlatform.getProperty("isWindows") } returns false
+        val underTest = ClogProfile()
+        Clog.setMinPriority(null)
+
+        with(underTest) {
+            assertEquals(AnsiPrintlnLogger::class, logger::class)
+            assertEquals(DefaultTagProvider::class, tagProvider::class)
+            assertEquals(DefaultFilter::class, filter::class)
+            assertEquals(DefaultMessageFormatter::class, messageFormatter::class)
+        }
+
+        Clog.setMinPriority(Clog.Priority.WARNING)
+        unmockkStatic(Log::class)
+        unmockkObject(ClogPlatform)
         Clog.setMinPriority(null)
     }
 
