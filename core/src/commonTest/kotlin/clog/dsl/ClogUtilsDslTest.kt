@@ -4,8 +4,7 @@ import clog.Clog
 import clog.ClogProfile
 import clog.api.ClogFilter
 import clog.test.impl.clogProfileTest
-import co.touchlab.stately.concurrency.AtomicReference
-import co.touchlab.stately.concurrency.value
+import clog.util.MutableVariable
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -21,14 +20,14 @@ class ClogUtilsDslTest {
 
     @Test
     fun testClogShouldLog_false() {
-        val tagProvidedToFilter = AtomicReference<String?>(null)
-        val priorityProvidedToFilter = AtomicReference<Clog.Priority?>(null)
+        val tagProvidedToFilter = MutableVariable<String?>(null)
+        val priorityProvidedToFilter = MutableVariable<Clog.Priority?>(null)
 
         val profile = ClogProfile(
             filter = object : ClogFilter {
                 override fun shouldLog(priority: Clog.Priority, tag: String?): Boolean {
-                    priorityProvidedToFilter.value = priority
-                    tagProvidedToFilter.value = tag
+                    priorityProvidedToFilter.set(priority)
+                    tagProvidedToFilter.set(tag)
 
                     return false
                 }
@@ -37,22 +36,22 @@ class ClogUtilsDslTest {
 
         clogProfileTest(profile) {
             val shouldLog = Clog.shouldLog(Clog.Priority.VERBOSE, "test tag")
-            assertEquals("test tag", tagProvidedToFilter.value)
-            assertEquals(Clog.Priority.VERBOSE, priorityProvidedToFilter.value)
+            assertEquals("test tag", tagProvidedToFilter.get())
+            assertEquals(Clog.Priority.VERBOSE, priorityProvidedToFilter.get())
             assertFalse(shouldLog)
         }
     }
 
     @Test
     fun testClogShouldLog_true() {
-        val tagProvidedToFilter = AtomicReference<String?>(null)
-        val priorityProvidedToFilter = AtomicReference<Clog.Priority?>(null)
+        val tagProvidedToFilter = MutableVariable<String?>(null)
+        val priorityProvidedToFilter = MutableVariable<Clog.Priority?>(null)
 
         val profile = ClogProfile(
             filter = object : ClogFilter {
                 override fun shouldLog(priority: Clog.Priority, tag: String?): Boolean {
-                    priorityProvidedToFilter.value = priority
-                    tagProvidedToFilter.value = tag
+                    priorityProvidedToFilter.set(priority)
+                    tagProvidedToFilter.set(tag)
 
                     return true
                 }
@@ -61,8 +60,8 @@ class ClogUtilsDslTest {
 
         clogProfileTest(profile) {
             val shouldLog = Clog.shouldLog(Clog.Priority.VERBOSE, "test tag")
-            assertEquals("test tag", tagProvidedToFilter.value)
-            assertEquals(Clog.Priority.VERBOSE, priorityProvidedToFilter.value)
+            assertEquals("test tag", tagProvidedToFilter.get())
+            assertEquals(Clog.Priority.VERBOSE, priorityProvidedToFilter.get())
             assertTrue(shouldLog)
         }
     }

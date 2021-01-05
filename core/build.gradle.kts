@@ -12,10 +12,10 @@ val bintrayUser: String by extra
 val bintrayToken: String by extra
 
 android {
-    compileSdkVersion(29)
+    compileSdkVersion(30)
     defaultConfig {
         minSdkVersion(21)
-        targetSdkVersion(29)
+        targetSdkVersion(30)
         versionCode = 1
         versionName = project.version.toString()
         testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
@@ -65,15 +65,12 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(Kotlin.stdlib.common)
-                implementation("co.touchlab:stately-concurrency:_")
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(Kotlin.test.common)
                 implementation(Kotlin.test.annotationsCommon)
-                implementation("co.touchlab:stately-isolate:_")
-                implementation("co.touchlab:stately-iso-collections:_")
             }
         }
 

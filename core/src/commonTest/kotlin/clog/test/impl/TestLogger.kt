@@ -4,7 +4,6 @@ import clog.Clog
 import clog.api.ClogLogger
 import clog.ClogProfile
 import clog.dsl.updateProfile
-import co.touchlab.stately.collections.IsoMutableList
 
 class TestLogger : ClogLogger {
 
@@ -15,7 +14,7 @@ class TestLogger : ClogLogger {
         val throwable: Throwable?
     )
 
-    private val loggingEvents: IsoMutableList<LoggingEvent> = IsoMutableList()
+    private val loggingEvents: CopyOnWriteList<LoggingEvent> = CopyOnWriteList()
 
     override fun log(priority: Clog.Priority, tag: String?, message: String) {
         loggingEvents.add(LoggingEvent(priority, tag, message, null))

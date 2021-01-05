@@ -1,7 +1,7 @@
 package clog
 
 import clog.api.ClogMessageFormatter
-import co.touchlab.stately.concurrency.AtomicReference
+import clog.util.MutableVariable
 import kotlin.jvm.JvmStatic
 
 /**
@@ -21,7 +21,7 @@ object Clog {
 // Configuration
 // ---------------------------------------------------------------------------------------------------------------------
 
-    private val atomicInstance: AtomicReference<ClogProfile> = AtomicReference(ClogProfile())
+    private val atomicInstance: MutableVariable<ClogProfile> = MutableVariable(ClogProfile())
 
     /**
      * Get the current global instance of the ClogProfile.

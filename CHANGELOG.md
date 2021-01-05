@@ -1,3 +1,7 @@
+## 3.6.0- 2021-01-05
+
+- Removes Stately entirely and uses actual/expect for AtomicReferences
+
 ## 3.5.5 - 2020-09-11
 
 - Splits default logger into variants which do or do not use ANSI escape codes, and chooses default JVM and Android unit test implementations to account for Windows lack of ANSI support
