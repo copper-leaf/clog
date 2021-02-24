@@ -3,12 +3,16 @@ plugins {
     `clog-base`
 }
 
+repositories {
+    jcenter()
+}
+
 dependencies {
-    orchidRuntimeOnly(Orchid.bundles.docs)
-    orchidRuntimeOnly(Orchid.themes.bsDoc)
-    orchidRuntimeOnly(Orchid.plugins.github)
-    orchidRuntimeOnly(Orchid.plugins.kotlindoc)
-    orchidRuntimeOnly(Orchid.plugins.pluginDocs)
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidDocs:0.21.1")
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidBsDoc:0.21.1")
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidGithub:0.21.1")
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidKotlindoc:0.21.1")
+    orchidRuntimeOnly("io.github.javaeden.orchid:OrchidPluginDocs:0.21.1")
 }
 
 // Orchid setup

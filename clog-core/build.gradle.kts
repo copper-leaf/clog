@@ -1,8 +1,8 @@
 plugins {
     id("com.android.library")
     id("maven-publish")
-    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
-    kotlin("multiplatform") version "1.3.72"
+    id("org.jlleitschuh.gradle.ktlint")
+    kotlin("multiplatform")
     `clog-base`
 }
 
@@ -10,6 +10,10 @@ val ghUser: String by extra
 val ghToken: String by extra
 val bintrayUser: String by extra
 val bintrayToken: String by extra
+
+repositories {
+    maven(url = "https://jetbrains.bintray.com/trove4j") // needed for internal android stuff
+}
 
 android {
     compileSdkVersion(30)
@@ -34,10 +38,10 @@ android {
         }
     }
     testOptions {
-        unitTests(delegateClosureOf<com.android.build.gradle.internal.dsl.TestOptions.UnitTestOptions> {
-            setIncludeAndroidResources(true)
-            setReturnDefaultValues(true)
-        })
+        unitTests {
+            isIncludeAndroidResources = true
+            isReturnDefaultValues = true
+        }
     }
     lintOptions {
         disable("GradleDependency")
@@ -49,7 +53,7 @@ kotlin {
     android {
         publishAllLibraryVariants()
     }
-    js {
+    js(BOTH) {
         browser { }
     }
     ios { }
@@ -64,53 +68,48 @@ kotlin {
         // Common Sourcesets
         val commonMain by getting {
             dependencies {
-                implementation(Kotlin.stdlib.common)
             }
         }
         val commonTest by getting {
             dependencies {
-                implementation(Kotlin.test.common)
-                implementation(Kotlin.test.annotationsCommon)
+                implementation("org.jetbrains.kotlin:kotlin-test-annotations-common:1.4.30")
             }
         }
 
         // plain JVM Sourcesets
         val jvmMain by getting {
             dependencies {
-                implementation(Kotlin.stdlib.jdk7)
-                implementation("org.slf4j:slf4j-api:_")
+                implementation("org.slf4j:slf4j-api:1.7.30")
             }
         }
         val jvmTest by getting {
             dependencies {
-                implementation(Kotlin.test.junit)
-                implementation("io.mockk:mockk:1.10.0")
+                implementation("org.jetbrains.kotlin:kotlin-test-junit:1.4.30")
+                implementation("io.mockk:mockk:1.10.6")
             }
         }
 
         // Android JVM Sourcesets
         val androidMain by getting {
             dependencies {
-                implementation(Kotlin.stdlib.jdk7)
-                implementation("org.slf4j:slf4j-api:_")
+                implementation("org.slf4j:slf4j-api:1.7.30")
             }
         }
         val androidTest by getting {
             dependencies {
-                implementation(Kotlin.test.junit)
-                implementation("io.mockk:mockk:1.10.0")
+                implementation("org.jetbrains.kotlin:kotlin-test-junit:1.4.30")
+                implementation("io.mockk:mockk:1.10.6")
             }
         }
 
         // JS Sourcesets
         val jsMain by getting {
             dependencies {
-                implementation(Kotlin.stdlib.js)
             }
         }
         val jsTest by getting {
             dependencies {
-                implementation(Kotlin.test.js)
+                implementation("org.jetbrains.kotlin:kotlin-test-js:1.4.30")
             }
         }
 
@@ -163,4 +162,7 @@ tasks.withType<Test> {
     testLogging {
         showStandardStreams = true
     }
+}
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions.useIR = true
 }

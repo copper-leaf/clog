@@ -1,5 +1,3 @@
-import de.fayard.dependencies.bootstrapRefreshVersionsAndDependencies
-
 pluginManagement {
     resolutionStrategy {
         eachPlugin {
@@ -11,22 +9,13 @@ pluginManagement {
 
     repositories {
         google()
-        jcenter()
+        mavenCentral()
         gradlePluginPortal()
         maven(url = "https://kotlin.bintray.com/kotlinx")
     }
 }
 
-buildscript {
-    repositories { gradlePluginPortal() }
-    dependencies.classpath("de.fayard:dependencies:0.5.7")
-}
-
-bootstrapRefreshVersionsAndDependencies()
-
 rootProject.name = "clog"
 
-include(":core")
+include(":clog-core")
 include(":docs")
-
-project(":core").name = "clog"

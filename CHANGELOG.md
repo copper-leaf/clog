@@ -1,4 +1,11 @@
-## 3.6.0- 2021-01-05
+## 4.0.0 - 2021-01-05
+
+- Updates Clog to Kotlin 1.4.30
+    - JS artifacts are published in `BOTH` mode, to support legacy and IR compilers
+    - JVM is now using IR backend
+- Renames artifact from `io.copper-leaf:clog` to `io.copper-leaf:clog-core`
+
+## 3.6.0 - 2021-01-05
 
 - Removes Stately entirely and uses actual/expect for AtomicReferences
 
