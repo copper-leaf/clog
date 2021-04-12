@@ -1,3 +1,9 @@
+## 4.0.1 - 2021-01-05
+
+- Updates Clog to Kotlin 1.4.32
+- Adds DSL method for removing existing loggers
+- Publishes artifacts to Jetbrains Space instead of Bintray
+
 ## 4.0.0 - 2021-01-05
 
 - Updates Clog to Kotlin 1.4.30

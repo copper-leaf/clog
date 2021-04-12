@@ -3,9 +3,9 @@
 package clog.dsl
 
 import clog.Clog
-import clog.api.ClogLogger
 import clog.ClogProfile
 import clog.api.ClogFilter
+import clog.api.ClogLogger
 import clog.impl.DefaultTagProvider
 import clog.impl.DelegatingLogger
 import clog.impl.DisableInProductionFilter
@@ -50,11 +50,29 @@ inline fun Clog.configureLoggingInProduction(isDebug: Boolean) {
 
 /**
  * Adds an additional [ClogLogger] as a logging target.
+ *
+ * @see [DelegatingLogger.plus]
  */
 inline fun Clog.addLogger(logger: ClogLogger, filter: ClogFilter? = null) {
     updateProfile {
         val delegatingLogger = it.logger as? DelegatingLogger ?: DelegatingLogger(listOf(null to it.logger))
         it.copy(logger = delegatingLogger + (filter to logger))
+    }
+}
+
+/**
+ * Removes the given [ClogLogger] as a logging target, if it was previously added. Loggers are removed if they are the
+ * same instance.
+ *
+ * @see [DelegatingLogger.minus]
+ */
+inline fun Clog.removeLogger(logger: ClogLogger) {
+    updateProfile {
+        if (it.logger is DelegatingLogger) {
+            it.copy(logger = it.logger - logger)
+        } else {
+            it
+        }
     }
 }
 

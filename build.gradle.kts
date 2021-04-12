@@ -12,6 +12,6 @@ buildscript {
 }
 
 plugins {
-    kotlin("multiplatform") version "1.4.30" apply false
+    kotlin("multiplatform") version "1.4.32" apply false
     id("org.jlleitschuh.gradle.ktlint") version "9.2.1" apply false
 }

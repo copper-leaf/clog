@@ -74,5 +74,5 @@ jobs:
         env:
           GITHUB_ACTOR: '${{ github.actor }}'
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-          BINTRAY_USER: '${{ secrets.BINTRAY_USER }}'
-          BINTRAY_TOKEN: '${{ secrets.BINTRAY_TOKEN }}'
+          JETBRAINS_SPACE_USER: '${{ secrets.JETBRAINS_SPACE_USER }}'
+          JETBRAINS_SPACE_TOKEN: '${{ secrets.JETBRAINS_SPACE_TOKEN }}'

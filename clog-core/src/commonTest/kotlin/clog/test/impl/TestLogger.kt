@@ -35,6 +35,10 @@ class TestLogger : ClogLogger {
     val lastThrowablePriority: Clog.Priority? get() = throwableEvents.lastOrNull()?.priority
     val lastThrowableTag: String? get() = throwableEvents.lastOrNull()?.tag
     val lastThrowable: Throwable? get() = throwableEvents.lastOrNull()?.throwable
+
+    fun reset() {
+        loggingEvents.clear()
+    }
 }
 
 inline fun clogTest(block: (TestLogger) -> Unit) {

@@ -39,7 +39,7 @@ Clog is designed with the following goals in mind:
 ```kotlin
 repositories {
     mavenCentral()
-    maven(url = "https://dl.bintray.com/copper-leaf/oss")
+    maven(url = "https://maven.pkg.jetbrains.space/cjbrooks12/p/cjbrooks12/oss")
 }
 
 // for plain JVM or Android projects
@@ -58,12 +58,6 @@ kotlin {
     }
 }
 ```
-
-> [JCenter is shutting down](https://jfrog.com/blog/into-the-sunset-bintray-jcenter-gocenter-and-chartcenter/), 
-> and I am committed to migrating Clog off Bintray as soon as possible. It does not depend on any 
-> compile or runtime artifacts that are not available on MavenCentral, so the only challenge is 
-> simply to get Clog publishing elsewhere, which will probably require changing the artifact 
-> coordinates. Follow [this issue](https://github.com/copper-leaf/clog/issues/2) for status updates.
 
 ## Usage
 

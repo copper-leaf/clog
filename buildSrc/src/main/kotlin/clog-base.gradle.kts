@@ -142,8 +142,8 @@ fun getProjectVersion(
 
 var ghUser: String by project.extra
 var ghToken: String by project.extra
-var bintrayUser: String by project.extra
-var bintrayToken: String by project.extra
+var jetbrainsSpaceUser: String by project.extra
+var jetbrainsSpaceToken: String by project.extra
 
 var projectVersion: ProjectVersion by project.extra
 var shortVersion: String by project.extra
@@ -152,8 +152,8 @@ var fullVersion: String by project.extra
 
 ghUser       = (System.getenv("GITHUB_ACTOR")?.toString() ?: project.properties["github_username"]?.toString()) ?: ""
 ghToken      = (System.getenv("GITHUB_TOKEN")?.toString() ?: project.properties["githubToken"]?.toString()) ?: ""
-bintrayUser  = (System.getenv("BINTRAY_USER")?.toString() ?: project.properties["bintrayUser"]?.toString()) ?: ""
-bintrayToken = (System.getenv("BINTRAY_TOKEN")?.toString() ?: project.properties["bintrayToken"]?.toString()) ?: ""
+jetbrainsSpaceUser  = (System.getenv("JETBRAINS_SPACE_USER")?.toString() ?: project.properties["jetbrainsSpaceUser"]?.toString()) ?: ""
+jetbrainsSpaceToken = (System.getenv("JETBRAINS_SPACE_TOKEN")?.toString() ?: project.properties["jetbrainsSpaceToken"]?.toString()) ?: ""
 
 projectVersion = getProjectVersion(logChanges = true)
 shortVersion = projectVersion.shortVersion

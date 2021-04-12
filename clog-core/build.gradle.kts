@@ -8,12 +8,8 @@ plugins {
 
 val ghUser: String by extra
 val ghToken: String by extra
-val bintrayUser: String by extra
-val bintrayToken: String by extra
-
-repositories {
-    maven(url = "https://jetbrains.bintray.com/trove4j") // needed for internal android stuff
-}
+val jetbrainsSpaceUser: String by extra
+val jetbrainsSpaceToken: String by extra
 
 android {
     compileSdkVersion(30)
@@ -72,7 +68,7 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-annotations-common:1.4.30")
+                implementation("org.jetbrains.kotlin:kotlin-test-annotations-common:1.4.32")
             }
         }
 
@@ -84,7 +80,7 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-junit:1.4.30")
+                implementation("org.jetbrains.kotlin:kotlin-test-junit:1.4.32")
                 implementation("io.mockk:mockk:1.10.6")
             }
         }
@@ -97,7 +93,7 @@ kotlin {
         }
         val androidTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-junit:1.4.30")
+                implementation("org.jetbrains.kotlin:kotlin-test-junit:1.4.32")
                 implementation("io.mockk:mockk:1.10.6")
             }
         }
@@ -109,7 +105,7 @@ kotlin {
         }
         val jsTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-js:1.4.30")
+                implementation("org.jetbrains.kotlin:kotlin-test-js:1.4.32")
             }
         }
 
@@ -129,11 +125,11 @@ publishing {
         maven(url = "${project.buildDir}/.m2/repository") {
             name = "project"
         }
-        maven(url = "https://api.bintray.com/maven/copper-leaf/oss/clog/;publish=1;override=1;") {
-            name = "Bintray"
+        maven(url = "https://maven.pkg.jetbrains.space/cjbrooks12/p/cjbrooks12/oss") {
+            name = "JetbrainsSpace"
             credentials {
-                username = bintrayUser
-                password = bintrayToken
+                username = jetbrainsSpaceUser
+                password = jetbrainsSpaceToken
             }
         }
     }

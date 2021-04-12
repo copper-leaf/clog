@@ -130,6 +130,35 @@ class ClogConfigurationDslTest {
     }
 
     @Test
+    fun testRemoveLogger() {
+        clogTest { logger ->
+            val logger1 = TestLogger()
+            val logger2 = TestLogger()
+
+            Clog.addLogger(logger1)
+            Clog.addLogger(logger2)
+
+            Clog.v("m1")
+            assertTrue(logger.messageWasLogged)
+            assertTrue(logger1.messageWasLogged)
+            assertTrue(logger2.messageWasLogged)
+
+            logger.reset()
+            logger1.reset()
+            logger2.reset()
+            assertFalse(logger.messageWasLogged)
+            assertFalse(logger1.messageWasLogged)
+            assertFalse(logger2.messageWasLogged)
+
+            Clog.removeLogger(logger2)
+            Clog.e("m2")
+            assertTrue(logger.messageWasLogged)
+            assertTrue(logger1.messageWasLogged)
+            assertFalse(logger2.messageWasLogged)
+        }
+    }
+
+    @Test
     fun testTagWhitelisting() {
         clogTest { logger ->
             Clog.addTagToWhitelist("t2")

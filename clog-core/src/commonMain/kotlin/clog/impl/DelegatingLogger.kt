@@ -26,11 +26,23 @@ data class DelegatingLogger(
     }
 
     /**
-     * Returns a copy of this [DelegatingLogger] with [logger] appended to its list of [delegates].
+     * Returns a copy of this [DelegatingLogger] with [filteredLogger] appended to its list of [delegates].
      */
     operator fun plus(filteredLogger: Pair<ClogFilter?, ClogLogger>): DelegatingLogger {
         return DelegatingLogger(
             delegates + filteredLogger
+        )
+    }
+
+    /**
+     * Returns a copy of this [DelegatingLogger] with [logger] removed from its list of [delegates]. All delegates that
+     * are the same instance as [logger] are removed, regardless of their associated [ClogFilter].
+     */
+    operator fun minus(logger: ClogLogger): DelegatingLogger {
+        val newDelegatesList = delegates.filterNot { it.second === logger }
+
+        return DelegatingLogger(
+            newDelegatesList
         )
     }
 }
