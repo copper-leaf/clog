@@ -55,8 +55,9 @@ inline fun Clog.configureLoggingInProduction(isDebug: Boolean) {
  */
 inline fun Clog.addLogger(logger: ClogLogger, filter: ClogFilter? = null) {
     updateProfile {
-        val delegatingLogger = it.logger as? DelegatingLogger ?: DelegatingLogger(listOf(null to it.logger))
-        it.copy(logger = delegatingLogger + (filter to logger))
+        val delegatingLogger = it.logger as? DelegatingLogger
+            ?: DelegatingLogger(listOf(DelegatingLogger.FilteredLogger(null, it.logger)))
+        it.copy(logger = delegatingLogger + DelegatingLogger.FilteredLogger(filter, logger))
     }
 }
 

@@ -15,11 +15,13 @@ class DelegatingLoggerTest {
         val logger1 = TestLogger()
         val logger2 = TestLogger()
         val logger3 = TestLogger()
-        val underTest = DelegatingLogger(listOf(
-            null to logger1,
-            DefaultFilter() to logger2,
-            DefaultFilter(minPriority = Clog.Priority.WARNING) to logger3
-        ))
+        val underTest = DelegatingLogger(
+            listOf(
+                DelegatingLogger.FilteredLogger(null, logger1),
+                DelegatingLogger.FilteredLogger(DefaultFilter(), logger2),
+                DelegatingLogger.FilteredLogger(DefaultFilter(minPriority = Clog.Priority.WARNING), logger3),
+            )
+        )
 
         underTest.log(Clog.Priority.VERBOSE, null, "a message")
 
@@ -41,11 +43,13 @@ class DelegatingLoggerTest {
         val logger1 = TestLogger()
         val logger2 = TestLogger()
         val logger3 = TestLogger()
-        val underTest = DelegatingLogger(listOf(
-            null to logger1,
-            DefaultFilter() to logger2,
-            DefaultFilter(minPriority = Clog.Priority.WARNING) to logger3
-        ))
+        val underTest = DelegatingLogger(
+            listOf(
+                DelegatingLogger.FilteredLogger(null, logger1),
+                DelegatingLogger.FilteredLogger(DefaultFilter(), logger2),
+                DelegatingLogger.FilteredLogger(DefaultFilter(minPriority = Clog.Priority.WARNING), logger3),
+            )
+        )
 
         underTest.logException(Clog.Priority.VERBOSE, null, RuntimeException("a message"))
 

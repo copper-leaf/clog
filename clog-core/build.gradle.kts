@@ -1,15 +1,13 @@
 plugins {
     id("com.android.library")
-    id("maven-publish")
-    id("org.jlleitschuh.gradle.ktlint")
     kotlin("multiplatform")
-    `clog-base`
+    `copper-leaf-base`
+    `copper-leaf-version`
+    `copper-leaf-lint`
+    `copper-leaf-publish`
 }
 
-val ghUser: String by extra
-val ghToken: String by extra
-val jetbrainsSpaceUser: String by extra
-val jetbrainsSpaceToken: String by extra
+description = "Zero-Config logging utility for Kotlin Multiplatform"
 
 android {
     compileSdkVersion(30)
@@ -81,7 +79,7 @@ kotlin {
         val jvmTest by getting {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-test-junit:1.4.32")
-                implementation("io.mockk:mockk:1.10.6")
+                implementation("io.mockk:mockk:1.11.0")
             }
         }
 
@@ -94,7 +92,7 @@ kotlin {
         val androidTest by getting {
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-test-junit:1.4.32")
-                implementation("io.mockk:mockk:1.10.6")
+                implementation("io.mockk:mockk:1.11.0")
             }
         }
 
@@ -119,41 +117,10 @@ kotlin {
     }
 }
 
-publishing {
-    repositories {
-        // publish to the project buildDir to make sure things are getting published correctly
-        maven(url = "${project.buildDir}/.m2/repository") {
-            name = "project"
-        }
-        maven(url = "https://maven.pkg.jetbrains.space/cjbrooks12/p/cjbrooks12/oss") {
-            name = "JetbrainsSpace"
-            credentials {
-                username = jetbrainsSpaceUser
-                password = jetbrainsSpaceToken
-            }
-        }
-    }
+tasks.withType<JavaCompile> {
+    sourceCompatibility = Config.javaVersion
+    targetCompatibility = Config.javaVersion
 }
-
-ktlint {
-    debug.set(false)
-    verbose.set(true)
-    android.set(true)
-    outputToConsole.set(true)
-    ignoreFailures.set(false)
-    enableExperimentalRules.set(false)
-    additionalEditorconfigFile.set(file("$rootDir/.editorconfig"))
-    reporters {
-        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN)
-        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)
-        reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.HTML)
-    }
-    filter {
-        exclude("**/generated/**")
-        include("**/kotlin/**")
-    }
-}
-
 tasks.withType<Test> {
     testLogging {
         showStandardStreams = true
@@ -161,4 +128,7 @@ tasks.withType<Test> {
 }
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.useIR = true
+    kotlinOptions {
+        jvmTarget = Config.javaVersion
+    }
 }

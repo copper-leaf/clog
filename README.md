@@ -7,6 +7,8 @@ Zero-config Kotlin multiplatform logging utility, strongly inspired by the [SLF4
 [Timber](https://github.com/JakeWharton/timber) APIs.
 
 ![GitHub release (latest by date)](https://img.shields.io/github/v/release/copper-leaf/clog)
+![Maven Central](https://img.shields.io/maven-central/v/io.github.copper-leaf/clog-core)
+![Kotlin Version](https://img.shields.io/badge/Kotlin-1.4.32-orange)
 
 Clog is designed with the following goals in mind:
 
@@ -39,12 +41,11 @@ Clog is designed with the following goals in mind:
 ```kotlin
 repositories {
     mavenCentral()
-    maven(url = "https://maven.pkg.jetbrains.space/cjbrooks12/p/cjbrooks12/oss")
 }
 
 // for plain JVM or Android projects
 dependencies {
-    implementation("io.copper-leaf:clog-core:{{site.version}}")
+    implementation("io.github.copper-leaf:clog-core:{{site.version}}")
 }
 
 // for multiplatform projects
@@ -52,7 +53,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("io.copper-leaf:clog-core:{{site.version}}")
+                implementation("io.github.copper-leaf:clog-core:{{site.version}}")
             }
         }
     }

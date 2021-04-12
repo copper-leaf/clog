@@ -1,6 +1,8 @@
 plugins {
     id("com.eden.orchidPlugin") version "0.21.1"
-    `clog-base`
+    `copper-leaf-base`
+    `copper-leaf-version`
+    `copper-leaf-lint`
 }
 
 repositories {
@@ -16,11 +18,11 @@ dependencies {
 }
 
 // Orchid setup
-//----------------------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------------------
 
 val ghUser: String by extra
 val ghToken: String by extra
-var releaseVersion: String by project.extra
+val releaseVersion: String by extra
 
 orchid {
     githubToken = ghToken

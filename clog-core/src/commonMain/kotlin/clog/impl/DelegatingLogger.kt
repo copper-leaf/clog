@@ -8,8 +8,13 @@ import clog.api.ClogLogger
  * Passes a log message to multiple other loggers
  */
 data class DelegatingLogger(
-    val delegates: List<Pair<ClogFilter?, ClogLogger>> = emptyList()
+    val delegates: List<FilteredLogger> = emptyList()
 ) : ClogLogger {
+
+    data class FilteredLogger(
+        val filter: ClogFilter?,
+        val logger: ClogLogger,
+    )
 
     override fun log(priority: Clog.Priority, tag: String?, message: String) {
         filteredLoggers(priority, tag).forEach { it.log(priority, tag, message) }
@@ -21,14 +26,14 @@ data class DelegatingLogger(
 
     private fun filteredLoggers(priority: Clog.Priority, tag: String?): List<ClogLogger> {
         return delegates
-            .filter { it.first == null || it.first!!.shouldLog(priority, tag) }
-            .map { it.second }
+            .filter { it.filter == null || it.filter.shouldLog(priority, tag) }
+            .map { it.logger }
     }
 
     /**
      * Returns a copy of this [DelegatingLogger] with [filteredLogger] appended to its list of [delegates].
      */
-    operator fun plus(filteredLogger: Pair<ClogFilter?, ClogLogger>): DelegatingLogger {
+    operator fun plus(filteredLogger: FilteredLogger): DelegatingLogger {
         return DelegatingLogger(
             delegates + filteredLogger
         )
@@ -39,7 +44,7 @@ data class DelegatingLogger(
      * are the same instance as [logger] are removed, regardless of their associated [ClogFilter].
      */
     operator fun minus(logger: ClogLogger): DelegatingLogger {
-        val newDelegatesList = delegates.filterNot { it.second === logger }
+        val newDelegatesList = delegates.filterNot { it.logger === logger }
 
         return DelegatingLogger(
             newDelegatesList
