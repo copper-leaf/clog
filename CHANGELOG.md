@@ -1,3 +1,7 @@
+## 4.0.1 - 2021-04-13
+
+- Enables publication from Github Actions
+
 ## 4.1.0 - 2021-04-13
 
 - Updates Clog to Kotlin 1.4.32

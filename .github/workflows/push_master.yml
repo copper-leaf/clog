@@ -33,7 +33,6 @@ jobs:
   testOnAll:
     needs: ['buildCachesOnAll']
     strategy:
-      fail-fast: false
       matrix:
         java: [8, 9, 10, 11, 12, 13, 14, 15, 16]
         os: ['ubuntu-latest', 'macos-latest']
@@ -77,5 +76,9 @@ jobs:
         env:
           GITHUB_ACTOR: '${{ github.actor }}'
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
-          JETBRAINS_SPACE_USER: '${{ secrets.JETBRAINS_SPACE_USER }}'
-          JETBRAINS_SPACE_TOKEN: '${{ secrets.JETBRAINS_SPACE_TOKEN }}'
+          OSSRH_USERNAME: '${{ secrets.OSSRH_USERNAME }}'
+          OSSRH_PASSWORD: '${{ secrets.OSSRH_PASSWORD }}'
+          SIGNING_KEY_ID: '${{ secrets.SIGNING_KEY_ID }}'
+          SIGNING_KEY: '${{ secrets.SIGNING_KEY }}'
+          SIGNING_PASSWORD: '${{ secrets.SIGNING_PASSWORD }}'
+

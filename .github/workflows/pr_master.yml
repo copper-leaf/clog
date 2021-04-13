@@ -33,7 +33,6 @@ jobs:
   testOnAll:
     needs: ['buildCachesOnAll']
     strategy:
-      fail-fast: false
       matrix:
         java: [8, 9, 10, 11, 12, 13, 14, 15, 16]
         os: ['ubuntu-latest', 'macos-latest']
