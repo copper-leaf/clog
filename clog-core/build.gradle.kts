@@ -66,7 +66,8 @@ kotlin {
         }
         val commonTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-annotations-common:1.4.32")
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
             }
         }
 
@@ -78,7 +79,7 @@ kotlin {
         }
         val jvmTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-junit:1.4.32")
+                implementation(kotlin("test-junit"))
                 implementation("io.mockk:mockk:1.11.0")
             }
         }
@@ -91,7 +92,7 @@ kotlin {
         }
         val androidTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-junit:1.4.32")
+                implementation(kotlin("test-junit"))
                 implementation("io.mockk:mockk:1.11.0")
             }
         }
@@ -103,7 +104,7 @@ kotlin {
         }
         val jsTest by getting {
             dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-js:1.4.32")
+                implementation(kotlin("test-js"))
             }
         }
 

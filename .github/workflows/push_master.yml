@@ -34,7 +34,7 @@ jobs:
     needs: ['buildCachesOnAll']
     strategy:
       matrix:
-        java: [8, 9, 10, 11, 12, 13, 14, 15, 16]
+        java: [8, 9, 10, 11, 12, 13, 14, 15]
         os: ['ubuntu-latest', 'macos-latest']
     name: 'Test on ${{ matrix.os }} JDK ${{ matrix.java }}'
     runs-on: '${{ matrix.os }}'

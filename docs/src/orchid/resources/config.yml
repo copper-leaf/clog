@@ -1,31 +1,66 @@
 site:
-  theme: 'BsDoc'
-  baseUrl: 'https://copper-leaf.github.io/clog'
+  theme: Copper
+  baseUrl: 'https://copper-leaf.github.io/clog/'
   about:
     siteName: Clog
     siteDescription: Zero-config Kotlin multiplatform logging utility
 
 theme:
-  primaryColor: '#2a623d'
-  trianglifyOptions:
-    x_colors: ['#000', '#2a623d', '#000']
-  metaComponents:
-    - type: "prism"
-      githubTheme: 'duotone-light'
-      languages:
-        - java
-        - kotlin
-        - groovy
-        - swift
+  social:
+    other:
+      - { link: 'https://github.com/copper-leaf',         label: 'Copper Leaf Home', icon: 'fas fa-home' }
+      - { link: 'https://github.com/copper-leaf/clog', label: 'Github',           icon: 'fab fa-github'}
+      - { link: 'https://twitter.com/OrchidSSG',          label: 'Twitter',          icon: 'fab fa-twitter'}
   menu:
+    # Main site menu in toolbar
+    - { type: 'github', githubProject: 'orchidhq/Orchid'  }
+    - type: 'submenu'
+      title: 'Copper Leaf'
+      menu:
+        - { type: 'github', githubProject: 'copper-leaf/common'  }
+        - { type: 'github', githubProject: 'copper-leaf/clog'    }
+        - { type: 'github', githubProject: 'copper-leaf/kudzu'   }
+        - { type: 'github', githubProject: 'copper-leaf/trellis' }
+        - { type: 'github', githubProject: 'copper-leaf/thistle' }
+        - { type: 'github', githubProject: 'copper-leaf/kodiak'  }
+        - { type: 'github', githubProject: 'copper-leaf/krow'    }
+  sidebarBackground: 'primary'
+  sidebarBackgroundType: 'GRADIENT'
+  colors:
+    green: '#3d634a'
+  palette:
+    primary: 'GREEN'
+    link: 'GREEN'
+    linkVisited: 'PURPLE'
+
+allPages:
+  menu:
+    # Menu in left sidebar
     - type: 'page'
       itemId: 'Home'
     - type: 'page'
-      itemId: 'Releases'
-    - type: 'sourcedocModules'
-      moduleType:  'kotlindoc'
-      asSubmenu: true
-      submenuTitle: 'Supported Platforms'
+      itemId: 'Changelog'
+    - type: 'wiki'
+  layoutConfig:
+    wrapPageInBox: true
+    wrapTitleInBox: false
+    includeTitle: false
+    includeBreadcrumbs: false
+    pageContentsMenu:
+      # Sticky menu on the page
+      - type: 'separator'
+        title: 'In This Page'
+      - type: 'pageIds'
+        structure: nested
+        maxLevel: 2
+  metaComponents:
+    - type: "orchidSearch"
+    - type: "prism"
+      githubTheme: 'duotone-light'
+      languages:
+        - kotlin
+        - java
+        - groovy
 
 changelog:
   adapter:
@@ -39,19 +74,7 @@ snippets:
         type: 'embedded'
         recursive: true
         baseDirs:
-          - './../../../../core/src/commonTest/kotlin/'
-          - './../../../../core/src/jvmTest/kotlin/'
-          - './../../../../core/src/androidTest/kotlin/'
-          - './../../../../core/src/jsTest/kotlin/'
-          - './../../../../core/src/iosTest/kotlin/'
-
-kotlindoc:
-  modules:
-    - { name: 'Common',  slug: 'common',  sourceDirs: './../../../../core/src/commonMain/kotlin/'                              }
-    - { name: 'JVM',     slug: 'jvm',     sourceDirs: './../../../../core/src/jvmMain/kotlin/',     relatedModules: ['Common'] }
-    - { name: 'Android', slug: 'android', sourceDirs: './../../../../core/src/androidMain/kotlin/', relatedModules: ['Common'] }
-    - { name: 'JS',      slug: 'js',      sourceDirs: './../../../../core/src/jsMain/kotlin/',      relatedModules: ['Common'] }
-    - { name: 'iOS',     slug: 'ios',     sourceDirs: './../../../../core/src/iosMain/kotlin/',     relatedModules: ['Common'] }
+          - './../../../../clog-core/'
 
 services:
   publications:
@@ -63,3 +86,7 @@ services:
       - type: githubPages
         repo: 'copper-leaf/clog'
         username: 'cjbrooks12'
+  generators:
+    disabled:
+      - 'kotlindoc'
+      - 'assets'
