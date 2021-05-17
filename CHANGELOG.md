@@ -1,12 +1,16 @@
-## 4.0.1 - 2021-04-13
+## 4.1.1 - 2021-05-16
 
-- Enables publication from Github Actions
+- Republish with Kotlin hierarchical MPP Gradle metadata enabled
 
 ## 4.1.0 - 2021-04-13
 
 - Updates Clog to Kotlin 1.4.32
 - Adds DSL method for removing existing loggers
 - Publishes artifacts to MavenCentral
+
+## 4.0.1 - 2021-04-13
+
+- Enables publication from Github Actions
 
 ## 4.0.0 - 2021-01-05
 
