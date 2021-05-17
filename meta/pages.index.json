@@ -1,0 +1,19 @@
+{
+  "ownKey": "pages",
+  "childrenPages": {"releases": {
+    "ownKey": "releases",
+    "ownPages": [{
+      "reference": {
+        "path": "",
+        "baseUrl": "https://copper-leaf.github.io/clog",
+        "fileName": "releases",
+        "extension": "html",
+        "usePrettyUrl": true,
+        "link": "https://copper-leaf.github.io/clog/releases"
+      },
+      "description": "",
+      "title": "Releases",
+      "content": ""
+    }]
+  }}
+}

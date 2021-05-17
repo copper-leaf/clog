@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+
+
+
+
+
+<meta charset="utf-8"/>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no"/>
+<meta name="generator" content="Orchid 0.21.1"/>
+<link rel="icon" href="https://copper-leaf.github.io/clog/favicon.ico">
+
+
+<meta name="robots" content="index, follow">
+
+
+
+<title>iOS</title>
+
+
+<meta name="description" content="Zero-config Kotlin multiplatform logging utility">
+
+
+
+
+
+<!-- start:inject styles -->
+<link rel="stylesheet" type="text/css" href="https://netdna.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"  />
+<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"  />
+<link rel="stylesheet" type="text/css" href="https://copper-leaf.github.io/clog/BsDoc/802f6534/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.min.css"  />
+<link rel="stylesheet" type="text/css" href="https://copper-leaf.github.io/clog/BsDoc/802f6534/assets/css/bsdoc.css"  />
+<link rel="stylesheet" type="text/css" href="https://copper-leaf.github.io/clog/BsDoc/802f6534/assets/css/orchidSearch.css"  />
+<link rel="stylesheet" type="text/css" href="https://copper-leaf.github.io/clog/PrismJS/prism-themes/master/themes/prism-duotone-light.css"  />
+<!-- end:inject styles -->
+
+
+
+<script>
+    window.site = {"orchidVersion":"0.21.1","baseUrl":"https://copper-leaf.github.io/clog","environment":"prod","version":"4.1.1"};
+</script>
+
+
+    <!-- start:inject meta-components [head] -->
+    
+
+        
+            
+        
+
+        
+            
+        
+    
+    <!-- end:inject meta-components [head] -->
+
+
+
+    <!-- start:inject meta-components [head] -->
+    
+    <!-- end:inject meta-components [head] -->
+
+
+
+
+
+
+
+</head>
+<body>
+
+
+
+
+
+    <!-- start:inject meta-components [bodyStart] -->
+    
+
+        
+            
+        
+
+        
+    
+    <!-- end:inject meta-components [bodyStart] -->
+
+
+
+    <!-- start:inject meta-components [bodyStart] -->
+    
+    <!-- end:inject meta-components [bodyStart] -->
+
+
+
+
+
+
+
+
+<header class="navbar navbar-fixed-top bs-docs-nav">
+    <div class="container">
+        <div class="navbar-header" role="banner">
+            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://copper-leaf.github.io/clog">Clog</a>
+        </div>
+        <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+            <ul class="nav navbar-nav navbar-right">
+                
+                    
+                        <li><a href="https://copper-leaf.github.io/clog">Home</a></li>
+                    
+                
+                    
+                        <li><a href="https://copper-leaf.github.io/clog/releases">Releases</a></li>
+                    
+                
+                    
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Supported Platforms<span class="caret"></span></a>
+                            <ul class="dropdown-menu scrollable-menu">
+                                
+                                    <li><a href="https://copper-leaf.github.io/clog/kotlindoc/android">Android</a></li>
+                                
+                                    <li><a href="https://copper-leaf.github.io/clog/kotlindoc/common">Common</a></li>
+                                
+                                    <li><a href="https://copper-leaf.github.io/clog/kotlindoc/js">JS</a></li>
+                                
+                                    <li><a href="https://copper-leaf.github.io/clog/kotlindoc/jvm">JVM</a></li>
+                                
+                                    <li><a href="https://copper-leaf.github.io/clog/kotlindoc/ios">iOS</a></li>
+                                
+                            </ul>
+                        </li>
+                    
+                
+            </ul>
+        </nav>
+    </div>
+</header>
+
+
+<div id="top"></div>
+
+
+    <div class="bs-docs-masthead" id="jumbotron">
+        <div class="container">
+            <h1 class="home-title">iOS</h1>
+        </div>
+    </div>
+
+
+<div class="container bs-docs-container">
+    <div class="row">
+        <div class="col-md-9" role="main">
+        <nav aria-label="breadcrumb">
+    <ul class="breadcrumb">
+    
+    
+        <li class="breadcrumb-item active" aria-current="page">iOS</li>
+    
+    
+    </ul>
+</nav>
+        
+
+        
+        
+            
+    <!-- start:inject components -->
+    
+        
+            
+                
+                    
+                        <h2 id="clog"><a href="#clog" id="clog" class="anchor"></a>Clog</h2>
+<p>Zero-config Kotlin multiplatform logging utility, strongly inspired by the <a href="http://www.slf4j.org/">SLF4J</a> and
+<a href="https://github.com/JakeWharton/timber">Timber</a> APIs.</p>
+<p><img src="https://img.shields.io/github/v/release/copper-leaf/clog" alt="GitHub release (latest by date)" />
+<img src="https://img.shields.io/maven-central/v/io.github.copper-leaf/clog-core" alt="Maven Central" />
+<img src="https://img.shields.io/badge/Kotlin-1.4.32-orange" alt="Kotlin Version" /></p>
+<p>Clog is designed with the following goals in mind:</p>
+<ul>
+<li><strong>Zero setup required</strong>: just add the dependency and start logging</li>
+<li><strong>Support natural logging for each platform</strong>: use <code>actual/expect</code> declarations to provide natural logging targets for
+each platform, rather than printing everything to stdout</li>
+<li><strong>Be a central logger</strong>: Unlike many other Kotlin/Multiplatform loggers which simply delegate to SLF4j, Clog is designed
+to be the central logger instead of a wrapper around another logger. Clog <em>is</em> an SLF4J implementation, so logs from
+other libraries will be passed through to Clog and can be configured and filtered using Clog's APIs.</li>
+<li><strong>Support existing standards for logging</strong>: with the API of Timber and semantics compatible with SLF4J, Clog is a
+natural way to transition your JVM-specific logging into the Kotlin/Multiplatform world</li>
+<li><strong>Customization is there if you need it</strong>: the Clog singleton can be easily configured with custom classes to apply
+your own formatting, filtering, and logging targets</li>
+<li><strong>Immutable loggers</strong>: The ClogProfile and all classes implementing the logger are immutable, for multithreaded
+performance and safety. The global Clog instance is updated only by swapping out the backing instance, and you're
+free to bypass the global instance entirely and inject loggers instead.</li>
+</ul>
+<h3 id="supported-platformsfeatures"><a href="#supported-platformsfeatures" id="supported-platformsfeatures" class="anchor"></a>Supported Platforms/Features</h3>
+<table class="table">
+<thead>
+<tr><th>Platform</th><th>Logging Target</th><th>ANSI Colors</th><th>Tag Inference</th><th>Message Formatting</th><th>SLF4J Integration</th><th>SLF4J MDC Support</th></tr>
+</thead>
+<tbody>
+<tr><td>JVM</td><td>System.out</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+<tr><td>Android</td><td>android.util.Log</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td></tr>
+<tr><td>JS</td><td>console.log</td><td>❌</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td></tr>
+<tr><td>iOS</td><td>NSLog</td><td>❌</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td></tr>
+</tbody>
+</table>
+<h3 id="installation"><a href="#installation" id="installation" class="anchor"></a>Installation</h3>
+<pre><code class="language-kotlin">repositories {
+    mavenCentral()
+}
+
+// for plain JVM or Android projects
+dependencies {
+    implementation(&quot;io.github.copper-leaf:clog-core:4.1.1&quot;)
+}
+
+// for multiplatform projects
+kotlin {
+    sourceSets {
+        val commonMain by getting {
+            dependencies {
+                implementation(&quot;io.github.copper-leaf:clog-core:4.1.1&quot;)
+            }
+        }
+    }
+}
+</code></pre>
+<h2 id="usage"><a href="#usage" id="usage" class="anchor"></a>Usage</h2>
+<p>Clog's logging levels generally follow the SLF4J logging levels, and the API follows a similar API as
+<a href="https://developer.android.com/reference/android/util/Log">android.util.log</a> or
+<a href="https://github.com/JakeWharton/timber">Timber</a>.</p>
+<table class="table">
+<thead>
+<tr><th>Clog Level</th><th>Clog Method</th><th>SLF4J Level</th></tr>
+</thead>
+<tbody>
+<tr><td>Verbose</td><td><code>Clog.v()</code></td><td><code>logger.trace()</code></td></tr>
+<tr><td>Debug</td><td><code>Clog.d()</code></td><td><code>logger.debug()</code></td></tr>
+<tr><td>Info</td><td><code>Clog.i()</code></td><td><code>logger.info()</code></td></tr>
+<tr><td>Default</td><td><code>Clog.log()</code></td><td>N/A</td></tr>
+<tr><td>Warning</td><td><code>Clog.w()</code></td><td><code>logger.warn()</code></td></tr>
+<tr><td>Error</td><td><code>Clog.e()</code></td><td><code>logger.error()</code></td></tr>
+<tr><td>Fatal</td><td><code>Clog.wtf()</code></td><td>N/A</td></tr>
+</tbody>
+</table>
+<p>In general, a log consists of a <em>message</em> (which may be formatted with params in SLF4J-style), a <em>tag</em>, and a
+<em>log level</em>. Below is a description of the API</p>
+<h3 id="normal-log-messages"><a href="#normal-log-messages" id="normal-log-messages" class="anchor"></a>Normal log messages</h3>
+<p>Tag will be inferred on supported platforms, based on the calling class</p>
+<pre><code class="language-kotlin">Clog.v(&quot;message&quot;)
+Clog.d(&quot;message&quot;)
+Clog.i(&quot;message&quot;)
+Clog.log(&quot;message&quot;)
+Clog.w(&quot;message&quot;)
+Clog.e(&quot;message&quot;)
+Clog.wtf(&quot;message&quot;)
+</code></pre>
+<h3 id="logs-with-custom-tags"><a href="#logs-with-custom-tags" id="logs-with-custom-tags" class="anchor"></a>Logs with custom tags</h3>
+<pre><code class="language-kotlin">Clog.tag(&quot;tag&quot;).v(&quot;message&quot;)
+Clog.tag(&quot;tag&quot;).d(&quot;message&quot;)
+Clog.tag(&quot;tag&quot;).i(&quot;message&quot;)
+Clog.tag(&quot;tag&quot;).w(&quot;message&quot;)
+Clog.tag(&quot;tag&quot;).e(&quot;message&quot;)
+Clog.tag(&quot;tag&quot;).wtf(&quot;message&quot;)
+</code></pre>
+<h3 id="log-exceptions"><a href="#log-exceptions" id="log-exceptions" class="anchor"></a>Log exceptions</h3>
+<pre><code class="language-kotlin">val e = RuntimeException()
+Clog.v(e)
+Clog.d(e)
+Clog.i(e)
+Clog.log(e)
+Clog.w(e)
+Clog.e(e)
+Clog.wtf(e)
+</code></pre>
+<h3 id="message-formatting"><a href="#message-formatting" id="message-formatting" class="anchor"></a>Message Formatting</h3>
+<p>SLF4j-style formatting is supported, replacing <code>{}</code> with params passed to the logging call. This is supported on all
+platforms and all log levels.</p>
+<pre><code class="language-kotlin">val foo = &quot;bar&quot;
+Clog.i(&quot;message {}&quot;, foo) // logs 'message bar'
+</code></pre>
+<h3 id="priority-filter"><a href="#priority-filter" id="priority-filter" class="anchor"></a>Priority Filter</h3>
+<p>Messages and exceptions can be filtered out by priority.</p>
+<pre><code class="language-kotlin">Clog.setMinPriority(Clog.Priority.ERROR)
+</code></pre>
+<h3 id="tag-whitelistingblacklisting"><a href="#tag-whitelistingblacklisting" id="tag-whitelistingblacklisting" class="anchor"></a>Tag whitelisting/blacklisting</h3>
+<p>Messages can be filtered out by tags.</p>
+<pre><code class="language-kotlin">Clog.addTagToWhitelist(&quot;tag1&quot;)
+Clog.addTagToBlacklist(&quot;tag2&quot;)
+</code></pre>
+<h2 id="lambda-dsl"><a href="#lambda-dsl" id="lambda-dsl" class="anchor"></a>Lambda DSL</h2>
+<p>Using the Clog DSL, simple strings can be logged lazily. The lambda is only evaluated if the logging level and tag is
+enabled. By default, messages logged with the lambda DSL are not formatted, but it can be re-enabled by using <code>format()</code>
+inside the lambda.</p>
+<h3 id="normal-log-messages-1"><a href="#normal-log-messages-1" id="normal-log-messages-1" class="anchor"></a>Normal log messages</h3>
+<pre><code class="language-kotlin">import clog.dsl.*
+
+v   { &quot;message&quot; }
+d   { &quot;message&quot; }
+i   { &quot;message&quot; }
+w   { &quot;message&quot; }
+e   { &quot;message&quot; }
+wtf { &quot;message&quot; }
+</code></pre>
+<h3 id="logs-with-custom-tags-1"><a href="#logs-with-custom-tags-1" id="logs-with-custom-tags-1" class="anchor"></a>Logs with custom tags</h3>
+<pre><code class="language-kotlin">import clog.dsl.*
+
+v(&quot;tag&quot;)   { &quot;message&quot; }
+d(&quot;tag&quot;)   { &quot;message&quot; }
+i(&quot;tag&quot;)   { &quot;message&quot; }
+w(&quot;tag&quot;)   { &quot;message&quot; }
+e(&quot;tag&quot;)   { &quot;message&quot; }
+wtf(&quot;tag&quot;) { &quot;message&quot; }
+</code></pre>
+<h3 id="message-formatting-1"><a href="#message-formatting-1" id="message-formatting-1" class="anchor"></a>Message formatting</h3>
+<pre><code class="language-kotlin">import clog.dsl.*
+
+val foo = &quot;bar&quot; 
+v   { format(&quot;message {}&quot;, foo) } // logs 'message bar'
+d   { format(&quot;message {}&quot;, foo) } // logs 'message bar'
+i   { format(&quot;message {}&quot;, foo) } // logs 'message bar'
+w   { format(&quot;message {}&quot;, foo) } // logs 'message bar'
+e   { format(&quot;message {}&quot;, foo) } // logs 'message bar'
+wtf { format(&quot;message {}&quot;, foo) } // logs 'message bar'
+</code></pre>
+<h2 id="slf4j"><a href="#slf4j" id="slf4j" class="anchor"></a>SLF4J</h2>
+<p>On plain JVM and Android platforms, Clog is set up as an SLF4J binding; that is, SLF4J will pass log messages through to
+Clog. Other libraries and frameworks logging to SLF4J will be formatted as normal Clog logs for uniform log output, and
+so Clog can be used as a simple SLF4J binding when you don't want to configure Logback. Additionally, SLF Mapped
+Diagnostic Context (MDC) is supported, and context data can be added to log messages with the standard format of
+<code>%X{mdcKey}</code>.</p>
+<pre><code class="language-kotlin">val slf4j: Logger = LoggerFactory.getLogger(JvmClogSlf4jTest::class.java)
+
+MDC.put(&quot;akey&quot;, &quot;avalue&quot;)
+slf4j.trace(&quot;message %X{akey}&quot;) // logs 'message avalue' to the Clog logger
+</code></pre>
+<h2 id="more-customization"><a href="#more-customization" id="more-customization" class="anchor"></a>More Customization</h2>
+<p>Clog is designed to work out-of-the-box with absolutely zero config required to start logging with it. However, you can
+customize all components of Clog to your needs. Clog is comprised of several components wrapped in a <code>ClogProfile</code>,
+which is the global instance of <code>Clog.getInstance()</code>. You can customize your Clog by creating a new Profile with your
+custom components:</p>
+<pre><code class="language-kotlin">val newProfile = ClogProfile(...)
+Clog.setProfile(newProfile)
+</code></pre>
+<p>You can also use the <code>Clog.updateProfile</code> helper to create a profile based on the current global instance:</p>
+<pre><code class="language-kotlin">Clog.updateProfile { it.copy(logger = newLogger) }
+</code></pre>
+<p>The table below describes the classes that can be customized in the <code>ClogProfile</code>, along with their default
+implementation for each supported platform:</p>
+<table class="table">
+<thead>
+<tr><th>Interface</th><th>Description</th><th>JVM</th><th>Android</th><th>JS</th><th>iOS</th></tr>
+</thead>
+<tbody>
+<tr><td><code>ClogTagProvider</code></td><td>Infers a tag if one is not provided to the logging call</td><td><code>DefaultTagProvider()</code></td><td><code>DefaultTagProvider()</code></td><td><code>DefaultTagProvider()</code></td><td><code>DefaultTagProvider()</code></td></tr>
+<tr><td><code>ClogMessageFormatter</code></td><td>Formats a message string to pass to the <code>ClogLogger</code></td><td><code>Slf4jMessageFormatter(DefaultMessageFormatter())</code></td><td><code>DefaultMessageFormatter()</code></td><td><code>DefaultMessageFormatter()</code></td><td><code>DefaultMessageFormatter()</code></td></tr>
+<tr><td><code>ClogFilter</code></td><td>Determines whether to format and log a message</td><td><code>DefaultFilter()</code></td><td><code>DefaultFilter()</code></td><td><code>DefaultFilter()</code></td><td><code>DefaultFilter()</code></td></tr>
+<tr><td><code>ClogLogger</code></td><td>Prints a formatted log to a lower-level platform-specific logger or console</td><td><code>DefaultLogger()</code></td><td><code>AndroidLogger()</code></td><td><code>JsConsoleLogger()</code></td><td><code>NsLogger()</code></td></tr>
+</tbody>
+</table>
+<h2 id="recipes"><a href="#recipes" id="recipes" class="anchor"></a>Recipes</h2>
+<h3 id="turn-off-logging-in-production"><a href="#turn-off-logging-in-production" id="turn-off-logging-in-production" class="anchor"></a>Turn off logging in production</h3>
+<pre><code class="language-kotlin">val isDebug = ...
+Clog.configureLoggingInProduction(isDebug)
+</code></pre>
+<h3 id="use-a-custom-logger"><a href="#use-a-custom-logger" id="use-a-custom-logger" class="anchor"></a>Use a custom logger</h3>
+<p>Replaces the current logging target with a custom one.</p>
+<pre><code class="language-kotlin">val customLogger = object : ClogLogger {
+    override fun log(priority: Clog.Priority, tag: String?, message: String) {
+        ...
+    }
+    override fun logException(priority: Clog.Priority, tag: String?, throwable: Throwable) {
+        ...
+    }
+}
+Clog.updateProfile { it.copy(logger = customLogger) }
+</code></pre>
+<h3 id="using-multiple-logging-targets"><a href="#using-multiple-logging-targets" id="using-multiple-logging-targets" class="anchor"></a>Using multiple logging targets</h3>
+<p>Add an additional logger to the current instance. Calling <code>addLogger</code> multiple times will continue adding loggers, and
+messages will be delegated to all loggers.</p>
+<pre><code class="language-kotlin">val customLogger = object : ClogLogger {
+    override fun log(priority: Clog.Priority, tag: String?, message: String) {
+        ...
+    }
+    override fun logException(priority: Clog.Priority, tag: String?, throwable: Throwable) {
+        ...
+    }
+}
+Clog.addLogger(customLogger)
+</code></pre>
+<h3 id="using-clog-with-dependency-injection"><a href="#using-clog-with-dependency-injection" id="using-clog-with-dependency-injection" class="anchor"></a>Using Clog with dependency injection</h3>
+<pre><code class="language-kotlin">// Given some classes that depend on a logger
+class Controller(val logger: ClogProfile) 
+
+// just declare a ClogProfile singleton with any configurations you need 
+val module = module { 
+  single { ClogProfile() } 
+  single { Controller(get()) } 
+} 
+</code></pre>
+
+
+
+
+                    
+                
+            
+        
+    
+    <!-- end:inject components -->
+
+
+        
+        </div>
+
+        <!-- Page navigation
+        =========================================== -->
+        <div class="col-md-3" role="complementary">
+        <div class="bs-docs-sidebar hidden-print" id="bs-docs-sidebar">
+    <section id="search" >
+        <form data-orchid-search="">
+            <div class="input-group">
+                <input type="text" name="query" id="query" class="form-control" placeholder="Search&hellip;">
+                <span class="input-group-btn"><button type="submit" class="btn btn-default">Go</button></span>
+            </div>
+        </form>
+        <div id="search-results" data-orchid-search-results style="display: none;">
+            <b>Search Results</b>
+            <ul></ul>
+        </div>
+        <div id="search-progress" data-orchid-search-progress style="display: none;">
+            <div class="loader">Loading...</div>
+        </div>
+    </section>
+
+    <ul class="nav bs-docs-sidenav">
+        
+    </ul>
+
+    
+    <!-- start:inject components -->
+    
+    <!-- end:inject components -->
+
+
+
+    <a class="back-to-top" href="#top">
+        <i class="glyphicon glyphicon-chevron-up"></i> Back to top
+    </a>
+</div>
+
+        </div>
+    </div>
+</div>
+
+
+<div id="footer">
+    <div class="container bs-docs-container">
+    <footer class="bs-docs-footer" role="contentinfo">
+    <div class="row">
+        <div class="col-xs-12">
+            <nav aria-label="navigateClasses">
+                <ul class="pager">
+                    
+
+                    
+                </ul>
+            </nav>
+        </div>
+    </div>
+    <div class="icons">
+    
+    
+    
+    </div>
+    <br>
+    <p>
+    Documentation template based on the
+    <a href="https://github.com/mistic100/jekyll-bootstrap-doc">Jekyll Bootstrap Doc</a>
+    Jekyll theme by the <a href="https://getbootstrap.com">Bootstrap team</a>. Site created with
+    <a href="https://orchid.run">Orchid</a>.
+</p>
+
+<ul class="bs-docs-footer-links muted">
+    <li>Currently 4.1.1</li>
+</ul>
+
+
+</footer>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+    <!-- start:inject meta-components [bodyEnd] -->
+    
+
+        
+            
+        
+
+        
+    
+    <!-- end:inject meta-components [bodyEnd] -->
+
+
+
+    <!-- start:inject meta-components [bodyEnd] -->
+    
+    <!-- end:inject meta-components [bodyEnd] -->
+
+
+
+
+<!-- start:inject scripts -->
+<script  src="https://copper-leaf.github.io/clog/BsDoc/802f6534/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script  src="https://copper-leaf.github.io/clog/BsDoc/802f6534/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<script  src="https://copper-leaf.github.io/clog/BsDoc/802f6534/ajax/libs/bootbox.js/4.3.0/bootbox.min.js"></script>
+<script  src="https://copper-leaf.github.io/clog/BsDoc/802f6534/assets/js/bsdoc.js"></script>
+<script  src="https://copper-leaf.github.io/clog/ajax/libs/prism/1.17.1/prism.min.js"></script>
+<script  src="https://copper-leaf.github.io/clog/ajax/libs/prism/1.17.1/components/prism-java.min.js"></script>
+<script  src="https://copper-leaf.github.io/clog/ajax/libs/prism/1.17.1/components/prism-kotlin.min.js"></script>
+<script  src="https://copper-leaf.github.io/clog/ajax/libs/prism/1.17.1/components/prism-groovy.min.js"></script>
+<script  src="https://copper-leaf.github.io/clog/ajax/libs/prism/1.17.1/components/prism-swift.min.js"></script>
+<!-- end:inject scripts -->
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.11/d3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/trianglify/1.2.0/trianglify.min.js"></script>
+
+<script>
+    $(function () {
+        window.colors = ['#2a623d', '#000000'];
+        
+    trianglify({"x_colors":["#000","#2a623d","#000"]});
+
+        buildNav();
+    });
+</script>
+</body>
+</html>
