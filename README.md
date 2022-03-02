@@ -1,6 +1,9 @@
 ---
 ---
 
+> # IMPORTANT
+> This library has been archived and will be receiving no further updates. Please switch to [touchlab/Kermit](https://github.com/touchlab/Kermit) for a replacement library, to consolidate the massive spread of Kotlin logging libraries. See discussion [here](https://github.com/copper-leaf/clog/discussions/7) for more context.
+
 ## Clog
 
 Zero-config Kotlin multiplatform logging utility, strongly inspired by the [SLF4J](http://www.slf4j.org/) and 
